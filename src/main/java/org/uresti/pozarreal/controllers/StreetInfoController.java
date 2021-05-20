@@ -21,6 +21,7 @@ public class StreetInfoController {
     @GetMapping("/{streetId}")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_RESIDENT')")
     public ResponseEntity<StreetInfo> getStreetInfo(@PathVariable("streetId") String streetId) {
+        System.out.println("algo de prueba");
         return new ResponseEntity<>(streetsService.getStreetInfo(streetId), HttpStatus.OK);
     }
 }
