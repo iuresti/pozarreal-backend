@@ -3,21 +3,18 @@ package org.uresti.pozarreal.service.impl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.springframework.data.domain.Example;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.uresti.pozarreal.model.Street;
 import org.uresti.pozarreal.repository.HousesRepository;
 import org.uresti.pozarreal.repository.RepresentativeRepository;
 import org.uresti.pozarreal.repository.StreetRepository;
 
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
 
 public class StreetServiceImplTests {
 
     @Test
-    public void givenAnEmptyStreetList_whenGetStreets_thenEmptyListIsReturned(){
+    public void givenAnEmptyStreetList_whenGetStreets_thenEmptyListIsReturned() {
         // Given:
         StreetRepository streetRepository = Mockito.mock(StreetRepository.class);
         RepresentativeRepository representativeRepository = null;
@@ -36,7 +33,7 @@ public class StreetServiceImplTests {
     }
 
     @Test
-    public void givenAnStreetListWithTwoElements_whenGetStreets_thenListWithTwoElementsIsReturned(){
+    public void givenAnStreetListWithTwoElements_whenGetStreets_thenListWithTwoElementsIsReturned() {
         // Given:
         StreetRepository streetRepository = Mockito.mock(StreetRepository.class);
         RepresentativeRepository representativeRepository = null;
