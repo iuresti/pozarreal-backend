@@ -61,5 +61,3 @@ CREATE TABLE chips
     valid boolean not null default true,
     notes varchar(500)
 );
-
-INSERT INTO chips (id, house, code, valid) VALUES (uuid_generate_v1(), 'house', 'code', true);
