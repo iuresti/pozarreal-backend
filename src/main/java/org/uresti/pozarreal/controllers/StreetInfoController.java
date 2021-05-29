@@ -9,7 +9,6 @@ import org.uresti.pozarreal.service.StreetsService;
 
 @RestController
 @RequestMapping("/api/streetInfo")
-@CrossOrigin
 public class StreetInfoController {
 
     private final StreetsService streetsService;
@@ -19,9 +18,8 @@ public class StreetInfoController {
     }
 
     @GetMapping("/{streetId}")
-    //@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_RESIDENT')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_RESIDENT')")
     public ResponseEntity<StreetInfo> getStreetInfo(@PathVariable("streetId") String streetId) {
-        System.out.println("algo de prueba");
         return new ResponseEntity<>(streetsService.getStreetInfo(streetId), HttpStatus.OK);
     }
 }

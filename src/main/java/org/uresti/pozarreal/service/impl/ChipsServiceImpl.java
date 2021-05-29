@@ -7,6 +7,7 @@ import org.uresti.pozarreal.service.ChipsService;
 import org.uresti.pozarreal.service.mappers.ChipsMapper;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -41,5 +42,21 @@ public class ChipsServiceImpl implements ChipsService {
         chip.setValid(false);
 
         return ChipsMapper.entityToDto(chipsRepository.save(chip));
+    }
+
+    @Override
+    public Chip addChip(Chip chip) {
+        chip.setId(UUID.randomUUID().toString());
+
+        return ChipsMapper.entityToDto(chipsRepository.save(ChipsMapper.dtoToEntity(chip)));
+    }
+
+    @Override
+    public Chip deleteChip(String chipId) {
+        org.uresti.pozarreal.model.Chip chip = chipsRepository.findById(chipId).orElseThrow();
+
+        chipsRepository.deleteById(chipId);
+
+        return ChipsMapper.entityToDto(chip);
     }
 }

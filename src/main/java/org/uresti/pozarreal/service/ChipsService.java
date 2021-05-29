@@ -11,4 +11,8 @@ public interface ChipsService {
     Chip activateChip(String chipId);
 
     Chip deactivateChip(String chipId);
+
+    Chip addChip(Chip chip);
+
+    Chip deleteChip(String chipId);
 }

@@ -15,7 +15,6 @@ import org.uresti.pozarreal.service.StreetsService;
 
 @RestController
 @RequestMapping("/api/streets")
-@CrossOrigin
 public class StreetsController {
 
     private final StreetsService streetsService;
@@ -25,7 +24,7 @@ public class StreetsController {
     }
 
     @GetMapping
-    //@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_RESIDENT')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_RESIDENT')")
     public ResponseEntity<List<Street>> getStreets(OAuth2AuthenticationToken authentication) {
         List<Street> streets = streetsService.getStreets();
 

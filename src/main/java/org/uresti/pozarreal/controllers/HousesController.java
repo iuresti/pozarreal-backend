@@ -17,7 +17,7 @@ public class HousesController {
     }
 
     @PutMapping("chips")
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_RESIDENT')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     public void toggleChipStatusRequest( @RequestBody ToggleChipStatusRequest toggleChipStatusRequest) {
         housesService.toggleChipStatusRequest(toggleChipStatusRequest.getHouseId(), toggleChipStatusRequest.isEnable());
     }

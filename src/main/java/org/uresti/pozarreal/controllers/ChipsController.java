@@ -36,4 +36,17 @@ public class ChipsController {
         return chipsService.deactivateChip(chipId);
     }
 
+    @PostMapping
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+    public Chip addChip(@RequestBody Chip chip) {
+        return chipsService.addChip(chip);
+    }
+
+    @DeleteMapping("{chipId}")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+    public Chip addChip(@PathVariable String chipId) {
+        return chipsService.deleteChip(chipId);
+    }
+
+
 }
