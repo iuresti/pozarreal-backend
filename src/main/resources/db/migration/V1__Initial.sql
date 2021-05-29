@@ -61,4 +61,3 @@ CREATE TABLE chips
     valid boolean not null default true,
     notes varchar(500)
 );
-

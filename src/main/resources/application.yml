@@ -3,8 +3,6 @@ spring:
     url: jdbc:postgresql://localhost:5432/pozarreal
     username: postgres
     password: postgres
-
-
   security:
     oauth2:
       client:
