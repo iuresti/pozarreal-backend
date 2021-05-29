@@ -1,7 +1,5 @@
 package org.uresti.pozarreal.service.impl;
 
-import java.util.List;
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.uresti.pozarreal.dto.StreetInfo;
@@ -10,6 +8,11 @@ import org.uresti.pozarreal.repository.HousesRepository;
 import org.uresti.pozarreal.repository.RepresentativeRepository;
 import org.uresti.pozarreal.repository.StreetRepository;
 import org.uresti.pozarreal.service.StreetsService;
+import org.uresti.pozarreal.service.mappers.HousesMapper;
+import org.uresti.pozarreal.service.mappers.RepresentativeMapper;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class StreetServiceImpl implements StreetsService {
@@ -43,8 +46,8 @@ public class StreetServiceImpl implements StreetsService {
 
         streetInfo.setId(streetId);
         streetInfo.setName(street.getName());
-        streetInfo.setRepresentative(representativeRepository.findRepresentativeByStreet(streetId));
-        streetInfo.setHouses(housesRepository.findAllByStreet(streetId));
+        streetInfo.setRepresentative(RepresentativeMapper.entityToDto(representativeRepository.findRepresentativeByStreet(streetId)));
+        streetInfo.setHouses(housesRepository.findAllByStreetOrderByNumber(streetId).stream().map(HousesMapper::entityToDto).collect(Collectors.toList()));
 
         return streetInfo;
     }

@@ -21,7 +21,7 @@ public class StreetInfoController {
     }
 
     @GetMapping("/{streetId}")
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_RESIDENT')")
+    //@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_RESIDENT')")
     public ResponseEntity<StreetInfo> getStreetInfo(@PathVariable("streetId") String streetId) {
         return new ResponseEntity<>(streetsService.getStreetInfo(streetId), HttpStatus.OK);
     }

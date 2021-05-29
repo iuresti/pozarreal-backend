@@ -23,7 +23,7 @@ public class StreetsController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_RESIDENT')")
+    //@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_RESIDENT')")
     public ResponseEntity<List<Street>> getStreets(OAuth2AuthenticationToken authentication) {
         List<Street> streets = streetsService.getStreets();
 

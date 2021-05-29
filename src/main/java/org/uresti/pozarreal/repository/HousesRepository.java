@@ -9,5 +9,5 @@ import org.uresti.pozarreal.model.House;
 @Repository
 public interface HousesRepository extends JpaRepository<House, String> {
 
-    List<House> findAllByStreet(String street);
+    List<House> findAllByStreetOrderByNumber(String street);
 }

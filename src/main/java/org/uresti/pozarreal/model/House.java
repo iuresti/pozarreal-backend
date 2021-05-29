@@ -1,5 +1,10 @@
 package org.uresti.pozarreal.model;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -7,6 +12,10 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "houses")
+@Builder
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class House {
     @Id
     private String id;
@@ -15,35 +24,4 @@ public class House {
     @Column(name = "chips_enabled")
     private boolean chipsEnabled;
 
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getStreet() {
-        return street;
-    }
-
-    public void setStreet(String street) {
-        this.street = street;
-    }
-
-    public String getNumber() {
-        return number;
-    }
-
-    public void setNumber(String number) {
-        this.number = number;
-    }
-
-    public boolean isChipsEnabled() {
-        return chipsEnabled;
-    }
-
-    public void setChipsEnabled(boolean chipsEnabled) {
-        this.chipsEnabled = chipsEnabled;
-    }
 }
