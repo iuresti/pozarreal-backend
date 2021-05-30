@@ -9,10 +9,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class House {
-    private String id;
-    private String street;
-    private String streetName;
-    private String number;
-    private boolean chipsEnabled;
+public class Login {
+    private boolean google;
+    private boolean facebook;
 }

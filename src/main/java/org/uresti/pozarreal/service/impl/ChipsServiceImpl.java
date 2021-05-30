@@ -1,6 +1,7 @@
 package org.uresti.pozarreal.service.impl;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.uresti.pozarreal.dto.Chip;
 import org.uresti.pozarreal.repository.ChipsRepository;
 import org.uresti.pozarreal.service.ChipsService;
@@ -20,6 +21,7 @@ public class ChipsServiceImpl implements ChipsService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Chip> getChipsByHouse(String houseId) {
         return chipsRepository.getChipByHouse(houseId).stream()
                 .map(ChipsMapper::entityToDto)
@@ -27,6 +29,7 @@ public class ChipsServiceImpl implements ChipsService {
     }
 
     @Override
+    @Transactional
     public Chip activateChip(String chipId) {
         org.uresti.pozarreal.model.Chip chip = chipsRepository.findById(chipId).orElseThrow();
 
@@ -36,6 +39,7 @@ public class ChipsServiceImpl implements ChipsService {
     }
 
     @Override
+    @Transactional
     public Chip deactivateChip(String chipId) {
         org.uresti.pozarreal.model.Chip chip = chipsRepository.findById(chipId).orElseThrow();
 
@@ -45,6 +49,7 @@ public class ChipsServiceImpl implements ChipsService {
     }
 
     @Override
+    @Transactional
     public Chip addChip(Chip chip) {
         chip.setId(UUID.randomUUID().toString());
 
@@ -52,6 +57,7 @@ public class ChipsServiceImpl implements ChipsService {
     }
 
     @Override
+    @Transactional
     public Chip deleteChip(String chipId) {
         org.uresti.pozarreal.model.Chip chip = chipsRepository.findById(chipId).orElseThrow();
 
