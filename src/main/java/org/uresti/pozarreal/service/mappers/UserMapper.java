@@ -7,7 +7,7 @@ public class UserMapper {
         return User.builder()
                 .id(userEntity.getId())
                 .name(userEntity.getName())
-                .img(userEntity.getPicture())
+                .picture(userEntity.getPicture())
                 .build();
     }
 }

@@ -10,4 +10,8 @@ public interface UserService {
     List<String> addRole(String userId, String role);
 
     List<User> getAllUsers();
+
+    User buildUserForEmail(String email);
+
+    User save(User user);
 }

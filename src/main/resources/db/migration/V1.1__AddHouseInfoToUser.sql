@@ -1,0 +1,1 @@
+ALTER TABLE users ADD COLUMN house_id varchar(40) references houses;

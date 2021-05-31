@@ -4,10 +4,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.uresti.pozarreal.dto.User;
 import org.uresti.pozarreal.model.RoleByUser;
+import org.uresti.pozarreal.repository.HousesRepository;
 import org.uresti.pozarreal.repository.LoginRepository;
 import org.uresti.pozarreal.repository.RolesRepository;
 import org.uresti.pozarreal.repository.UserRepository;
 import org.uresti.pozarreal.service.UserService;
+import org.uresti.pozarreal.service.mappers.HousesMapper;
 import org.uresti.pozarreal.service.mappers.LoginMapper;
 import org.uresti.pozarreal.service.mappers.UserMapper;
 
@@ -21,13 +23,16 @@ public class UserServiceImpl implements UserService {
     private final RolesRepository rolesRepository;
     private final UserRepository userRepository;
     private final LoginRepository loginRepository;
+    private final HousesRepository housesRepository;
 
     public UserServiceImpl(RolesRepository rolesRepository,
                            UserRepository userRepository,
-                           LoginRepository loginRepository) {
+                           LoginRepository loginRepository,
+                           HousesRepository housesRepository) {
         this.rolesRepository = rolesRepository;
         this.userRepository = userRepository;
         this.loginRepository = loginRepository;
+        this.housesRepository = housesRepository;
     }
 
     @Override
@@ -63,5 +68,40 @@ public class UserServiceImpl implements UserService {
                 .collect(Collectors.toList());
 
 
+    }
+
+    @Override
+    public User buildUserForEmail(String email) {
+        org.uresti.pozarreal.model.User user = userRepository.findByEmail(email).orElseThrow();
+
+        return User.builder()
+                .id(user.getId())
+                .picture(user.getPicture())
+                .name(user.getName())
+                .roles(rolesRepository.findRolesByUser(user.getId()))
+                .additionalHouses(housesRepository.findHousesByUser(user.getId())
+                        .stream().map(HousesMapper::entityToDto).collect(Collectors.toList()))
+                .house(user.getHouseId() != null ? HousesMapper.entityToDto(housesRepository.findById(user.getHouseId()).orElse(null)) : null)
+                .build();
+    }
+
+    @Override
+    public User save(User user) {
+        org.uresti.pozarreal.model.User dbUser = userRepository.findById(user.getId()).orElseThrow();
+
+        dbUser.setName(user.getName());
+        dbUser.setHouseId(user.getHouse().getId());
+
+        userRepository.save(dbUser);
+
+        return User.builder()
+                .id(user.getId())
+                .picture(user.getPicture())
+                .name(user.getName())
+                .roles(rolesRepository.findRolesByUser(user.getId()))
+                .additionalHouses(housesRepository.findHousesByUser(user.getId())
+                        .stream().map(HousesMapper::entityToDto).collect(Collectors.toList()))
+                .house(HousesMapper.entityToDto(housesRepository.findById(dbUser.getHouseId()).orElse(null)))
+                .build();
     }
 }

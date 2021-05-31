@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -20,5 +21,7 @@ public class User {
     private String id;
     private String name;
     private String picture;
+    @Column(name = "house_id")
+    private String houseId;
 
 }

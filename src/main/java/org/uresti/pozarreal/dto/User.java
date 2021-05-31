@@ -15,7 +15,7 @@ public class User {
     String id;
     Login logins;
     String name;
-    String img;
+    String picture;
     List<String> roles;
     House house;
     String status;
