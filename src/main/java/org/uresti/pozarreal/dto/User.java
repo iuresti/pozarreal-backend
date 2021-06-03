@@ -12,12 +12,11 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class User {
-    String id;
-    Login logins;
-    String name;
-    String picture;
-    List<String> roles;
-    House house;
-    String status;
-    List<House> additionalHouses;
+    private String id;
+    private Login logins;
+    private String name;
+    private String picture;
+    private List<String> roles;
+    private String status;
+    private List<House> houses;
 }

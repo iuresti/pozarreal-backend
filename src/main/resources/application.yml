@@ -18,3 +18,11 @@ spring:
           facebook:
             client-id: ${FACEBOOK_CLIENT_ID}
             client-secret: ${FACEBOOK_CLIENT_SECRET}
+
+  servlet:
+    multipart:
+      max-file-size: 5000KB
+      max-request-size: 5000KB
+
+pozarreal:
+  datasourceUrl: jdbc:ucanaccess://PATH_TO_DB;password=${POZARREAL_DB_PWD}

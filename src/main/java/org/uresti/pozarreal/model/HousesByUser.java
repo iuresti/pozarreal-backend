@@ -23,4 +23,9 @@ public class HousesByUser {
     private String userId;
 
     private String houseId;
+
+    @Column(name = "main_house")
+    private Boolean mainHouse;
+
+    private Boolean validated;
 }

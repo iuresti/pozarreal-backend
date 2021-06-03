@@ -21,7 +21,4 @@ public class User {
     private String id;
     private String name;
     private String picture;
-    @Column(name = "house_id")
-    private String houseId;
-
 }

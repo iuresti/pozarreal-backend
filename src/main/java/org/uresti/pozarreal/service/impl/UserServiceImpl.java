@@ -79,9 +79,8 @@ public class UserServiceImpl implements UserService {
                 .picture(user.getPicture())
                 .name(user.getName())
                 .roles(rolesRepository.findRolesByUser(user.getId()))
-                .additionalHouses(housesRepository.findHousesByUser(user.getId())
+                .houses(housesRepository.findHousesByUser(user.getId())
                         .stream().map(HousesMapper::entityToDto).collect(Collectors.toList()))
-                .house(user.getHouseId() != null ? HousesMapper.entityToDto(housesRepository.findById(user.getHouseId()).orElse(null)) : null)
                 .build();
     }
 
@@ -90,7 +89,6 @@ public class UserServiceImpl implements UserService {
         org.uresti.pozarreal.model.User dbUser = userRepository.findById(user.getId()).orElseThrow();
 
         dbUser.setName(user.getName());
-        dbUser.setHouseId(user.getHouse().getId());
 
         userRepository.save(dbUser);
 
@@ -99,9 +97,8 @@ public class UserServiceImpl implements UserService {
                 .picture(user.getPicture())
                 .name(user.getName())
                 .roles(rolesRepository.findRolesByUser(user.getId()))
-                .additionalHouses(housesRepository.findHousesByUser(user.getId())
+                .houses(housesRepository.findHousesByUser(user.getId())
                         .stream().map(HousesMapper::entityToDto).collect(Collectors.toList()))
-                .house(HousesMapper.entityToDto(housesRepository.findById(dbUser.getHouseId()).orElse(null)))
                 .build();
     }
 }

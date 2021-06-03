@@ -65,4 +65,9 @@ public class ChipsServiceImpl implements ChipsService {
 
         return ChipsMapper.entityToDto(chip);
     }
+
+    @Override
+    public List<org.uresti.pozarreal.model.Chip> getChipsWithRealStatus() {
+        return chipsRepository.getChipsWithRealStatus();
+    }
 }

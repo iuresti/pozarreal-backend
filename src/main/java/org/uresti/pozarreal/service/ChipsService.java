@@ -15,4 +15,6 @@ public interface ChipsService {
     Chip addChip(Chip chip);
 
     Chip deleteChip(String chipId);
+
+    List<org.uresti.pozarreal.model.Chip> getChipsWithRealStatus();
 }
