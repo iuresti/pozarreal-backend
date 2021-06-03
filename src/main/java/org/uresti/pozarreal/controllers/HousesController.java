@@ -18,9 +18,9 @@ public class HousesController {
         this.housesService = housesService;
     }
 
-    @PutMapping("chips")
+    @PutMapping("{houseId}/chips")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
-    public void toggleChipStatusRequest( @RequestBody ToggleChipStatusRequest toggleChipStatusRequest) {
+    public void toggleChipStatusRequest(@PathVariable String houseId, @RequestBody ToggleChipStatusRequest toggleChipStatusRequest) {
         housesService.toggleChipStatusRequest(toggleChipStatusRequest.getHouseId(), toggleChipStatusRequest.isEnable());
     }
 }
