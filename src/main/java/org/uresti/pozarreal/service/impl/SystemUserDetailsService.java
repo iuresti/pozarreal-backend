@@ -1,18 +1,19 @@
 package org.uresti.pozarreal.service.impl;
 
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMapper;
+import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserRequest;
+import org.springframework.security.oauth2.core.oidc.OidcUserInfo;
+import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.security.oauth2.core.oidc.user.OidcUserAuthority;
 import org.springframework.security.oauth2.core.user.OAuth2UserAuthority;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.uresti.pozarreal.dto.LoggedUser;
 import org.uresti.pozarreal.model.Login;
 import org.uresti.pozarreal.model.User;
 import org.uresti.pozarreal.repository.LoginRepository;
@@ -85,5 +86,30 @@ public class SystemUserDetailsService {
         loginRepository.save(login);
 
         return Optional.of(user);
+    }
+
+    public OidcUser loadUser(OidcUserRequest userRequest) {
+        Map<String, Object> attributes = new HashMap<>(userRequest.getIdToken().getClaims());
+        String email = (String) attributes.get("email");
+        String picture = (String) attributes.get("picture");
+        String name = (String) attributes.get("name");
+        Set<GrantedAuthority> mappedAuthorities = new HashSet<>();
+
+        User user = userRepository.findByEmail(email).or(() -> registerUser(email, picture, name)).orElseThrow();
+
+        rolesRepository.findRolesByUser(user.getId()).forEach(role ->
+                mappedAuthorities.add(new SimpleGrantedAuthority(role)));
+
+        OidcUserInfo userInfo = new OidcUserInfo(attributes);
+
+        attributes.put("userId", user.getId());
+
+        return LoggedUser.builder()
+                .oidcIdToken(userRequest.getIdToken())
+                .claims(attributes)
+                .grantedAuthorities(mappedAuthorities)
+                .oidcUserInfo(userInfo)
+                .name(user.getName())
+                .build();
     }
 }

@@ -2,6 +2,7 @@ package org.uresti.pozarreal.controllers;
 
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.stereotype.Component;
+import org.uresti.pozarreal.dto.LoggedUser;
 
 import java.security.Principal;
 
@@ -9,11 +10,15 @@ import java.security.Principal;
 public class SessionHelper {
 
     public String getEmailForLoggedUser(Principal principal){
-        if(principal instanceof OAuth2AuthenticationToken) {
-            return ((OAuth2AuthenticationToken) principal).getPrincipal().getAttribute("email");
-        }
+        LoggedUser loggedUser = (LoggedUser) ((OAuth2AuthenticationToken) principal).getPrincipal();
 
-        return null;
+        return loggedUser.getEmail();
+    }
+
+    public String getUserIdForLoggedUser(Principal principal){
+        LoggedUser loggedUser = (LoggedUser) ((OAuth2AuthenticationToken) principal).getPrincipal();
+
+        return loggedUser.getUserId();
     }
 
 }

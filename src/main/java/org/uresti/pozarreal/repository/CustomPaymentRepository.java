@@ -29,7 +29,7 @@ public class CustomPaymentRepository {
                 "  INNER JOIN users u ON p.user_id = u.id ";
         StringBuilder whereCondition = new StringBuilder();
         MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
-        BeanPropertyRowMapper<PaymentView> paymentViewMapper = new BeanPropertyRowMapper<>();
+        BeanPropertyRowMapper<PaymentView> paymentViewMapper = new BeanPropertyRowMapper<>(PaymentView.class);
 
         if (StringUtils.hasLength(paymentFilter.getPaymentMode())) {
             appendParam(whereCondition, " p.payment_mode = :paymentMode");
