@@ -10,4 +10,6 @@ public interface PaymentsService {
     List<PaymentView> getPayments(PaymentFilter paymentFilter);
 
     Payment save(Payment payment, String userId);
+
+    void delete(String paymentId);
 }

@@ -21,4 +21,7 @@ public class SessionHelper {
         return loggedUser.getUserId();
     }
 
+    public LoggedUser getLoggedUser(Principal principal) {
+        return (LoggedUser) ((OAuth2AuthenticationToken) principal).getPrincipal();
+    }
 }

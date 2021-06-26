@@ -40,4 +40,9 @@ public class PaymentsServiceImpl implements PaymentsService {
 
         return PaymentMapper.entityToDto(paymentRepository.save(PaymentMapper.dtoToEntity(payment)));
     }
+
+    @Override
+    public void delete(String paymentId) {
+        paymentRepository.deleteById(paymentId);
+    }
 }

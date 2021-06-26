@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.uresti.pozarreal.dto.Chip;
+import org.uresti.pozarreal.dto.LoggedUser;
 import org.uresti.pozarreal.service.ChipsService;
 
 import java.security.Principal;
@@ -33,9 +34,9 @@ public class ChipsController {
     @PatchMapping("activate/{chipId}")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     public Chip activateChip(@PathVariable String chipId, Principal principal) {
-        String email = sessionHelper.getEmailForLoggedUser(principal);
+        LoggedUser loggedUser = sessionHelper.getLoggedUser(principal);
 
-        log.info("Activando chip: {} by user: {}", chipId, email);
+        log.info("Activando chip: {} by user: {} - {}", chipId, loggedUser.getName(), loggedUser.getUserId());
 
         return chipsService.activateChip(chipId);
     }
@@ -43,9 +44,9 @@ public class ChipsController {
     @PatchMapping("deactivate/{chipId}")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     public Chip deactivateChip(@PathVariable String chipId, Principal principal) {
-        String email = sessionHelper.getEmailForLoggedUser(principal);
+        LoggedUser loggedUser = sessionHelper.getLoggedUser(principal);
 
-        log.info("Desactivando chip: {} by user: {}", chipId, email);
+        log.info("Desactivando chip: {} by user: {} - {}", chipId, loggedUser.getName(), loggedUser.getUserId());
 
         return chipsService.deactivateChip(chipId);
     }
@@ -53,9 +54,9 @@ public class ChipsController {
     @PostMapping
     @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     public Chip addChip(@RequestBody Chip chip, Principal principal) {
-        String email = sessionHelper.getEmailForLoggedUser(principal);
+        LoggedUser loggedUser = sessionHelper.getLoggedUser(principal);
 
-        log.info("Agregando chip: {} para casa {} by user: {}", chip.getCode(), chip.getHouse(), email);
+        log.info("Agregando chip: {} para casa {} by user: {} - {}", chip.getCode(), chip.getHouse(), loggedUser.getName(), loggedUser.getUserId());
 
         return chipsService.addChip(chip);
     }
@@ -63,9 +64,9 @@ public class ChipsController {
     @DeleteMapping("{chipId}")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     public Chip removeChip(@PathVariable String chipId, Principal principal) {
-        String email = sessionHelper.getEmailForLoggedUser(principal);
+        LoggedUser loggedUser = sessionHelper.getLoggedUser(principal);
 
-        log.info("Eliminando chip: {} by user: {}", chipId, email);
+        log.info("Eliminando chip: {} by user: {} - {}", chipId, loggedUser.getName(), loggedUser.getUserId());
 
         return chipsService.deleteChip(chipId);
     }
