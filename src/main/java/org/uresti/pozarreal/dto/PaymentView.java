@@ -30,6 +30,8 @@ public class PaymentView {
 
     private String paymentConcept;
 
+    private String paymentSubConcept;
+
     private String paymentMode;
 
     private String notes;

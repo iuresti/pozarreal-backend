@@ -26,6 +26,7 @@ public class Payment {
     private String userId;
     private Double amount;
     private String paymentConceptId;
+    private String paymentSubConceptId;
     private String paymentMode;
     private String notes;
 

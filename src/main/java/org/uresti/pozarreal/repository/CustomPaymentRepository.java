@@ -22,10 +22,11 @@ public class CustomPaymentRepository {
 
     public List<PaymentView> executeQuery(PaymentFilter paymentFilter) {
         String query = "SELECT p.id, s.name streetName, h.number houseNumber, p.payment_date, " +
-                " p.registration_date, u.name userName, p.amount, pc.label paymentConcept, p.payment_mode paymentMode, p.notes " +
+                " p.registration_date, u.name userName, p.amount, pc.label paymentConcept, psc.label paymentSubConcept, p.payment_mode paymentMode, p.notes " +
                 " FROM payments p INNER JOIN houses h ON p.house_id = h.id " +
                 "  INNER JOIN streets s ON h.street = s.id " +
                 "  INNER JOIN payment_concepts pc ON p.payment_concept_id = pc.id" +
+                "  LEFT JOIN payment_sub_concepts psc ON p.payment_sub_concept_id = psc.id" +
                 "  INNER JOIN users u ON p.user_id = u.id ";
         StringBuilder whereCondition = new StringBuilder();
         MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();

@@ -35,6 +35,9 @@ public class Payment {
     @Column(name = "payment_concept_id")
     private String paymentConceptId;
 
+    @Column(name = "payment_sub_concept_id")
+    private String paymentSubConceptId;
+
     @Column(name = "payment_mode")
     private String paymentMode;
 
