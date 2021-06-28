@@ -9,13 +9,13 @@ import java.security.Principal;
 @Component
 public class SessionHelper {
 
-    public String getEmailForLoggedUser(Principal principal){
+    public String getEmailForLoggedUser(Principal principal) {
         LoggedUser loggedUser = (LoggedUser) ((OAuth2AuthenticationToken) principal).getPrincipal();
 
         return loggedUser.getEmail();
     }
 
-    public String getUserIdForLoggedUser(Principal principal){
+    public String getUserIdForLoggedUser(Principal principal) {
         LoggedUser loggedUser = (LoggedUser) ((OAuth2AuthenticationToken) principal).getPrincipal();
 
         return loggedUser.getUserId();
@@ -23,5 +23,11 @@ public class SessionHelper {
 
     public LoggedUser getLoggedUser(Principal principal) {
         return (LoggedUser) ((OAuth2AuthenticationToken) principal).getPrincipal();
+    }
+
+    public boolean hasRole(LoggedUser user, String roleName) {
+        return user.getAuthorities()
+                .stream()
+                .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals(roleName));
     }
 }

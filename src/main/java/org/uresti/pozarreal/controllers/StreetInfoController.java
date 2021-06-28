@@ -8,8 +8,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.uresti.pozarreal.dto.LoggedUser;
 import org.uresti.pozarreal.dto.StreetInfo;
 import org.uresti.pozarreal.service.StreetsService;
+
+import java.security.Principal;
 
 @RestController
 @RequestMapping("/api/streetInfo")
@@ -17,14 +20,19 @@ import org.uresti.pozarreal.service.StreetsService;
 public class StreetInfoController {
 
     private final StreetsService streetsService;
+    private final SessionHelper sessionHelper;
 
-    public StreetInfoController(StreetsService streetsService) {
+    public StreetInfoController(StreetsService streetsService,
+                                SessionHelper sessionHelper) {
         this.streetsService = streetsService;
+        this.sessionHelper = sessionHelper;
     }
 
     @GetMapping("/{streetId}")
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_RESIDENT')")
-    public ResponseEntity<StreetInfo> getStreetInfo(@PathVariable("streetId") String streetId) {
-        return new ResponseEntity<>(streetsService.getStreetInfo(streetId), HttpStatus.OK);
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_REPRESENTATIVE')")
+    public ResponseEntity<StreetInfo> getStreetInfo(@PathVariable("streetId") String streetId, Principal principal) {
+        LoggedUser userLogged = sessionHelper.getLoggedUser(principal);
+
+        return new ResponseEntity<>(streetsService.getStreetInfo(streetId, userLogged), HttpStatus.OK);
     }
 }

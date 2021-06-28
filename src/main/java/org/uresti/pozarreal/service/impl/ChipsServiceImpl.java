@@ -67,6 +67,7 @@ public class ChipsServiceImpl implements ChipsService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<org.uresti.pozarreal.model.Chip> getChipsWithRealStatus() {
         return chipsRepository.getChipsWithRealStatus();
     }

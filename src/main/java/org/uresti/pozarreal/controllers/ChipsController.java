@@ -25,7 +25,7 @@ public class ChipsController {
     }
 
     @GetMapping("/house/{houseId}")
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_RESIDENT')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_REPRESENTATIVE')")
     public List<Chip> getChipsByHouse(@PathVariable String houseId) {
         return chipsService.getChipsByHouse(houseId);
     }

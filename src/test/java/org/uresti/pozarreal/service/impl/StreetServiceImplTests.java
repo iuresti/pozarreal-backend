@@ -3,6 +3,7 @@ package org.uresti.pozarreal.service.impl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.uresti.pozarreal.dto.LoggedUser;
 import org.uresti.pozarreal.model.Street;
 import org.uresti.pozarreal.repository.HousesRepository;
 import org.uresti.pozarreal.repository.RepresentativeRepository;
@@ -19,14 +20,15 @@ public class StreetServiceImplTests {
         StreetRepository streetRepository = Mockito.mock(StreetRepository.class);
         RepresentativeRepository representativeRepository = null;
         HousesRepository housesRepository = null;
-        StreetServiceImpl streetService = new StreetServiceImpl(streetRepository, representativeRepository, housesRepository, null, null, null, null);
+        StreetServiceImpl streetService = new StreetServiceImpl(streetRepository, representativeRepository, housesRepository, null, null, null, null, null);
+        LoggedUser user = LoggedUser.builder().build();
 
         List<Street> lista = new LinkedList<>();
 
         Mockito.when(streetRepository.findAll()).thenReturn(lista);
 
         // When:
-        List<Street> streets = streetService.getStreets();
+        List<Street> streets = streetService.getStreets(user);
 
         // Then:
         Assertions.assertTrue(streets.isEmpty());
@@ -38,7 +40,8 @@ public class StreetServiceImplTests {
         StreetRepository streetRepository = Mockito.mock(StreetRepository.class);
         RepresentativeRepository representativeRepository = null;
         HousesRepository housesRepository = null;
-        StreetServiceImpl streetService = new StreetServiceImpl(streetRepository, representativeRepository, housesRepository, null, null, null, null);
+        StreetServiceImpl streetService = new StreetServiceImpl(streetRepository, representativeRepository, housesRepository, null, null, null, null, null);
+        LoggedUser user = LoggedUser.builder().build();
 
         List<Street> lista = new LinkedList<>();
 
@@ -56,7 +59,7 @@ public class StreetServiceImplTests {
 
 
         // When:
-        List<Street> streets = streetService.getStreets();
+        List<Street> streets = streetService.getStreets(user);
 
         // Then:
         Assertions.assertEquals(2, streets.size());

@@ -8,4 +8,6 @@ import org.uresti.pozarreal.model.Representative;
 public interface RepresentativeRepository extends JpaRepository<Representative, String> {
 
     Representative findRepresentativeByStreet(String street);
+
+    Representative findByUserId(String userId);
 }

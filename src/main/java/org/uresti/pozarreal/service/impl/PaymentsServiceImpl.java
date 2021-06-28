@@ -1,6 +1,7 @@
 package org.uresti.pozarreal.service.impl;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.uresti.pozarreal.dto.Payment;
 import org.uresti.pozarreal.dto.PaymentFilter;
 import org.uresti.pozarreal.dto.PaymentView;
@@ -26,11 +27,13 @@ public class PaymentsServiceImpl implements PaymentsService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<PaymentView> getPayments(PaymentFilter paymentFilter) {
         return customPaymentRepository.executeQuery(paymentFilter);
     }
 
     @Override
+    @Transactional
     public Payment save(Payment payment, String userId) {
 
         payment.setId(UUID.randomUUID().toString());
@@ -42,6 +45,7 @@ public class PaymentsServiceImpl implements PaymentsService {
     }
 
     @Override
+    @Transactional
     public void delete(String paymentId) {
         paymentRepository.deleteById(paymentId);
     }

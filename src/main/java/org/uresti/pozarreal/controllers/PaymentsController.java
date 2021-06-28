@@ -27,13 +27,14 @@ public class PaymentsController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_REPRESENTATIVE')")
     public List<PaymentView> search(PaymentFilter paymentFilter) {
         return paymentsService.getPayments(paymentFilter);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     public Payment save(@RequestBody Payment payment, Principal principal) {
         LoggedUser loggedUser = sessionHelper.getLoggedUser(principal);
 

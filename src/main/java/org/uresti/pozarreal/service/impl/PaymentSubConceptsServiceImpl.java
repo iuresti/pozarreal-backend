@@ -1,6 +1,7 @@
 package org.uresti.pozarreal.service.impl;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.uresti.pozarreal.dto.PaymentSubConcept;
 import org.uresti.pozarreal.exception.PozarrealSystemException;
 import org.uresti.pozarreal.repository.PaymentSubConceptsRepository;
@@ -22,6 +23,7 @@ public class PaymentSubConceptsServiceImpl implements PaymentSubConceptsService 
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<PaymentSubConcept> findAllByConcept(String paymentConceptId) {
         return paymentSubConceptsRepository.findAllByConceptId(paymentConceptId).stream()
                 .map(PaymentSubConceptMapper::entityToDto)
@@ -30,6 +32,7 @@ public class PaymentSubConceptsServiceImpl implements PaymentSubConceptsService 
     }
 
     @Override
+    @Transactional
     public PaymentSubConcept save(PaymentSubConcept paymentConcept) {
 
         paymentConcept.setId(UUID.randomUUID().toString());
@@ -39,6 +42,7 @@ public class PaymentSubConceptsServiceImpl implements PaymentSubConceptsService 
     }
 
     @Override
+    @Transactional
     public PaymentSubConcept update(PaymentSubConcept paymentConcept) {
         if (paymentConcept.getId() == null) {
             throw new PozarrealSystemException("Campo id de PaymentSubConcept requerido");

@@ -38,34 +38,8 @@ public class UserController {
         this.authorizedClientService = authorizedClientService;
         this.userService = userService;
         this.sessionHelper = sessionHelper;
-        availableRoles = Arrays.asList("ROLE_ADMIN", "ROLE_RESIDENT");
+        availableRoles = Arrays.asList("ROLE_ADMIN", "ROLE_RESIDENT", "ROLE_REPRESENTATIVE");
     }
-
-//    @GetMapping("/getUserInfo")
-//    public Map getLoginInfo(Principal principal) {
-//        OAuth2AuthorizedClient client = authorizedClientService
-//                .loadAuthorizedClient(
-//                        authentication.getAuthorizedClientRegistrationId(),
-//                        authentication.getName());
-//
-//        String userInfoEndpointUri = client.getClientRegistration()
-//                .getProviderDetails().getUserInfoEndpoint().getUri();
-//
-//        if (StringUtils.hasLength(userInfoEndpointUri)) {
-//            RestTemplate restTemplate = new RestTemplate();
-//            HttpHeaders headers = new HttpHeaders();
-//            headers.add(HttpHeaders.AUTHORIZATION, "Bearer " + client.getAccessToken()
-//                    .getTokenValue());
-//            HttpEntity entity = new HttpEntity("", headers);
-//            ResponseEntity<Map> response = restTemplate
-//                    .exchange(userInfoEndpointUri, HttpMethod.GET, entity, Map.class);
-//            Map userAttributes = response.getBody();
-//
-//            return userAttributes;
-//        }
-//
-//        return null;
-//    }
 
     @GetMapping("/api/loggedUser")
     public User getLoginInfo(Principal principal) {
@@ -100,6 +74,7 @@ public class UserController {
     }
 
     @PutMapping("/api/users/{userId}")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     public User updateUser(@PathVariable String userId, @RequestBody User user, Principal principal) {
         if (principal instanceof OAuth2AuthenticationToken) {
             String email = ((OAuth2AuthenticationToken) principal).getPrincipal().getAttribute("email");

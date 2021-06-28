@@ -71,6 +71,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public User buildUserForEmail(String email) {
         org.uresti.pozarreal.model.User user = userRepository.findByEmail(email).orElseThrow();
 
@@ -85,6 +86,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public User save(User user) {
         org.uresti.pozarreal.model.User dbUser = userRepository.findById(user.getId()).orElseThrow();
 

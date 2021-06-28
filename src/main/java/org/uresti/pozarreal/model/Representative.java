@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -22,5 +23,7 @@ public class Representative {
     private String name;
     private String phone;
     private String address;
+    @Column(name = "user_id")
+    private String userId;
 
 }

@@ -4,13 +4,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.uresti.pozarreal.config.FeeConfig;
 import org.uresti.pozarreal.config.PozarrealConfig;
+import org.uresti.pozarreal.config.RoleConstants;
+import org.uresti.pozarreal.controllers.SessionHelper;
 import org.uresti.pozarreal.dto.House;
-import org.uresti.pozarreal.dto.StreetInfo;
+import org.uresti.pozarreal.dto.LoggedUser;
 import org.uresti.pozarreal.dto.PaymentByConcept;
-import org.uresti.pozarreal.model.Payment;
-import org.uresti.pozarreal.model.PaymentConcept;
-import org.uresti.pozarreal.model.PaymentSubConcept;
-import org.uresti.pozarreal.model.Street;
+import org.uresti.pozarreal.dto.StreetInfo;
+import org.uresti.pozarreal.exception.PozarrealSystemException;
+import org.uresti.pozarreal.model.*;
 import org.uresti.pozarreal.repository.*;
 import org.uresti.pozarreal.service.StreetsService;
 import org.uresti.pozarreal.service.mappers.HousesMapper;
@@ -18,6 +19,7 @@ import org.uresti.pozarreal.service.mappers.RepresentativeMapper;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -29,18 +31,13 @@ import static org.uresti.pozarreal.model.PaymentSubConcept.*;
 public class StreetServiceImpl implements StreetsService {
 
     private final StreetRepository streetRepository;
-
     private final RepresentativeRepository representativeRepository;
-
     private final HousesRepository housesRepository;
-
     private final PaymentRepository paymentRepository;
-
     private final PaymentSubConceptsRepository paymentSubConceptsRepository;
-
     private final PaymentConceptsRepository paymentConceptsRepository;
-
     private final PozarrealConfig pozarrealConfig;
+    private final SessionHelper sessionHelper;
 
     public StreetServiceImpl(StreetRepository streetRepository,
                              RepresentativeRepository representativeRepository,
@@ -48,7 +45,7 @@ public class StreetServiceImpl implements StreetsService {
                              PaymentRepository paymentRepository,
                              PaymentSubConceptsRepository paymentSubConceptsRepository,
                              PaymentConceptsRepository paymentConceptsRepository,
-                             PozarrealConfig pozarrealConfig) {
+                             PozarrealConfig pozarrealConfig, SessionHelper sessionHelper) {
         this.streetRepository = streetRepository;
         this.representativeRepository = representativeRepository;
         this.housesRepository = housesRepository;
@@ -56,17 +53,34 @@ public class StreetServiceImpl implements StreetsService {
         this.paymentSubConceptsRepository = paymentSubConceptsRepository;
         this.paymentConceptsRepository = paymentConceptsRepository;
         this.pozarrealConfig = pozarrealConfig;
+        this.sessionHelper = sessionHelper;
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<Street> getStreets() {
+    public List<Street> getStreets(LoggedUser user) {
+
+        if (sessionHelper.hasRole(user, RoleConstants.ROLE_REPRESENTATIVE) && !sessionHelper.hasRole(user, RoleConstants.ROLE_ADMIN)) {
+            Representative representative = representativeRepository.findByUserId(user.getUserId());
+
+            return Collections.singletonList(streetRepository.findById(representative.getStreet())
+                    .orElseThrow(() -> new PozarrealSystemException("Wrong street configured for representative " + representative.getId())));
+        }
+
         return streetRepository.findAll();
     }
 
     @Override
     @Transactional(readOnly = true)
-    public StreetInfo getStreetInfo(String streetId) {
+    public StreetInfo getStreetInfo(String streetId, LoggedUser user) {
+
+        if (sessionHelper.hasRole(user, RoleConstants.ROLE_REPRESENTATIVE) && !sessionHelper.hasRole(user, RoleConstants.ROLE_ADMIN)) {
+            Representative representative = representativeRepository.findByUserId(user.getUserId());
+
+            if (!representative.getStreet().equals(streetId)) {
+                throw new PozarrealSystemException("Invalid street for representative query");
+            }
+        }
 
         Street street = streetRepository.findById(streetId).orElseThrow();
         StreetInfo streetInfo = new StreetInfo();
