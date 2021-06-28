@@ -6,4 +6,5 @@ import lombok.Data;
 public class FeeConfig {
     private Double biMonthlyMaintenanceFee;
     private Double yearlyMaintenanceFee;
+    private Double parkingPenFee;
 }

@@ -4,8 +4,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.uresti.pozarreal.config.FeeConfig;
 import org.uresti.pozarreal.config.PozarrealConfig;
+import org.uresti.pozarreal.dto.House;
 import org.uresti.pozarreal.dto.StreetInfo;
-import org.uresti.pozarreal.dto.TwoMonthsPayment;
+import org.uresti.pozarreal.dto.PaymentByConcept;
 import org.uresti.pozarreal.model.Payment;
 import org.uresti.pozarreal.model.PaymentConcept;
 import org.uresti.pozarreal.model.PaymentSubConcept;
@@ -21,7 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static org.uresti.pozarreal.model.PaymentConcept.MAINTENENCE;
+import static org.uresti.pozarreal.model.PaymentConcept.MAINTENANCE;
 import static org.uresti.pozarreal.model.PaymentSubConcept.*;
 
 @Service
@@ -70,17 +71,30 @@ public class StreetServiceImpl implements StreetsService {
         Street street = streetRepository.findById(streetId).orElseThrow();
         StreetInfo streetInfo = new StreetInfo();
 
-        PaymentConcept paymentConcept = paymentConceptsRepository.findByLabel(MAINTENENCE);
+        PaymentConcept paymentConcept = paymentConceptsRepository.findByLabel(MAINTENANCE);
         Map<String, String> paymentSubConcepts = paymentSubConceptsRepository.findAllByConceptId(paymentConcept.getId())
                 .stream().collect(Collectors.toMap(PaymentSubConcept::getLabel, PaymentSubConcept::getId));
 
         streetInfo.setId(streetId);
         streetInfo.setName(street.getName());
         streetInfo.setRepresentative(RepresentativeMapper.entityToDto(representativeRepository.findRepresentativeByStreet(streetId)));
-        streetInfo.setHouses(housesRepository.findAllByStreetOrderByNumber(streetId).stream().map(HousesMapper::entityToDto).
-                peek(house -> setYearPayments(house, paymentSubConcepts)).collect(Collectors.toList()));
+        streetInfo.setHouses(housesRepository.findAllByStreetOrderByNumber(streetId).stream().map(HousesMapper::entityToDto)
+                .peek(house -> setYearPayments(house, paymentSubConcepts))
+                .peek(this::setParkingPenPayment)
+                .collect(Collectors.toList()));
 
         return streetInfo;
+    }
+
+    private void setParkingPenPayment(House house) {
+        List<Payment> payments = paymentRepository.findAllByHouseIdAndPaymentConcept(house.getId(), PaymentConcept.PARKING_PEN);
+        PaymentByConcept paymentByConcept = new PaymentByConcept();
+        FeeConfig feeConfig = pozarrealConfig.getFees();
+
+        paymentByConcept.setAmount(payments.stream().map(Payment::getAmount).reduce(0.0, Double::sum));
+        paymentByConcept.setComplete(paymentByConcept.getAmount() >= feeConfig.getParkingPenFee());
+
+        house.setParkingPenPayment(paymentByConcept);
     }
 
     private void setYearPayments(org.uresti.pozarreal.dto.House house, Map<String, String> paymentSubConcepts) {
@@ -96,14 +110,14 @@ public class StreetServiceImpl implements StreetsService {
         };
         String annuityId = paymentSubConcepts.get(MAINTENANCE_ANNUITY);
 
-        ArrayList<TwoMonthsPayment> paymentInfo = new ArrayList<>();
+        ArrayList<PaymentByConcept> paymentInfo = new ArrayList<>();
 
-        paymentInfo.add(new TwoMonthsPayment());
-        paymentInfo.add(new TwoMonthsPayment());
-        paymentInfo.add(new TwoMonthsPayment());
-        paymentInfo.add(new TwoMonthsPayment());
-        paymentInfo.add(new TwoMonthsPayment());
-        paymentInfo.add(new TwoMonthsPayment());
+        paymentInfo.add(new PaymentByConcept());
+        paymentInfo.add(new PaymentByConcept());
+        paymentInfo.add(new PaymentByConcept());
+        paymentInfo.add(new PaymentByConcept());
+        paymentInfo.add(new PaymentByConcept());
+        paymentInfo.add(new PaymentByConcept());
 
         house.setTwoMonthsPayments(paymentInfo);
 
@@ -111,8 +125,8 @@ public class StreetServiceImpl implements StreetsService {
 
         for (Payment payment : payments) {
             if (annuityId.equals(payment.getPaymentSubConceptId())) {
-                for (TwoMonthsPayment twoMonthsPayment : paymentInfo) {
-                    twoMonthsPayment.setComplete(true);
+                for (PaymentByConcept paymentByConcept : paymentInfo) {
+                    paymentByConcept.setComplete(true);
                 }
                 break;
             } else {

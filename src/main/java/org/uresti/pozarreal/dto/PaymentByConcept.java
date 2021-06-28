@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class TwoMonthsPayment {
+public class PaymentByConcept {
     boolean isComplete;
     Double amount;
 }

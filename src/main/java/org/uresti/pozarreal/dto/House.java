@@ -17,5 +17,6 @@ public class House {
     private String streetName;
     private String number;
     private boolean chipsEnabled;
-    private ArrayList<TwoMonthsPayment> twoMonthsPayments; //An array of 6 elements is expected (current year payments)
+    private ArrayList<PaymentByConcept> twoMonthsPayments; //An array of 6 elements is expected (current year payments)
+    private PaymentByConcept parkingPenPayment;
 }

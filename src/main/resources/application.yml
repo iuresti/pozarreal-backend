@@ -26,3 +26,4 @@ pozarreal:
   fees:
     biMonthlyMaintenanceFee: 800
     yearlyMaintenanceFee: 4560
+    parkingPenFee: 1500
