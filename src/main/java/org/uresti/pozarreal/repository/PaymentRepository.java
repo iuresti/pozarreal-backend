@@ -7,6 +7,7 @@ import org.uresti.pozarreal.model.Payment;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public interface PaymentRepository extends JpaRepository<Payment, String> {
@@ -15,4 +16,7 @@ public interface PaymentRepository extends JpaRepository<Payment, String> {
 
     @Query("SELECT p FROM Payment p INNER JOIN PaymentConcept pc ON p.paymentConceptId = pc.id WHERE pc.label = :concept AND p.houseId = :houseId")
     List<Payment> findAllByHouseIdAndPaymentConcept(String houseId, String concept);
+
+    @Query("SELECT p FROM Payment p INNER JOIN House h ON p.houseId = h.id INNER JOIN Street s ON h.street = s.id WHERE s.id = :streetId AND p.paymentDate >= :startDate")
+    List<Payment> findAllByStreetAndPaymentDateIsGreaterThanEqual(String streetId, LocalDate startDate);
 }

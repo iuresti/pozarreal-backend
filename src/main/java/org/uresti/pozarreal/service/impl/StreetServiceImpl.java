@@ -89,11 +89,16 @@ public class StreetServiceImpl implements StreetsService {
         Map<String, String> paymentSubConcepts = paymentSubConceptsRepository.findAllByConceptId(paymentConcept.getId())
                 .stream().collect(Collectors.toMap(PaymentSubConcept::getLabel, PaymentSubConcept::getId));
 
+        LocalDate startOfYear = LocalDate.now().withDayOfYear(1);
+
+        Map<String, List<Payment>> streetPaymentsByHouse = paymentRepository.findAllByStreetAndPaymentDateIsGreaterThanEqual(streetId, startOfYear)
+                .stream().collect(Collectors.groupingBy(Payment::getHouseId));
+
         streetInfo.setId(streetId);
         streetInfo.setName(street.getName());
         streetInfo.setRepresentative(RepresentativeMapper.entityToDto(representativeRepository.findRepresentativeByStreet(streetId)));
         streetInfo.setHouses(housesRepository.findAllByStreetOrderByNumber(streetId).stream().map(HousesMapper::entityToDto)
-                .peek(house -> setYearPayments(house, paymentSubConcepts))
+                .peek(house -> setYearPayments(house, paymentSubConcepts, streetPaymentsByHouse.getOrDefault(house.getId(), Collections.emptyList())))
                 .peek(this::setParkingPenPayment)
                 .collect(Collectors.toList()));
 
@@ -111,9 +116,7 @@ public class StreetServiceImpl implements StreetsService {
         house.setParkingPenPayment(paymentByConcept);
     }
 
-    private void setYearPayments(org.uresti.pozarreal.dto.House house, Map<String, String> paymentSubConcepts) {
-        LocalDate startOfYear = LocalDate.now().withDayOfYear(1);
-        List<Payment> payments = paymentRepository.findAllByHouseIdAndPaymentDateIsGreaterThanEqual(house.getId(), startOfYear);
+    private void setYearPayments(org.uresti.pozarreal.dto.House house, Map<String, String> paymentSubConcepts, List<Payment> payments) {
         String[] twoMonthsPaymentIds = {
                 paymentSubConcepts.get(MAINTENANCE_TWO_MONTHS_1),
                 paymentSubConcepts.get(MAINTENANCE_TWO_MONTHS_2),
