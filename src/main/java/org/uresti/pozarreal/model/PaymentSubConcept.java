@@ -17,6 +17,15 @@ import javax.persistence.Table;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PaymentSubConcept {
+
+    public static final String MAINTENANCE_TWO_MONTHS_1 = "Bimestre 1";
+    public static final String MAINTENANCE_TWO_MONTHS_2 = "Bimestre 2";
+    public static final String MAINTENANCE_TWO_MONTHS_3 = "Bimestre 3";
+    public static final String MAINTENANCE_TWO_MONTHS_4 = "Bimestre 4";
+    public static final String MAINTENANCE_TWO_MONTHS_5 = "Bimestre 5";
+    public static final String MAINTENANCE_TWO_MONTHS_6 = "Bimestre 6";
+    public static final String MAINTENANCE_ANNUITY = "Anualidad";
+
     @Id
     private String id;
     @Column(name = "payment_concept_id")

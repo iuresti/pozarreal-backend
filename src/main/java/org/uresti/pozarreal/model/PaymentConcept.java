@@ -16,6 +16,9 @@ import javax.persistence.Table;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PaymentConcept {
+
+    public static final String MAINTENENCE = "Mantenimiento";
+
     @Id
     private String id;
     private String label;

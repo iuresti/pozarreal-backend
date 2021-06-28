@@ -2,21 +2,49 @@ package org.uresti.pozarreal.service.impl;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.uresti.pozarreal.config.FeeConfig;
+import org.uresti.pozarreal.config.PozarrealConfig;
+import org.uresti.pozarreal.dto.TwoMonthsPayment;
 import org.uresti.pozarreal.model.House;
+import org.uresti.pozarreal.model.Payment;
+import org.uresti.pozarreal.model.PaymentConcept;
+import org.uresti.pozarreal.model.PaymentSubConcept;
 import org.uresti.pozarreal.repository.HousesRepository;
+import org.uresti.pozarreal.repository.PaymentConceptsRepository;
+import org.uresti.pozarreal.repository.PaymentRepository;
+import org.uresti.pozarreal.repository.PaymentSubConceptsRepository;
 import org.uresti.pozarreal.service.HousesService;
 import org.uresti.pozarreal.service.mappers.HousesMapper;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
+
+import static org.uresti.pozarreal.model.PaymentConcept.MAINTENENCE;
+import static org.uresti.pozarreal.model.PaymentSubConcept.*;
 
 @Service
 public class HousesServiceImpl implements HousesService {
 
     private final HousesRepository housesRepository;
+    private final PaymentRepository paymentRepository;
+    private final PaymentSubConceptsRepository paymentSubConceptsRepository;
+    private final PaymentConceptsRepository paymentConceptsRepository;
 
-    public HousesServiceImpl(HousesRepository housesRepository) {
+    private final PozarrealConfig pozarrealConfig;
+
+    public HousesServiceImpl(HousesRepository housesRepository,
+                             PaymentRepository paymentRepository,
+                             PaymentSubConceptsRepository paymentSubConceptsRepository,
+                             PaymentConceptsRepository paymentConceptsRepository,
+                             PozarrealConfig pozarrealConfig) {
         this.housesRepository = housesRepository;
+        this.paymentRepository = paymentRepository;
+        this.paymentSubConceptsRepository = paymentSubConceptsRepository;
+        this.paymentConceptsRepository = paymentConceptsRepository;
+        this.pozarrealConfig = pozarrealConfig;
     }
 
     @Override

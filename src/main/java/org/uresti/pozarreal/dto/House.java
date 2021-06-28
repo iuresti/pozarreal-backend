@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+
 @Builder
 @Data
 @NoArgsConstructor
@@ -15,4 +17,5 @@ public class House {
     private String streetName;
     private String number;
     private boolean chipsEnabled;
+    private ArrayList<TwoMonthsPayment> twoMonthsPayments; //An array of 6 elements is expected (current year payments)
 }

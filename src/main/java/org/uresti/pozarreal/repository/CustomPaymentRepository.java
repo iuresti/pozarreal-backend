@@ -69,7 +69,7 @@ public class CustomPaymentRepository {
             mapSqlParameterSource.addValue("streetId", paymentFilter.getStreet());
         }
 
-        return namedParameterJdbcTemplate.query(query + whereCondition, mapSqlParameterSource, paymentViewMapper);
+        return namedParameterJdbcTemplate.query(query + whereCondition + " ORDER BY p.payment_date", mapSqlParameterSource, paymentViewMapper);
     }
 
     private void appendParam(StringBuilder query, String paramString) {

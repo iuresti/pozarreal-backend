@@ -6,4 +6,7 @@ import org.uresti.pozarreal.model.PaymentConcept;
 
 @Repository
 public interface PaymentConceptsRepository extends JpaRepository<PaymentConcept, String> {
+
+    PaymentConcept findByLabel(String label);
+
 }

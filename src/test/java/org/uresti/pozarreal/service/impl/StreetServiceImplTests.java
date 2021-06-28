@@ -19,7 +19,7 @@ public class StreetServiceImplTests {
         StreetRepository streetRepository = Mockito.mock(StreetRepository.class);
         RepresentativeRepository representativeRepository = null;
         HousesRepository housesRepository = null;
-        StreetServiceImpl streetService = new StreetServiceImpl(streetRepository, representativeRepository, housesRepository);
+        StreetServiceImpl streetService = new StreetServiceImpl(streetRepository, representativeRepository, housesRepository, null, null, null, null);
 
         List<Street> lista = new LinkedList<>();
 
@@ -38,7 +38,7 @@ public class StreetServiceImplTests {
         StreetRepository streetRepository = Mockito.mock(StreetRepository.class);
         RepresentativeRepository representativeRepository = null;
         HousesRepository housesRepository = null;
-        StreetServiceImpl streetService = new StreetServiceImpl(streetRepository, representativeRepository, housesRepository);
+        StreetServiceImpl streetService = new StreetServiceImpl(streetRepository, representativeRepository, housesRepository, null, null, null, null);
 
         List<Street> lista = new LinkedList<>();
 

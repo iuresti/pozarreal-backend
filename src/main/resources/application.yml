@@ -23,3 +23,6 @@ spring:
 
 pozarreal:
   datasourceUrl: jdbc:ucanaccess://PATH_TO_DB;password=${POZARREAL_DB_PWD}
+  fees:
+    biMonthlyMaintenanceFee: 800
+    yearlyMaintenanceFee: 4560
