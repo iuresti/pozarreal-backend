@@ -43,6 +43,17 @@ public class PaymentsController {
         return paymentsService.save(payment, sessionHelper.getUserIdForLoggedUser(principal));
     }
 
+    @GetMapping("/{paymentId}")
+    @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+    public Payment save(@PathVariable String paymentId, Principal principal) {
+        LoggedUser loggedUser = sessionHelper.getLoggedUser(principal);
+
+        log.info("Getting payment (paymentId: {}, user: {} - {})", paymentId, loggedUser.getName(), loggedUser.getUserId());
+
+        return paymentsService.getPayment(paymentId, sessionHelper.getUserIdForLoggedUser(principal));
+    }
+
     @DeleteMapping("/{paymentId}")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     public void deletePayment(@PathVariable String paymentId, Principal principal) {

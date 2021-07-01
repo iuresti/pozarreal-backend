@@ -47,7 +47,7 @@ public class HousesServiceImpl implements HousesService {
     public List<org.uresti.pozarreal.dto.House> getHousesByStreet(String streetId, LoggedUser user) {
 
         if(sessionHelper.hasRole(user, RoleConstants.ROLE_REPRESENTATIVE) && !sessionHelper.hasRole(user, RoleConstants.ROLE_ADMIN)){
-            Representative representative = representativeRepository.findByUserId(user.getUserId());
+            Representative representative = representativeRepository.findById(user.getUserId()).orElseThrow();
 
             if (!representative.getStreet().equals(streetId)) {
                 throw new PozarrealSystemException("Invalid street for representative query");

@@ -4,10 +4,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import org.uresti.pozarreal.model.Representative;
 
+import java.util.Optional;
+
 @Repository
 public interface RepresentativeRepository extends JpaRepository<Representative, String> {
 
-    Representative findRepresentativeByStreet(String street);
-
-    Representative findByUserId(String userId);
+    Optional<Representative> findByStreet(String street);
 }

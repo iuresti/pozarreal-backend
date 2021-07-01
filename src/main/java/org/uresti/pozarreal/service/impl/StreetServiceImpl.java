@@ -18,10 +18,7 @@ import org.uresti.pozarreal.service.mappers.HousesMapper;
 import org.uresti.pozarreal.service.mappers.RepresentativeMapper;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.uresti.pozarreal.model.PaymentConcept.MAINTENANCE;
@@ -36,6 +33,7 @@ public class StreetServiceImpl implements StreetsService {
     private final PaymentRepository paymentRepository;
     private final PaymentSubConceptsRepository paymentSubConceptsRepository;
     private final PaymentConceptsRepository paymentConceptsRepository;
+    private final UserRepository userRepository;
     private final PozarrealConfig pozarrealConfig;
     private final SessionHelper sessionHelper;
 
@@ -45,13 +43,14 @@ public class StreetServiceImpl implements StreetsService {
                              PaymentRepository paymentRepository,
                              PaymentSubConceptsRepository paymentSubConceptsRepository,
                              PaymentConceptsRepository paymentConceptsRepository,
-                             PozarrealConfig pozarrealConfig, SessionHelper sessionHelper) {
+                             UserRepository userRepository, PozarrealConfig pozarrealConfig, SessionHelper sessionHelper) {
         this.streetRepository = streetRepository;
         this.representativeRepository = representativeRepository;
         this.housesRepository = housesRepository;
         this.paymentRepository = paymentRepository;
         this.paymentSubConceptsRepository = paymentSubConceptsRepository;
         this.paymentConceptsRepository = paymentConceptsRepository;
+        this.userRepository = userRepository;
         this.pozarrealConfig = pozarrealConfig;
         this.sessionHelper = sessionHelper;
     }
@@ -61,10 +60,10 @@ public class StreetServiceImpl implements StreetsService {
     public List<Street> getStreets(LoggedUser user) {
 
         if (sessionHelper.hasRole(user, RoleConstants.ROLE_REPRESENTATIVE) && !sessionHelper.hasRole(user, RoleConstants.ROLE_ADMIN)) {
-            Representative representative = representativeRepository.findByUserId(user.getUserId());
+            Representative representative = representativeRepository.findById(user.getUserId()).orElseThrow();
 
             return Collections.singletonList(streetRepository.findById(representative.getStreet())
-                    .orElseThrow(() -> new PozarrealSystemException("Wrong street configured for representative " + representative.getId())));
+                    .orElseThrow(() -> new PozarrealSystemException("Wrong street configured for representative " + representative.getUserId())));
         }
 
         return streetRepository.findAll();
@@ -75,7 +74,7 @@ public class StreetServiceImpl implements StreetsService {
     public StreetInfo getStreetInfo(String streetId, LoggedUser user) {
 
         if (sessionHelper.hasRole(user, RoleConstants.ROLE_REPRESENTATIVE) && !sessionHelper.hasRole(user, RoleConstants.ROLE_ADMIN)) {
-            Representative representative = representativeRepository.findByUserId(user.getUserId());
+            Representative representative = representativeRepository.findById(user.getUserId()).orElseThrow();
 
             if (!representative.getStreet().equals(streetId)) {
                 throw new PozarrealSystemException("Invalid street for representative query");
@@ -96,13 +95,33 @@ public class StreetServiceImpl implements StreetsService {
 
         streetInfo.setId(streetId);
         streetInfo.setName(street.getName());
-        streetInfo.setRepresentative(RepresentativeMapper.entityToDto(representativeRepository.findRepresentativeByStreet(streetId)));
+        streetInfo.setRepresentative(getRepresentative(street));
         streetInfo.setHouses(housesRepository.findAllByStreetOrderByNumber(streetId).stream().map(HousesMapper::entityToDto)
                 .peek(house -> setYearPayments(house, paymentSubConcepts, streetPaymentsByHouse.getOrDefault(house.getId(), Collections.emptyList())))
                 .peek(this::setParkingPenPayment)
                 .collect(Collectors.toList()));
 
         return streetInfo;
+    }
+
+    private org.uresti.pozarreal.dto.Representative getRepresentative(Street street) {
+        Optional<Representative> representativeModel = representativeRepository.findByStreet(street.getId());
+
+        if (representativeModel.isEmpty()) {
+            return null;
+        }
+
+        org.uresti.pozarreal.dto.Representative representative = RepresentativeMapper.entityToDto(representativeModel.get());
+
+        representative.setStreet(street.getId());
+        representative.setStreetName(street.getName());
+        representative.setName(userRepository.findById(representative.getUserId()).orElseThrow().getName());
+
+        if (representative.getHouse() != null) {
+            housesRepository.findById(representative.getHouse()).ifPresent(house -> representative.setHouseNumber(house.getNumber()));
+        }
+
+        return representative;
     }
 
     private void setParkingPenPayment(House house) {

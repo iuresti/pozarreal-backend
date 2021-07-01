@@ -11,10 +11,12 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Representative {
 
-    private String id;
-    private String street;
+    private String userId;
     private String name;
+    private String street;
     private String phone;
-    private String address;
+    private String house;
+    private String houseNumber;
+    private String streetName;
 
 }

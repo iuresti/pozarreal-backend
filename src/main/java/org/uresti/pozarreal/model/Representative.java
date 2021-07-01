@@ -18,12 +18,9 @@ import javax.persistence.Table;
 @AllArgsConstructor
 public class Representative {
     @Id
-    private String id;
-    private String street;
-    private String name;
-    private String phone;
-    private String address;
     @Column(name = "user_id")
     private String userId;
-
+    private String street;
+    private String phone;
+    private String house;
 }

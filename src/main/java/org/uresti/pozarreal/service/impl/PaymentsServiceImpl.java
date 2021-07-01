@@ -49,4 +49,9 @@ public class PaymentsServiceImpl implements PaymentsService {
     public void delete(String paymentId) {
         paymentRepository.deleteById(paymentId);
     }
+
+    @Override
+    public Payment getPayment(String paymentId, String userId) {
+        return PaymentMapper.entityToDto(paymentRepository.findById(paymentId).orElseThrow());
+    }
 }

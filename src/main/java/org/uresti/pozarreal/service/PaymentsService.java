@@ -12,4 +12,6 @@ public interface PaymentsService {
     Payment save(Payment payment, String userId);
 
     void delete(String paymentId);
+
+    Payment getPayment(String paymentId, String userIdForLoggedUser);
 }

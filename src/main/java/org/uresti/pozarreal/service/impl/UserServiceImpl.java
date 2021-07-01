@@ -2,15 +2,13 @@ package org.uresti.pozarreal.service.impl;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.uresti.pozarreal.config.RoleConstants;
 import org.uresti.pozarreal.dto.User;
 import org.uresti.pozarreal.model.RoleByUser;
-import org.uresti.pozarreal.repository.HousesRepository;
-import org.uresti.pozarreal.repository.LoginRepository;
+import org.uresti.pozarreal.repository.RepresentativeRepository;
 import org.uresti.pozarreal.repository.RolesRepository;
 import org.uresti.pozarreal.repository.UserRepository;
 import org.uresti.pozarreal.service.UserService;
-import org.uresti.pozarreal.service.mappers.HousesMapper;
-import org.uresti.pozarreal.service.mappers.LoginMapper;
 import org.uresti.pozarreal.service.mappers.UserMapper;
 
 import java.util.List;
@@ -22,17 +20,14 @@ public class UserServiceImpl implements UserService {
 
     private final RolesRepository rolesRepository;
     private final UserRepository userRepository;
-    private final LoginRepository loginRepository;
-    private final HousesRepository housesRepository;
+    private final RepresentativeRepository representativeRepository;
 
     public UserServiceImpl(RolesRepository rolesRepository,
                            UserRepository userRepository,
-                           LoginRepository loginRepository,
-                           HousesRepository housesRepository) {
+                           RepresentativeRepository representativeRepository) {
         this.rolesRepository = rolesRepository;
         this.userRepository = userRepository;
-        this.loginRepository = loginRepository;
-        this.housesRepository = housesRepository;
+        this.representativeRepository = representativeRepository;
     }
 
     @Override
@@ -64,7 +59,11 @@ public class UserServiceImpl implements UserService {
 
         return userRepository.findAll().stream().map(UserMapper::entityToDto)
                 .peek(user -> user.setRoles(rolesRepository.findRolesByUser(user.getId())))
-                .peek(user -> user.setLogins(LoginMapper.buildLoginInfo(loginRepository.findAll())))
+                .peek(user -> {
+                    if (user.getRoles().contains(RoleConstants.ROLE_REPRESENTATIVE)) {
+                        this.representativeRepository.findById(user.getId()).ifPresent(representative -> user.setStreet(representative.getStreet()));
+                    }
+                })
                 .collect(Collectors.toList());
 
 
@@ -80,8 +79,6 @@ public class UserServiceImpl implements UserService {
                 .picture(user.getPicture())
                 .name(user.getName())
                 .roles(rolesRepository.findRolesByUser(user.getId()))
-                .houses(housesRepository.findHousesByUser(user.getId())
-                        .stream().map(HousesMapper::entityToDto).collect(Collectors.toList()))
                 .build();
     }
 
@@ -99,8 +96,6 @@ public class UserServiceImpl implements UserService {
                 .picture(user.getPicture())
                 .name(user.getName())
                 .roles(rolesRepository.findRolesByUser(user.getId()))
-                .houses(housesRepository.findHousesByUser(user.getId())
-                        .stream().map(HousesMapper::entityToDto).collect(Collectors.toList()))
                 .build();
     }
 }

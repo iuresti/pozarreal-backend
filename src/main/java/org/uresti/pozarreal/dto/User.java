@@ -13,10 +13,9 @@ import java.util.List;
 @AllArgsConstructor
 public class User {
     private String id;
-    private Login logins;
     private String name;
     private String picture;
     private List<String> roles;
     private String status;
-    private List<House> houses;
+    private String street;
 }
