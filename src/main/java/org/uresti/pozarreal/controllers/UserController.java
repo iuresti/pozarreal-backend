@@ -1,30 +1,19 @@
 package org.uresti.pozarreal.controllers;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
-import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
 import org.uresti.pozarreal.dto.User;
 import org.uresti.pozarreal.service.UserService;
 
 import java.security.Principal;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @Slf4j
 public class UserController {
-
-    private final OAuth2AuthorizedClientService authorizedClientService;
 
     private final List<String> availableRoles;
 
@@ -32,13 +21,11 @@ public class UserController {
 
     private final SessionHelper sessionHelper;
 
-    public UserController(OAuth2AuthorizedClientService authorizedClientService,
-                          UserService userService,
+    public UserController(UserService userService,
                           SessionHelper sessionHelper) {
-        this.authorizedClientService = authorizedClientService;
         this.userService = userService;
         this.sessionHelper = sessionHelper;
-        availableRoles = Arrays.asList("ROLE_ADMIN", "ROLE_RESIDENT", "ROLE_REPRESENTATIVE");
+        availableRoles = Arrays.asList("ROLE_ADMIN", "ROLE_RESIDENT", "ROLE_REPRESENTATIVE", "ROLE_USER_MANAGER", "ROLE_CHIPS_UPDATER");
     }
 
     @GetMapping("/api/loggedUser")
@@ -49,32 +36,32 @@ public class UserController {
 
     }
 
-    @GetMapping("/api/users")
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+    @GetMapping("/api/users/")
+    @PreAuthorize("hasAnyRole('ROLE_USER_MANAGER')")
     public List<User> getAllUsers() {
         return userService.getAllUsers();
     }
 
     @GetMapping("/api/users/roles")
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_USER_MANAGER')")
     public List<String> getAllRoles() {
         return availableRoles;
     }
 
     @DeleteMapping("/api/users/{userId}/roles/{role}")
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_USER_MANAGER')")
     public List<String> removeRole(@PathVariable String userId, @PathVariable String role) {
         return userService.removeRole(userId, role);
     }
 
     @PostMapping("/api/users/{userId}/roles/{role}")
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_USER_MANAGER')")
     public List<String> addRole(@PathVariable String userId, @PathVariable String role) {
         return userService.addRole(userId, role);
     }
 
     @PutMapping("/api/users/{userId}")
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_USER_MANAGER')")
     public User updateUser(@PathVariable String userId, @RequestBody User user, Principal principal) {
         if (principal instanceof OAuth2AuthenticationToken) {
             String email = ((OAuth2AuthenticationToken) principal).getPrincipal().getAttribute("email");

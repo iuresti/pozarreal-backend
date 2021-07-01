@@ -5,6 +5,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -31,6 +32,7 @@ public class FileController {
     }
 
     @PostMapping("/upload")
+    @PreAuthorize("hasAnyRole('ROLE_CHIPS_UPDATER')")
     public ResponseEntity<Map<String, Object>> uploadFile(@RequestParam("file") MultipartFile file) {
         Map<String, Object> response = new HashMap<>();
         try {
@@ -51,6 +53,7 @@ public class FileController {
     }
 
     @GetMapping("/files")
+    @PreAuthorize("hasAnyRole('ROLE_CHIPS_UPDATER')")
     public ResponseEntity<List<FileInfo>> getListFiles() {
         List<FileInfo> fileInfos = storageService.loadAll().map(path -> {
             String filename = path.getFileName().toString();
@@ -65,6 +68,7 @@ public class FileController {
 
     @GetMapping("/files/{filename:.+}")
     @ResponseBody
+    @PreAuthorize("hasAnyRole('ROLE_CHIPS_UPDATER')")
     public ResponseEntity<Resource> getFile(@PathVariable String filename) {
         Resource file = storageService.load(filename);
         return ResponseEntity.ok()
