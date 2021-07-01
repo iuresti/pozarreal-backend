@@ -36,7 +36,7 @@ public class UserController {
 
     }
 
-    @GetMapping("/api/users/")
+    @GetMapping("/api/users")
     @PreAuthorize("hasAnyRole('ROLE_USER_MANAGER')")
     public List<User> getAllUsers() {
         return userService.getAllUsers();
