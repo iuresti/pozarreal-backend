@@ -2,7 +2,7 @@ package org.uresti.pozarreal.service.impl;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.uresti.pozarreal.config.RoleConstants;
+import org.uresti.pozarreal.config.Role;
 import org.uresti.pozarreal.controllers.SessionHelper;
 import org.uresti.pozarreal.dto.LoggedUser;
 import org.uresti.pozarreal.exception.PozarrealSystemException;
@@ -46,7 +46,7 @@ public class HousesServiceImpl implements HousesService {
     @Transactional(readOnly = true)
     public List<org.uresti.pozarreal.dto.House> getHousesByStreet(String streetId, LoggedUser user) {
 
-        if(sessionHelper.hasRole(user, RoleConstants.ROLE_REPRESENTATIVE) && !sessionHelper.hasRole(user, RoleConstants.ROLE_ADMIN)){
+        if (sessionHelper.hasRole(user, Role.ROLE_REPRESENTATIVE) && !sessionHelper.hasRole(user, Role.ROLE_ADMIN)) {
             Representative representative = representativeRepository.findById(user.getUserId()).orElseThrow();
 
             if (!representative.getStreet().equals(streetId)) {

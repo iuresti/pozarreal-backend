@@ -4,12 +4,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.web.bind.annotation.*;
+import org.uresti.pozarreal.config.Role;
+import org.uresti.pozarreal.dto.LoggedUser;
 import org.uresti.pozarreal.dto.User;
 import org.uresti.pozarreal.service.UserService;
 
 import java.security.Principal;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @Slf4j
@@ -25,7 +28,7 @@ public class UserController {
                           SessionHelper sessionHelper) {
         this.userService = userService;
         this.sessionHelper = sessionHelper;
-        availableRoles = Arrays.asList("ROLE_ADMIN", "ROLE_RESIDENT", "ROLE_REPRESENTATIVE", "ROLE_USER_MANAGER", "ROLE_CHIPS_UPDATER");
+        availableRoles = Arrays.stream(Role.values()).map(Enum::name).collect(Collectors.toList());
     }
 
     @GetMapping("/api/loggedUser")
@@ -73,5 +76,13 @@ public class UserController {
             }
         }
         return null;
+    }
+
+    @GetMapping("logout")
+    public void logout(Principal principal) {
+
+        LoggedUser user = sessionHelper.getLoggedUser(principal);
+
+        log.info("Logging out user: {}", user.getName());
     }
 }

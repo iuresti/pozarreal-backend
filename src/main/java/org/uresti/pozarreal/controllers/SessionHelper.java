@@ -1,33 +1,16 @@
 package org.uresti.pozarreal.controllers;
 
-import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
-import org.springframework.stereotype.Component;
+import org.uresti.pozarreal.config.Role;
 import org.uresti.pozarreal.dto.LoggedUser;
 
 import java.security.Principal;
 
-@Component
-public class SessionHelper {
+public interface SessionHelper {
+    String getEmailForLoggedUser(Principal principal);
 
-    public String getEmailForLoggedUser(Principal principal) {
-        LoggedUser loggedUser = (LoggedUser) ((OAuth2AuthenticationToken) principal).getPrincipal();
+    String getUserIdForLoggedUser(Principal principal);
 
-        return loggedUser.getEmail();
-    }
+    LoggedUser getLoggedUser(Principal principal);
 
-    public String getUserIdForLoggedUser(Principal principal) {
-        LoggedUser loggedUser = (LoggedUser) ((OAuth2AuthenticationToken) principal).getPrincipal();
-
-        return loggedUser.getUserId();
-    }
-
-    public LoggedUser getLoggedUser(Principal principal) {
-        return (LoggedUser) ((OAuth2AuthenticationToken) principal).getPrincipal();
-    }
-
-    public boolean hasRole(LoggedUser user, String roleName) {
-        return user.getAuthorities()
-                .stream()
-                .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals(roleName));
-    }
+    boolean hasRole(LoggedUser user, Role role);
 }

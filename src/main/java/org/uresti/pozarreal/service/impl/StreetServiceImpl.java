@@ -4,7 +4,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.uresti.pozarreal.config.FeeConfig;
 import org.uresti.pozarreal.config.PozarrealConfig;
-import org.uresti.pozarreal.config.RoleConstants;
+import org.uresti.pozarreal.config.Role;
 import org.uresti.pozarreal.controllers.SessionHelper;
 import org.uresti.pozarreal.dto.House;
 import org.uresti.pozarreal.dto.LoggedUser;
@@ -59,7 +59,7 @@ public class StreetServiceImpl implements StreetsService {
     @Transactional(readOnly = true)
     public List<Street> getStreets(LoggedUser user) {
 
-        if (sessionHelper.hasRole(user, RoleConstants.ROLE_REPRESENTATIVE) && !sessionHelper.hasRole(user, RoleConstants.ROLE_ADMIN)) {
+        if (sessionHelper.hasRole(user, Role.ROLE_REPRESENTATIVE) && !sessionHelper.hasRole(user, Role.ROLE_ADMIN)) {
             Representative representative = representativeRepository.findById(user.getUserId()).orElseThrow();
 
             return Collections.singletonList(streetRepository.findById(representative.getStreet())
@@ -73,7 +73,7 @@ public class StreetServiceImpl implements StreetsService {
     @Transactional(readOnly = true)
     public StreetInfo getStreetInfo(String streetId, LoggedUser user) {
 
-        if (sessionHelper.hasRole(user, RoleConstants.ROLE_REPRESENTATIVE) && !sessionHelper.hasRole(user, RoleConstants.ROLE_ADMIN)) {
+        if (sessionHelper.hasRole(user, Role.ROLE_REPRESENTATIVE) && !sessionHelper.hasRole(user, Role.ROLE_ADMIN)) {
             Representative representative = representativeRepository.findById(user.getUserId()).orElseThrow();
 
             if (!representative.getStreet().equals(streetId)) {

@@ -14,4 +14,6 @@ public interface UserService {
     User buildUserForEmail(String email);
 
     User save(User user);
+
+    org.uresti.pozarreal.model.User findOrRegister(String email, String picture, String credential);
 }

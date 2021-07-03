@@ -35,7 +35,6 @@ public class StreetsController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_REPRESENTATIVE')")
     public ResponseEntity<List<Street>> getStreets(Principal principal) {
         LoggedUser user = sessionHelper.getLoggedUser(principal);
 

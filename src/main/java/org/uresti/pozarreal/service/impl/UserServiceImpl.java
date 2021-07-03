@@ -2,9 +2,11 @@ package org.uresti.pozarreal.service.impl;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.uresti.pozarreal.config.RoleConstants;
+import org.uresti.pozarreal.config.Role;
 import org.uresti.pozarreal.dto.User;
+import org.uresti.pozarreal.model.Login;
 import org.uresti.pozarreal.model.RoleByUser;
+import org.uresti.pozarreal.repository.LoginRepository;
 import org.uresti.pozarreal.repository.RepresentativeRepository;
 import org.uresti.pozarreal.repository.RolesRepository;
 import org.uresti.pozarreal.repository.UserRepository;
@@ -12,6 +14,7 @@ import org.uresti.pozarreal.service.UserService;
 import org.uresti.pozarreal.service.mappers.UserMapper;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -21,13 +24,16 @@ public class UserServiceImpl implements UserService {
     private final RolesRepository rolesRepository;
     private final UserRepository userRepository;
     private final RepresentativeRepository representativeRepository;
+    private final LoginRepository loginRepository;
 
     public UserServiceImpl(RolesRepository rolesRepository,
                            UserRepository userRepository,
-                           RepresentativeRepository representativeRepository) {
+                           RepresentativeRepository representativeRepository,
+                           LoginRepository loginRepository) {
         this.rolesRepository = rolesRepository;
         this.userRepository = userRepository;
         this.representativeRepository = representativeRepository;
+        this.loginRepository = loginRepository;
     }
 
     @Override
@@ -60,7 +66,7 @@ public class UserServiceImpl implements UserService {
         return userRepository.findAll().stream().map(UserMapper::entityToDto)
                 .peek(user -> user.setRoles(rolesRepository.findRolesByUser(user.getId())))
                 .peek(user -> {
-                    if (user.getRoles().contains(RoleConstants.ROLE_REPRESENTATIVE)) {
+                    if (user.getRoles().contains(Role.ROLE_REPRESENTATIVE.name())) {
                         this.representativeRepository.findById(user.getId()).ifPresent(representative -> user.setStreet(representative.getStreet()));
                     }
                 })
@@ -97,5 +103,33 @@ public class UserServiceImpl implements UserService {
                 .name(user.getName())
                 .roles(rolesRepository.findRolesByUser(user.getId()))
                 .build();
+    }
+
+
+    @Override
+    @Transactional
+    public org.uresti.pozarreal.model.User findOrRegister(String email, String picture, String name) {
+        return userRepository.findByEmail(email).or(() -> registerUser(email, picture, name)).orElseThrow();
+    }
+
+
+    private Optional<org.uresti.pozarreal.model.User> registerUser(String email, String picture, String name) {
+        org.uresti.pozarreal.model.User user = new org.uresti.pozarreal.model.User();
+
+        user.setId(UUID.randomUUID().toString());
+        user.setName(name);
+        user.setPicture(picture);
+
+        userRepository.save(user);
+
+        Login login = new Login();
+
+        login.setUserId(user.getId());
+        login.setEmail(email);
+        login.setId(UUID.randomUUID().toString());
+
+        loginRepository.save(login);
+
+        return Optional.of(user);
     }
 }
