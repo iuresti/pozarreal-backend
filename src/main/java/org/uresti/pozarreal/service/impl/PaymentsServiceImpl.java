@@ -36,7 +36,9 @@ public class PaymentsServiceImpl implements PaymentsService {
     @Transactional
     public Payment save(Payment payment, String userId) {
 
-        payment.setId(UUID.randomUUID().toString());
+        if (payment.getId() == null) {
+            payment.setId(UUID.randomUUID().toString());
+        }
 
         payment.setRegistrationDate(LocalDate.now());
         payment.setUserId(userId);

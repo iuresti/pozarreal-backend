@@ -16,7 +16,11 @@ public class PaymentView {
 
     private String id;
 
+    private String streetId;
+
     private String streetName;
+
+    private String houseId;
 
     private String houseNumber;
 
@@ -28,7 +32,11 @@ public class PaymentView {
 
     private Double amount;
 
+    private String paymentConceptId;
+
     private String paymentConcept;
+
+    private String paymentSubConceptId;
 
     private String paymentSubConcept;
 
