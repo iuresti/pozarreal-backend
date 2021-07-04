@@ -27,6 +27,8 @@ public class TestSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests().anyRequest().authenticated()
                 .and().httpBasic()
-                .and().logout().deleteCookies("JSESSIONID").permitAll();
+                .and().logout().deleteCookies("JSESSIONID").permitAll()
+                .and().cors()
+                .and().csrf().disable();
     }
 }
