@@ -63,29 +63,7 @@ public class DBUpdaterServiceImpl implements DBUpdaterService {
 
         } catch (SQLException ex) {
             log.error("No fue posible actualizar los chips", ex);
-            throw new PozarrealSystemException("No fue posible actualizar los chips", ex);
+            throw new PozarrealSystemException("Error updating chips", "ERROR_UPDATING_CHIPS", ex);
         }
     }
-
-//    private void updateChips(String query, String url, AtomicInteger count, Spliterator<Chip> iterator1) {
-//        try (Connection conn = DriverManager.getConnection(url);
-//        ) {
-//            iterator1.forEachRemaining(chip -> {
-//                try (PreparedStatement updateStatement = conn.prepareStatement(query)) {
-//
-//                    updateStatement.setLong(1, chip.isValid() ? STATE_ACTIVE : STATE_LOST);
-//                    updateStatement.setLong(2, Long.parseLong(chip.getCode()));
-//                    int result = updateStatement.executeUpdate();
-//                    count.addAndGet(result);
-//                    log.info("Actualización de chip {} -> {} ({} chips actualizados)", chip.getCode(), result == 1 ? "Exitoso" : "Falló", count);
-//
-//                } catch (SQLException ex) {
-//                    log.warn("Falla actualización de chip {} a status {}", chip.getCode(), chip.isValid() ? "Activo" : "Inactivo");
-//                }
-//            });
-//
-//        } catch (SQLException ex) {
-//            throw new PozarrealSystemException("No fue posible actualizar los chips", ex);
-//        }
-//    }
 }

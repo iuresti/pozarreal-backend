@@ -3,7 +3,7 @@ package org.uresti.pozarreal.service.impl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.uresti.pozarreal.dto.PaymentSubConcept;
-import org.uresti.pozarreal.exception.PozarrealSystemException;
+import org.uresti.pozarreal.exception.BadRequestDataException;
 import org.uresti.pozarreal.repository.PaymentSubConceptsRepository;
 import org.uresti.pozarreal.service.PaymentSubConceptsService;
 import org.uresti.pozarreal.service.mappers.PaymentSubConceptMapper;
@@ -45,7 +45,7 @@ public class PaymentSubConceptsServiceImpl implements PaymentSubConceptsService 
     @Transactional
     public PaymentSubConcept update(PaymentSubConcept paymentConcept) {
         if (paymentConcept.getId() == null) {
-            throw new PozarrealSystemException("Campo id de PaymentSubConcept requerido");
+            throw new BadRequestDataException("Missing payment sub concept id", "REQUIRED_PAYMENT_SUB_CONCEPT_ID");
         }
 
         return PaymentSubConceptMapper.entityToDto(paymentSubConceptsRepository.save(PaymentSubConceptMapper.dtoToEntity(paymentConcept)));

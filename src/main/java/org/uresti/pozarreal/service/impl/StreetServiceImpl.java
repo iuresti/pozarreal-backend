@@ -10,6 +10,7 @@ import org.uresti.pozarreal.dto.House;
 import org.uresti.pozarreal.dto.LoggedUser;
 import org.uresti.pozarreal.dto.PaymentByConcept;
 import org.uresti.pozarreal.dto.StreetInfo;
+import org.uresti.pozarreal.exception.BadRequestDataException;
 import org.uresti.pozarreal.exception.PozarrealSystemException;
 import org.uresti.pozarreal.model.*;
 import org.uresti.pozarreal.repository.*;
@@ -63,7 +64,7 @@ public class StreetServiceImpl implements StreetsService {
             Representative representative = representativeRepository.findById(user.getUserId()).orElseThrow();
 
             return Collections.singletonList(streetRepository.findById(representative.getStreet())
-                    .orElseThrow(() -> new PozarrealSystemException("Wrong street configured for representative " + representative.getUserId())));
+                    .orElseThrow(() -> new BadRequestDataException("Wrong street configured for representative " + representative.getUserId(), "INVALID_STREET")));
         }
 
         return streetRepository.findAll();
@@ -77,7 +78,7 @@ public class StreetServiceImpl implements StreetsService {
             Representative representative = representativeRepository.findById(user.getUserId()).orElseThrow();
 
             if (!representative.getStreet().equals(streetId)) {
-                throw new PozarrealSystemException("Invalid street for representative query");
+                throw new BadRequestDataException("Invalid street for representative query", "INVALID_STREET");
             }
         }
 

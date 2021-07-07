@@ -5,6 +5,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.uresti.pozarreal.config.Role;
 import org.uresti.pozarreal.controllers.SessionHelper;
 import org.uresti.pozarreal.dto.LoggedUser;
+import org.uresti.pozarreal.exception.BadRequestDataException;
 import org.uresti.pozarreal.exception.PozarrealSystemException;
 import org.uresti.pozarreal.model.House;
 import org.uresti.pozarreal.model.Representative;
@@ -50,7 +51,7 @@ public class HousesServiceImpl implements HousesService {
             Representative representative = representativeRepository.findById(user.getUserId()).orElseThrow();
 
             if (!representative.getStreet().equals(streetId)) {
-                throw new PozarrealSystemException("Invalid street for representative query");
+                throw new BadRequestDataException("Invalid street for representative query", "INVALID_STREET");
             }
         }
 

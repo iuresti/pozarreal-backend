@@ -1,7 +1,7 @@
 package org.uresti.pozarreal.service.impl;
 
 import org.springframework.stereotype.Service;
-import org.uresti.pozarreal.exception.PozarrealSystemException;
+import org.uresti.pozarreal.exception.BadRequestDataException;
 import org.uresti.pozarreal.model.Representative;
 import org.uresti.pozarreal.repository.RepresentativeRepository;
 import org.uresti.pozarreal.service.RepresentativesService;
@@ -20,7 +20,7 @@ public class RepresentativesServiceImpl implements RepresentativesService {
     public org.uresti.pozarreal.dto.Representative save(org.uresti.pozarreal.dto.Representative representative, String userId) {
 
         if (!representative.getUserId().equals(userId)) {
-            throw new PozarrealSystemException("UserId does not match with request body to update representative");
+            throw new BadRequestDataException("UserId does not match with request body to update representative", "WRONG_USER_ID");
         }
 
         return RepresentativeMapper.entityToDto(representativeRepository.save(RepresentativeMapper.dtoToEntity(representative)));
