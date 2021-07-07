@@ -2,9 +2,11 @@ package org.uresti.pozarreal.service.impl;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.uresti.pozarreal.config.PozarrealConfig;
 import org.uresti.pozarreal.dto.Payment;
 import org.uresti.pozarreal.dto.PaymentFilter;
 import org.uresti.pozarreal.dto.PaymentView;
+import org.uresti.pozarreal.exception.MaintenanceFeeOverPassedException;
 import org.uresti.pozarreal.repository.CustomPaymentRepository;
 import org.uresti.pozarreal.repository.PaymentRepository;
 import org.uresti.pozarreal.service.PaymentsService;
@@ -14,16 +16,22 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
+import static org.uresti.pozarreal.model.PaymentConcept.MAINTENANCE;
+import static org.uresti.pozarreal.model.PaymentSubConcept.MAINTENANCE_ANNUITY;
+
 @Service
 public class PaymentsServiceImpl implements PaymentsService {
 
     private final CustomPaymentRepository customPaymentRepository;
     private final PaymentRepository paymentRepository;
+    private final PozarrealConfig pozarrealConfig;
 
     public PaymentsServiceImpl(CustomPaymentRepository customPaymentRepository,
-                               PaymentRepository paymentRepository) {
+                               PaymentRepository paymentRepository,
+                               PozarrealConfig pozarrealConfig) {
         this.customPaymentRepository = customPaymentRepository;
         this.paymentRepository = paymentRepository;
+        this.pozarrealConfig = pozarrealConfig;
     }
 
     @Override
@@ -38,6 +46,10 @@ public class PaymentsServiceImpl implements PaymentsService {
 
         if (payment.getId() == null) {
             payment.setId(UUID.randomUUID().toString());
+        }
+
+        if (payment.getPaymentConceptId().equals(MAINTENANCE)) {
+            validateMaintenancePayment(payment);
         }
 
         payment.setRegistrationDate(LocalDate.now());
@@ -55,5 +67,22 @@ public class PaymentsServiceImpl implements PaymentsService {
     @Override
     public Payment getPayment(String paymentId, String userId) {
         return PaymentMapper.entityToDto(paymentRepository.findById(paymentId).orElseThrow());
+    }
+
+    private void validateMaintenancePayment(Payment payment) {
+        if (!MAINTENANCE_ANNUITY.equals(payment.getPaymentSubConceptId())) {
+            List<org.uresti.pozarreal.model.Payment> payments = paymentRepository.findAllByHouseIdAndPaymentSubConceptId(payment.getHouseId(), payment.getPaymentSubConceptId());
+
+            double totalPayments = payment.getAmount() + payments.stream()
+                    .filter(paymentIt -> payment.getId() == null || !paymentIt.getId().equals(payment.getId()))
+                    .map(org.uresti.pozarreal.model.Payment::getAmount)
+                    .reduce(0.0, Double::sum);
+
+            double overPassed = totalPayments - pozarrealConfig.getFees().getBiMonthlyMaintenanceFee();
+
+            if (overPassed > 0) {
+                throw new MaintenanceFeeOverPassedException("Over passed maintenance fee", "ERROR_OVER_PASS_PAYMENT", overPassed);
+            }
+        }
     }
 }

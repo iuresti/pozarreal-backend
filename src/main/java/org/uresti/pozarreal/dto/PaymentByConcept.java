@@ -11,5 +11,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class PaymentByConcept {
     boolean isComplete;
-    Double amount;
+    double amount = 0;
 }

@@ -17,8 +17,10 @@ import javax.persistence.Table;
 @AllArgsConstructor
 public class PaymentConcept {
 
-    public static final String MAINTENANCE = "Mantenimiento";
-    public static final String PARKING_PEN = "Instalación Pluma";
+    public static final String MAINTENANCE = "MAINTENANCE";
+    public static final String PARKING_PEN = "PARKING_PEN";
+    public static final String ACCESS_CHIPS = "ACCESS_CHIPS";
+    public static final String COMMON_AREA_CONSTRUCTION = "COMMON_AREA_CONSTRUCTION";
 
     @Id
     private String id;

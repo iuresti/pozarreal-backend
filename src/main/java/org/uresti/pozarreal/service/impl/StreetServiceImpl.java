@@ -11,8 +11,10 @@ import org.uresti.pozarreal.dto.LoggedUser;
 import org.uresti.pozarreal.dto.PaymentByConcept;
 import org.uresti.pozarreal.dto.StreetInfo;
 import org.uresti.pozarreal.exception.BadRequestDataException;
-import org.uresti.pozarreal.exception.PozarrealSystemException;
-import org.uresti.pozarreal.model.*;
+import org.uresti.pozarreal.model.Payment;
+import org.uresti.pozarreal.model.PaymentConcept;
+import org.uresti.pozarreal.model.Representative;
+import org.uresti.pozarreal.model.Street;
 import org.uresti.pozarreal.repository.*;
 import org.uresti.pozarreal.service.StreetsService;
 import org.uresti.pozarreal.service.mappers.HousesMapper;
@@ -22,7 +24,6 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static org.uresti.pozarreal.model.PaymentConcept.MAINTENANCE;
 import static org.uresti.pozarreal.model.PaymentSubConcept.*;
 
 @Service
@@ -32,8 +33,6 @@ public class StreetServiceImpl implements StreetsService {
     private final RepresentativeRepository representativeRepository;
     private final HousesRepository housesRepository;
     private final PaymentRepository paymentRepository;
-    private final PaymentSubConceptsRepository paymentSubConceptsRepository;
-    private final PaymentConceptsRepository paymentConceptsRepository;
     private final UserRepository userRepository;
     private final PozarrealConfig pozarrealConfig;
     private final SessionHelper sessionHelper;
@@ -42,15 +41,13 @@ public class StreetServiceImpl implements StreetsService {
                              RepresentativeRepository representativeRepository,
                              HousesRepository housesRepository,
                              PaymentRepository paymentRepository,
-                             PaymentSubConceptsRepository paymentSubConceptsRepository,
-                             PaymentConceptsRepository paymentConceptsRepository,
-                             UserRepository userRepository, PozarrealConfig pozarrealConfig, SessionHelper sessionHelper) {
+                             UserRepository userRepository,
+                             PozarrealConfig pozarrealConfig,
+                             SessionHelper sessionHelper) {
         this.streetRepository = streetRepository;
         this.representativeRepository = representativeRepository;
         this.housesRepository = housesRepository;
         this.paymentRepository = paymentRepository;
-        this.paymentSubConceptsRepository = paymentSubConceptsRepository;
-        this.paymentConceptsRepository = paymentConceptsRepository;
         this.userRepository = userRepository;
         this.pozarrealConfig = pozarrealConfig;
         this.sessionHelper = sessionHelper;
@@ -85,10 +82,6 @@ public class StreetServiceImpl implements StreetsService {
         Street street = streetRepository.findById(streetId).orElseThrow();
         StreetInfo streetInfo = new StreetInfo();
 
-        PaymentConcept paymentConcept = paymentConceptsRepository.findByLabel(MAINTENANCE);
-        Map<String, String> paymentSubConcepts = paymentSubConceptsRepository.findAllByConceptId(paymentConcept.getId())
-                .stream().collect(Collectors.toMap(PaymentSubConcept::getLabel, PaymentSubConcept::getId));
-
         LocalDate startOfYear = LocalDate.now().withDayOfYear(1);
 
         Map<String, List<Payment>> streetPaymentsByHouse = paymentRepository.findAllByStreetAndPaymentDateIsGreaterThanEqual(streetId, startOfYear)
@@ -98,7 +91,7 @@ public class StreetServiceImpl implements StreetsService {
         streetInfo.setName(street.getName());
         streetInfo.setRepresentative(getRepresentative(street));
         streetInfo.setHouses(housesRepository.findAllByStreetOrderByNumber(streetId).stream().map(HousesMapper::entityToDto)
-                .peek(house -> setYearPayments(house, paymentSubConcepts, streetPaymentsByHouse.getOrDefault(house.getId(), Collections.emptyList())))
+                .peek(house -> setYearPayments(house, streetPaymentsByHouse.getOrDefault(house.getId(), Collections.emptyList())))
                 .peek(this::setParkingPenPayment)
                 .collect(Collectors.toList()));
 
@@ -126,7 +119,7 @@ public class StreetServiceImpl implements StreetsService {
     }
 
     private void setParkingPenPayment(House house) {
-        List<Payment> payments = paymentRepository.findAllByHouseIdAndPaymentConcept(house.getId(), PaymentConcept.PARKING_PEN);
+        List<Payment> payments = paymentRepository.findAllByHouseIdAndPaymentConceptId(house.getId(), PaymentConcept.PARKING_PEN);
         PaymentByConcept paymentByConcept = new PaymentByConcept();
         FeeConfig feeConfig = pozarrealConfig.getFees();
 
@@ -136,16 +129,15 @@ public class StreetServiceImpl implements StreetsService {
         house.setParkingPenPayment(paymentByConcept);
     }
 
-    private void setYearPayments(org.uresti.pozarreal.dto.House house, Map<String, String> paymentSubConcepts, List<Payment> payments) {
+    private void setYearPayments(org.uresti.pozarreal.dto.House house, List<Payment> payments) {
         String[] twoMonthsPaymentIds = {
-                paymentSubConcepts.get(MAINTENANCE_TWO_MONTHS_1),
-                paymentSubConcepts.get(MAINTENANCE_TWO_MONTHS_2),
-                paymentSubConcepts.get(MAINTENANCE_TWO_MONTHS_3),
-                paymentSubConcepts.get(MAINTENANCE_TWO_MONTHS_4),
-                paymentSubConcepts.get(MAINTENANCE_TWO_MONTHS_5),
-                paymentSubConcepts.get(MAINTENANCE_TWO_MONTHS_6)
+                MAINTENANCE_BIM_1,
+                MAINTENANCE_BIM_2,
+                MAINTENANCE_BIM_3,
+                MAINTENANCE_BIM_4,
+                MAINTENANCE_BIM_5,
+                MAINTENANCE_BIM_6
         };
-        String annuityId = paymentSubConcepts.get(MAINTENANCE_ANNUITY);
 
         ArrayList<PaymentByConcept> paymentInfo = new ArrayList<>();
 
@@ -161,7 +153,7 @@ public class StreetServiceImpl implements StreetsService {
         FeeConfig feeConfig = pozarrealConfig.getFees();
 
         for (Payment payment : payments) {
-            if (annuityId.equals(payment.getPaymentSubConceptId())) {
+            if (MAINTENANCE_ANNUITY.equals(payment.getPaymentSubConceptId())) {
                 for (PaymentByConcept paymentByConcept : paymentInfo) {
                     paymentByConcept.setComplete(true);
                 }
@@ -169,8 +161,8 @@ public class StreetServiceImpl implements StreetsService {
             } else {
                 for (int i = 0; i < twoMonthsPaymentIds.length; i++) {
                     if (twoMonthsPaymentIds[i].equals(payment.getPaymentSubConceptId())) {
-                        paymentInfo.get(i).setAmount(payment.getAmount());
-                        paymentInfo.get(i).setComplete(payment.getAmount() >= feeConfig.getBiMonthlyMaintenanceFee());
+                        paymentInfo.get(i).setAmount(paymentInfo.get(i).getAmount() + payment.getAmount());
+                        paymentInfo.get(i).setComplete(paymentInfo.get(i).getAmount()  >= feeConfig.getBiMonthlyMaintenanceFee());
                         break;
                     }
                 }
