@@ -3,6 +3,8 @@ package org.uresti.pozarreal.service.impl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.uresti.pozarreal.config.Role;
+import org.uresti.pozarreal.controllers.SessionHelper;
 import org.uresti.pozarreal.dto.LoggedUser;
 import org.uresti.pozarreal.model.Street;
 import org.uresti.pozarreal.repository.HousesRepository;
@@ -20,12 +22,15 @@ public class StreetServiceImplTests {
         StreetRepository streetRepository = Mockito.mock(StreetRepository.class);
         RepresentativeRepository representativeRepository = null;
         HousesRepository housesRepository = null;
-        StreetServiceImpl streetService = new StreetServiceImpl(streetRepository, representativeRepository, housesRepository, null, null, null, null);
+        SessionHelper mockSessionHelper = Mockito.mock(SessionHelper.class);
+        StreetServiceImpl streetService = new StreetServiceImpl(streetRepository, representativeRepository, housesRepository, null, null, null, mockSessionHelper);
         LoggedUser user = LoggedUser.builder().build();
 
         List<Street> lista = new LinkedList<>();
 
         Mockito.when(streetRepository.findAll()).thenReturn(lista);
+
+        Mockito.when(mockSessionHelper.hasRole(user, Role.ROLE_ADMIN)).thenReturn(true);
 
         // When:
         List<Street> streets = streetService.getStreets(user);
@@ -40,7 +45,8 @@ public class StreetServiceImplTests {
         StreetRepository streetRepository = Mockito.mock(StreetRepository.class);
         RepresentativeRepository representativeRepository = null;
         HousesRepository housesRepository = null;
-        StreetServiceImpl streetService = new StreetServiceImpl(streetRepository, representativeRepository, housesRepository, null, null, null, null);
+        SessionHelper mockSessionHelper = Mockito.mock(SessionHelper.class);
+        StreetServiceImpl streetService = new StreetServiceImpl(streetRepository, representativeRepository, housesRepository, null, null, null, mockSessionHelper);
         LoggedUser user = LoggedUser.builder().build();
 
         List<Street> lista = new LinkedList<>();
@@ -56,6 +62,7 @@ public class StreetServiceImplTests {
         lista.add(street2);
 
         Mockito.when(streetRepository.findAll()).thenReturn(lista);
+        Mockito.when(mockSessionHelper.hasRole(user, Role.ROLE_ADMIN)).thenReturn(true);
 
 
         // When:
