@@ -59,11 +59,6 @@ public class CustomPaymentRepository {
             mapSqlParameterSource.addValue("houseId", paymentFilter.getHouse());
         }
 
-        if (StringUtils.hasLength(paymentFilter.getPaymentMode())) {
-            appendParam(whereCondition, " h.id = :paymentMode");
-            mapSqlParameterSource.addValue("paymentMode", paymentFilter.getPaymentMode());
-        }
-
         if (StringUtils.hasLength(paymentFilter.getStreet())) {
             appendParam(whereCondition, " s.id = :streetId");
             mapSqlParameterSource.addValue("streetId", paymentFilter.getStreet());
