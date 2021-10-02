@@ -1,0 +1,107 @@
+<div class="row">
+  <div class="col-4">
+    <label for="name" class="form-label">Nombre:</label>
+  </div>
+  <div class="col-8">
+    <input type="text" class="form-control" id="name"
+           [(ngModel)]="studentData.name"
+           (change)="formChanged()"
+           [ngClass]="{'border border-danger':!isNameValid() }">
+  </div>
+</div>
+<div class="row">
+  <div class="col-4">
+    <label for="needsResponsible" class="form-label">Menor de edad:</label>
+  </div>
+  <div class="col-8">
+    <input type="checkbox" id="needsResponsible"
+           [(ngModel)]="needsResponsible"
+           (change)="needsResponsibleChanged()">
+  </div>
+</div>
+<div class="row mt-1" *ngIf="needsResponsible">
+  <div class="col-4"><label for="birthDate" class="form-label">Fecha de nacimiento:</label></div>
+  <div class="col-8">
+    <form class="form-inline">
+      <div class="form-group">
+        <div class="input-group pr-1">
+          <input class="form-control" placeholder="yyyy-mm-dd" id="birthDate"
+                 name="dp" [(ngModel)]="modelBirthDate" (ngModelChange)="updateDate()"
+                 ngbDatepicker #paymentDate="ngbDatepicker"
+                 [minDate]="minDate"
+                 [maxDate]="maxDate"
+                 [ngClass]="{'border border-danger':!isBirthDateValid() }">
+          <div class="input-group-append">
+            <button class="btn btn-outline-secondary calendar" (click)="paymentDate.toggle()"
+                    type="button"><i class="bi bi-calendar3"></i></button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+<div class="row mt-1">
+  <div class="col-4">
+    <label for="phone" class="form-label">Teléfono:</label>
+  </div>
+  <div class="col-8">
+    <input id="phone" class="form-control" [(ngModel)]="studentData.phone" type="text"
+           (change)="formChanged()">
+  </div>
+</div>
+<div class="row mt-1"  *ngIf="needsResponsible">
+  <div class="col-4">
+    <label for="responsibleName" class="form-label">Responsable:</label>
+  </div>
+  <div class="col-8">
+    <input id="responsibleName" class="form-control" [(ngModel)]="studentData.responsibleName" type="text"
+           (change)="formChanged()">
+  </div>
+</div>
+<div class="row mt-1" *ngIf="needsResponsible">
+  <div class="col-4">
+    <label for="responsiblePhone" class="form-label">Teléfono Responsable:</label>
+  </div>
+  <div class="col-8">
+    <input id="responsiblePhone" class="form-control" [(ngModel)]="studentData.responsiblePhone" type="text"
+           (change)="formChanged()">
+  </div>
+</div>
+<div class="row mt-1" *ngIf="needsResponsible">
+  <div class="col-4">
+    <label for="responsibleName2" class="form-label">Responsable 2:</label>
+  </div>
+  <div class="col-8">
+    <input id="responsibleName2" class="form-control" [(ngModel)]="studentData.responsibleName2" type="text"
+           (change)="formChanged()">
+  </div>
+</div>
+<div class="row mt-1" *ngIf="needsResponsible">
+  <div class="col-4">
+    <label for="responsiblePhone2" class="form-label">Teléfono Responsable 2:</label>
+  </div>
+  <div class="col-8">
+    <input id="responsiblePhone2" class="form-control" [(ngModel)]="studentData.responsiblePhone2" type="text"
+           (change)="formChanged()">
+  </div>
+</div>
+<div class="row mt-1">
+  <div class="col-4">
+    <label for="email" class="form-label">Correo electrónico:</label>
+  </div>
+  <div class="col-8">
+    <input id="email" class="form-control" [(ngModel)]="studentData.email" type="email"
+           (change)="formChanged()">
+  </div>
+</div>
+<div class="row mt-1">
+  <div class="col-12">
+    <label for="notes" class="form-label">Notas:</label>
+  </div>
+</div>
+<div class="row">
+  <div class="col-12">
+    <textarea id="notes" (change)="formChanged()" class="form-control" [(ngModel)]="studentData.notes"></textarea>
+  </div>
+</div>
+

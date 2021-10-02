@@ -1,0 +1,56 @@
+<div *ngIf="user">
+
+  <nav class="m-0 navbar navbar-expand-md navbar-dark bg-dark">
+
+    <img [src]="user.picture" style="width: 40px">
+
+    <button class="navbar-toggler navbar-toggler-right" type="button" aria-controls="appNavigation"
+            aria-expanded="!isCollapsed" aria-label="Toggle navigation" (click)="toggleMenu()">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="appNavigation" [ngbCollapse]="isCollapsed">
+      <div class="navbar-nav mr-auto">
+        <a (click)="toggleMenu()" class="nav-item nav-link" routerLink="/account"
+           routerLinkActive="active">Mi Cuenta</a>
+        <a (click)="toggleMenu()" class="nav-item nav-link" routerLink="/streets"
+           routerLinkActive="active" *ngIf="userHasRoles(['ROLE_ADMIN', 'ROLE_REPRESENTATIVE'])">Circuitos</a>
+        <a (click)="toggleMenu()" class="nav-item nav-link" routerLink="/payments"
+           routerLinkActive="active" *ngIf="userHasRoles(['ROLE_ADMIN', 'ROLE_REPRESENTATIVE'])">Pagos</a>
+        <a (click)="toggleMenu()" class="nav-item nav-link" routerLink="/chipsUpdates"
+           routerLinkActive="active" *ngIf="userHasRoles(['ROLE_CHIPS_UPDATER'])">Actualización de
+          chips</a>
+        <a (click)="toggleMenu()" class="nav-item nav-link" routerLink="/classes"
+           routerLinkActive="active" *ngIf="userHasRoles(['ROLE_SCHOOL_MANAGER'])">Clases</a>
+        <a (click)="toggleMenu()" class="nav-item nav-link" routerLink="/users"
+           routerLinkActive="active" *ngIf="userHasRoles(['ROLE_USER_MANAGER'])">Usuarios</a>
+        <a href="/logout" class="nav-item nav-link">Salir</a>
+      </div>
+    </div>
+
+  </nav>
+
+  <router-outlet></router-outlet>
+
+</div>
+
+
+<div *ngIf="failedLogin" class="container">
+  <div class="row mt-3">
+    <div class="col col-3">Usuario:</div>
+    <div class="col col-9"><input class="form-control" type="text" #userInput></div>
+  </div>
+  <div class="row mt-2">
+    <div class="col col-3">Password:</div>
+    <div class="col col-9"><input class="form-control" type="password" #pwdInput></div>
+  </div>
+  <div class="row mt-2">
+    <div class="col col-10 ">
+
+    </div>
+    <div class="col col-2 text-right">
+      <button class="btn btn-success" (click)="apiLogin(userInput.value, pwdInput.value)">Entrar
+      </button>
+    </div>
+  </div>
+</div>

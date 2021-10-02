@@ -1,0 +1,11 @@
+<div class="input-group" xmlns="http://www.w3.org/1999/html">
+  <input class="form-control" type="text" #inputElement>
+  <span class="input-group-btn">
+      <button class="btn btn-link" (click)="cancel.emit()" >
+        <em class="bi bi-x-circle"></em>
+      </button>
+      <button class="btn btn-link" >
+        <em class="bi bi-check-circle" (click)="textAccepted.emit(inputElement.value)"></em>
+      </button>
+    </span>
+</div>

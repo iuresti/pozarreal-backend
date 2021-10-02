@@ -1,0 +1,12 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Run For Tests Template" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
+    <module name="backend" />
+    <option name="SPRING_BOOT_MAIN_CLASS" value="org.uresti.pozarreal.PozarrealBackEndApplication" />
+    <option name="VM_PARAMETERS" value="-Dspring.profiles.active=tests -DDATABASE_URL=jdbc:postgresql://127.0.0.1:5432/pozarreal -DDATABASE_USERNAME=postgres -DDATABASE_PASSWORD=postgres" />
+    <option name="ALTERNATIVE_JRE_PATH" />
+    <option name="SHORTEN_COMMAND_LINE" value="NONE" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

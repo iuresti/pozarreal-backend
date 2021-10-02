@@ -1,0 +1,36 @@
+<div class="container">
+  <h6 *ngIf="!addingChip">Activos
+    <button class="btn btn-link" (click)="addingChip = true">
+      <em class="bi bi-plus-circle-fill"></em>
+    </button>
+  </h6>
+  <app-confirmation-input-text *ngIf="addingChip"
+                               (cancel)="addingChip = false"
+                               (textAccepted)="addChip($event)">
+  </app-confirmation-input-text>
+  <div [ngClass]="{ 'p-1': !activeChips || activeChips.length == 0 }" droppable
+       [dropScope]="'activate'"
+       (onDrop)="activateChip($event)">
+    <a *ngFor="let chip of activeChips" draggable [dragData]="chip"
+       [dragScope]="'inactivate'"
+       class="badge mr-1"
+       [ngClass]="{'badge-success': house.chipsEnabled,'badge-secondary': !house.chipsEnabled}">{{chip.code}}
+    </a>
+  </div>
+
+  <h6>Dados de baja</h6>
+  <div [ngClass]="{ 'p-1': !inactiveChips || inactiveChips.length == 0 }" droppable
+       [dropScope]="'inactivate'"
+       (onDrop)="deactivateChip($event)">
+    <a *ngFor="let chip of inactiveChips" draggable [dragData]="chip"
+       (mouseover)="removeIconVisible = true"
+       (mouseleave)="removeIconVisible = false"
+       [dragScope]="'activate'"
+       class="badge mr-1 "
+       [ngClass]="{'badge-danger': house.chipsEnabled,'badge-secondary': !house.chipsEnabled}">{{chip.code}}
+      <a (click)="removeChip(chip)" class="remove-chip">
+        <em class="bi bi-trash-fill"></em>
+      </a>
+    </a>
+  </div>
+</div>
