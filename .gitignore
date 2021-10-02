@@ -34,4 +34,5 @@ build/
 
 frontend/dist/
 frontend/node_modules/
+backend/src/main/resources/public
 
