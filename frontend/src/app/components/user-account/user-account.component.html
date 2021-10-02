@@ -1,0 +1,28 @@
+<div class="container pl-3 pr-3">
+  <div class="mb-3">
+    <label for="name" class="form-label">Nombre</label>
+    <input type="text"
+           class="form-control"
+           id="name"
+           [(ngModel)]="user.name"
+           aria-describedby="nameHelp">
+    <div id="nameHelp" class="form-text"></div>
+  </div>
+  <div class="mb-3">
+    <label class="form-label">Casas</label>
+    <table class="table table-responsive">
+      <thead>
+      <tr>
+        <th>Circuito</th>
+        <th>Número</th>
+        <th>Chips</th>
+        <th>Teléfonos en caseta</th>
+        <th>Al corriente en mantenimiento</th>
+      </tr>
+      </thead>
+    </table>
+  </div>
+
+
+  <button class="btn btn-primary" (click)="saveUserInfo()">Guardar</button>
+</div>

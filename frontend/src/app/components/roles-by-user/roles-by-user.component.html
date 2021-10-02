@@ -1,0 +1,13 @@
+<div class="d-inline-block" ngbDropdown #myDrop="ngbDropdown">
+  <button [disabled]="availableRoles.length == 0" class="btn btn-link" ngbDropdownAnchor (focus)="myDrop.open()" ><em class="bi bi-plus-circle-fill"></em></button>
+  <div ngbDropdownMenu aria-labelledby="dropdownManual">
+    <button class="row" ngbDropdownItem *ngFor="let role of availableRoles" (click)="addRole(user, role)">{{role | role}}</button>
+  </div>
+</div>
+
+<a *ngFor="let role of user.roles"
+   class="badge mr-1 badge-info">{{role | role}}
+  <a (click)="removeRole(user, role)" class="trash">
+    <em style="color: red" class="bi bi-trash-fill"></em>
+  </a>
+</a>

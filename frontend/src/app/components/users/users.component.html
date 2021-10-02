@@ -1,0 +1,26 @@
+<table class="table table-striped table-responsive">
+  <thead>
+  <tr>
+    <th scope="col">&nbsp;</th>
+    <th scope="col">Nombre</th>
+    <th scope="col">Estatus</th>
+    <th scope="col">Roles</th>
+    <th scope="col">Circuito (Representante)</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr *ngFor="let user of users; index as i">
+    <td>
+      <img [src]="user.picture" style="width: 50px;" />
+    </td>
+    <td>
+      {{ user.name }}
+    </td>
+    <td>{{ user.status }}</td>
+    <td>
+      <app-roles-by-user [user]="user" (roleRemoved)="roleRemoved(user, $event)"></app-roles-by-user>
+    </td>
+    <td><app-street [selectedStreet]="user.street" *ngIf="hasRole(user, 'ROLE_REPRESENTATIVE')" (streetSelected)="saveStreetForRepresentative(user, $event)"></app-street></td>
+  </tr>
+  </tbody>
+</table>
