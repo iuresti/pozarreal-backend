@@ -1,0 +1,87 @@
+<app-payment-filter (selectionDone)="doSearch($event)"
+                    (addPaymentClicked)="open(addPaymentDialog)"
+                    [isAdmin]="isAdmin">
+</app-payment-filter>
+
+<div class="d-flex justify-content-center" *ngIf="loading">
+  <div class="spinner-border" role="status">
+    <span class="sr-only">Loading...</span>
+  </div>
+</div>
+
+<a *ngIf="payments"
+   (click)="exportToExcel()"
+   class="export">
+  Exportar a Excel
+</a>
+<div class="table-responsive">
+  <table class="table"
+         *ngIf="!loading"
+         id="table"
+         #tableElement>
+    <thead>
+    <tr>
+      <th>Circuito</th>
+      <th>Casa</th>
+      <th>Fecha de pago</th>
+      <th>Monto</th>
+      <th>Concepto</th>
+      <th>Modo de pago</th>
+      <th>Notas</th>
+      <th>&nbsp;</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let payment of payments">
+      <td>{{payment.streetName}}</td>
+      <td>{{payment.houseNumber}}</td>
+      <td>{{payment.paymentDate | commonDateFormat}}</td>
+      <td>{{payment.amount | currency}}</td>
+      <td>{{payment.paymentConcept +
+      (payment.paymentSubConcept ? ' - ' + payment.paymentSubConcept : '')}}
+      </td>
+      <td>{{payment.paymentMode | paymentMode}}</td>
+      <td>{{payment.notes}}</td>
+      <td>
+        <i class="bi bi-trash btn btn-link"
+           (click)="deletePayment(payment)"
+           *ngIf="isAdmin">
+        </i> &nbsp;
+        <i class="bi bi-pencil btn btn-link"
+           disabled="true"
+           (click)="editPayment(addPaymentDialog, payment)"
+           *ngIf="isAdmin">
+        </i>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+
+
+<ng-template #addPaymentDialog let-c="close" let-d="dismiss">
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Registrar pago</h4>
+    <button type="button"
+            class="close"
+            aria-label="Close"
+            (click)="d('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <app-payment-add (dataReady)="newPaymentReady = true"
+                     (wrongData)="newPaymentReady = false"
+                     [paymentData]="newPayment">
+    </app-payment-add>
+  </div>
+  <div class="modal-footer">
+    <label *ngIf="!newPaymentReady" class="alert-danger">Hay datos inválidos</label>
+    <button [disabled]="!newPaymentReady"
+            type="button"
+            class="btn btn-outline-dark"
+            (click)="c('saved')">
+      Guardar
+    </button>
+  </div>
+</ng-template>

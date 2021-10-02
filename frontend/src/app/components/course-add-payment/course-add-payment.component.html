@@ -1,0 +1,63 @@
+<div class="row mt-1">
+  <div class="col-4"><label for="paymentDate" class="form-label">Fecha de pago:</label></div>
+  <div class="col-8">
+    <form class="form-inline">
+      <div class="form-group">
+        <div class="input-group pr-1">
+          <input class="form-control" placeholder="yyyy-mm-dd" id="paymentDate"
+                 name="dp" [(ngModel)]="modelPaymentDate" (ngModelChange)="updateDate()"
+                 ngbDatepicker #paymentDate="ngbDatepicker"
+                 [maxDate]="maxDate"
+                 [ngClass]="{'border border-danger':!isPaymentDateValid() }">
+          <div class="input-group-append">
+            <button class="btn btn-outline-secondary calendar" (click)="paymentDate.toggle()"
+                    type="button"><i class="bi bi-calendar3"></i></button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+<div class="row mt-1">
+  <div class="col-4">
+    <label for="concept" class="form-label">Concepto:</label>
+  </div>
+  <div class="col-8">
+    <input id="concept" class="form-control" [(ngModel)]="paymentData.concept" type="text"
+           (change)="formChanged()">
+  </div>
+</div>
+<div class="row mt-1">
+  <div class="col-4">
+    <label for="amount" class="form-label">Monto:</label>
+  </div>
+  <div class="col-8">
+    <input id="amount" class="form-control" [(ngModel)]="paymentData.amount" type="number"
+           (change)="formChanged()"
+           [ngClass]="{'border border-danger':!isPaymentAmountValid() }">
+  </div>
+</div>
+<div class="row mt-1">
+  <div class="col-4">
+    <label for="receiptNumber" class="form-label"># Recibo:</label>
+  </div>
+  <div class="col-8">
+    <input id="receiptNumber" class="form-control" [(ngModel)]="paymentData.receiptNumber" type="number"
+           (change)="formChanged()">
+  </div>
+</div>
+<div class="row mt-1">
+  <div class="col-12">
+    <label for="notes" class="form-label">Notas:</label>
+  </div>
+</div>
+<div class="row">
+  <div class="col-12">
+    <textarea id="notes" (change)="formChanged()" class="form-control" [(ngModel)]="paymentData.notes"></textarea>
+  </div>
+</div>
+<div class="row mt-2">
+  <div class="col-12 text-right">
+    <button class="btn btn-success" [disabled]="!(isPaymentDateValid() && isPaymentAmountValid())"  (click)="savePayment()">Guardar</button>
+  </div>
+</div>

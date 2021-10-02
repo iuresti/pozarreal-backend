@@ -1,0 +1,110 @@
+<div class="mt-4 mr-1 ml-1">
+  <div class="row">
+    <div class="col col-12">
+      <select class="form-control" [(ngModel)]="selectedCourseId" (change)="loadStudents()">
+        <option [value]="null">Seleccione un grupo</option>
+        <option *ngFor="let course of courses" [value]="course.id">{{course.name}}</option>
+      </select>
+    </div>
+  </div>
+  <app-course-info class="mt-2" *ngIf="selectedCourseId"
+                   [course]="selectedCourse"></app-course-info>
+  <div class="d-flex justify-content-center" *ngIf="loading">
+    <div class="spinner-border" role="status">
+      <span class="sr-only">Loading...</span>
+    </div>
+  </div>
+
+  <div class="text-right mt-2">
+    <p><a href="#" class="text-primary small" *ngIf="selectedCourseId"
+          (click)="openStudentDialog(addStudentDialog)">Agregar Estudiante</a></p>
+  </div>
+
+  <div class="mt-2" *ngIf="selectedCourseId">
+    <ngb-accordion [closeOthers]="true" #acc="ngbAccordion">
+      <ngb-panel title="" *ngFor="let student of students">
+        <ng-template ngbPanelHeader>
+          <div class="row">
+            <div class="col-7">
+              <h5 class="m-0">
+                <button ngbPanelToggle class="btn btn-link p-0">{{student.name}}</button>
+              </h5>
+            </div>
+            <div class="col-2 text-right">
+              <i class="bi bi-trash btn btn-link" (click)="deleteStudent(student)"></i> &nbsp;
+            </div>
+            <div class="col-3 text-right">
+              <i class="bi bi-pencil btn btn-link" disabled="true"
+                 (click)="editStudent(addStudentDialog, student)"></i>
+            </div>
+          </div>
+        </ng-template>
+        <ng-template ngbPanelContent>
+          <div class="row" *ngIf="student.age">
+            <div class="col-4">Edad:</div>
+            <div class="col-8">{{student.age}}</div>
+          </div>
+          <div class="row">
+            <div class="col-4">Contactos:</div>
+            <div class="col-8">
+              <div *ngIf="student.phone">{{student.phone}}</div>
+              <div *ngIf="student.responsiblePhone">R1: {{student.responsiblePhone}}</div>
+              <div *ngIf="student.responsiblePhone2">R2: {{student.responsiblePhone2}}</div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-4">Correo:</div>
+            <div class="col-8">{{student.email}}</div>
+          </div>
+          <div class="row">
+            <div class="col-4">Notas:</div>
+            <div class="col-8">{{student.notes}}</div>
+          </div>
+          <div class="row mt-1">
+            <div class="col-12 text-right small">
+              <a href="#" class="text-primary"
+                 (click)="registerPayments(studentPaymentsDialog, student)">Registrar pago</a>
+              &nbsp;
+              <a href="#" class="text-info"
+                 (click)="showPayments(studentPaymentsDialog, student)">{{this.showPaymentsForStudents === student.id ? 'Ocultar' : 'Mostrar'}} pagos</a>
+            </div>
+          </div>
+          <app-course-assistant-payments [courseAssistantId]="student.id" *ngIf="showPaymentsForStudents === student.id"></app-course-assistant-payments>
+        </ng-template>
+      </ngb-panel>
+    </ngb-accordion>
+  </div>
+
+</div>
+
+<ng-template #addStudentDialog let-c="close" let-d="dismiss">
+  <div class="modal-header">
+    <h4 class="modal-title" id="addStudentDialogModal">{{newStudent.id ? 'Editar' : 'Registrar' }}
+      estudiante</h4>
+    <button type="button" class="close" aria-label="Close" (click)="d('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <app-student-add (dataReady)="newStudentReady = true" (wrongData)="newStudentReady = false"
+                     [studentData]="newStudent"></app-student-add>
+  </div>
+  <div class="modal-footer">
+    <label *ngIf="!newStudentReady" class="alert-danger">Hay datos inválidos</label>
+    <button [disabled]="!newStudentReady" type="button" class="btn btn-outline-dark"
+            (click)="c('saved')">Guardar
+    </button>
+  </div>
+</ng-template>
+
+<ng-template #studentPaymentsDialog let-c="close" let-d="dismiss">
+  <div class="modal-header">
+    <h4 class="modal-title" id="studentPaymentsDialogModal">Registrar pago</h4>
+    <button type="button" class="close" aria-label="Close" (click)="d('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <app-course-add-payment [courseAssistantId]="studentForPayments.id" (saved)="c(true)"></app-course-add-payment>
+  </div>
+</ng-template>

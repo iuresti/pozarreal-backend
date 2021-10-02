@@ -1,0 +1,4 @@
+<select class="form form-control" [(ngModel)]="selectedStreet" (change)="streetSelected.emit(selectedStreet)">
+  <option *ngIf="streets.length > 1" value="">Todos</option>
+  <option *ngFor="let street of streets" [value]="street.id" >{{street.name}}</option>
+</select>
