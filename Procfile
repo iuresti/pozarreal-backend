@@ -1,1 +1,1 @@
-web: java -jar backend/target/*.jar
+web: java -jar target/*.jar

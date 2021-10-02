@@ -9,8 +9,8 @@
         <version>2.4.4</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>org.uresti</groupId>
-    <artifactId>pozarreal-back-end</artifactId>
+    <groupId>org.uresti.pozarreal</groupId>
+    <artifactId>backend</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>pozarreal-back-end</name>
     <description>Backend for Pozarreal project</description>
