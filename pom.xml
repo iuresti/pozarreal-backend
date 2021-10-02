@@ -16,25 +16,19 @@
     <build>
         <plugins>
             <plugin>
-                <artifactId>maven-resources-plugin</artifactId>
-                <version>3.2.0</version>
+                <groupId>com.coderplus.maven.plugins</groupId>
+                <artifactId>copy-rename-maven-plugin</artifactId>
+                <version>1.0.1</version>
                 <executions>
                     <execution>
-                        <id>copy-resources</id>
+                        <id>prepare-jar-to-run</id>
                         <phase>package</phase>
                         <goals>
-                            <goal>copy-resources</goal>
+                            <goal>rename</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>${basedir}/target</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>${basedir}/backend/target/</directory>
-                                    <includes>
-                                        <include>backend-*.jar</include>
-                                    </includes>
-                                </resource>
-                            </resources>
+                            <sourceFile>${basedir}/backend/target/backend-0.0.1-SNAPSHOT.jar</sourceFile>
+                            <destinationFile>${basedir}/target/pozarreal.jar</destinationFile>
                         </configuration>
                     </execution>
                 </executions>
