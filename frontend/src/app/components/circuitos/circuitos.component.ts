@@ -27,6 +27,7 @@ export class CircuitosComponent implements OnInit {
   maintenanceFee = 800;
   selectedStreetId: string;
   mobile: boolean;
+  house: House;
 
   constructor(private streetService: StreetService,
               private houseService: HouseService,
@@ -76,10 +77,12 @@ export class CircuitosComponent implements OnInit {
     });
   }
 
-  addPayment(content, houseId: string, bim: number, bimesterPayment: PaymentByConcept): void {
+  addPayment(content,bim: number, bimesterPayment: PaymentByConcept, house: House): void {
     this.newPayment = {} as Payment;
     this.newPayment.streetId = this.selectedStreet.id;
-    this.newPayment.houseId = houseId;
+    this.newPayment.houseId = house.id;
+    this.house = {} as House;
+    this.house = house;
     this.newPayment.paymentConceptId = 'MAINTENANCE';
     this.newPayment.paymentSubConceptId = 'MAINTENANCE_BIM_' + bim;
     this.newPayment.amount = this.maintenanceFee - bimesterPayment.amount;
@@ -95,4 +98,5 @@ export class CircuitosComponent implements OnInit {
       console.log('Cancel saving payment');
     });
   }
+
 }

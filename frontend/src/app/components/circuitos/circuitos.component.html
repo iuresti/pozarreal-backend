@@ -1,33 +1,34 @@
 <div class="mt-2 bg-light pb-2 pl-3 pr-3">
 
   <div class="row">
-    <div class="col col-12" *ngIf="streets?.length > 1">
-      <select class="form-control" [(ngModel)]="selectedStreetId" (change)="selectStreet()">
+    <div *ngIf="streets?.length > 1" class="col col-12">
+      <select (change)="selectStreet()" [(ngModel)]="selectedStreetId" class="form-control">
         <option [value]="null">Seleccione un circuito</option>
         <option *ngFor="let street of streets" [value]="street.id">{{street.name}}</option>
       </select>
     </div>
-    <div class="col col-12" *ngIf="streets?.length == 1 && selectedStreet">
-      <h4 class="display-4" *ngIf="selectedStreet">{{selectedStreet.name}}</h4>
+
+    <div *ngIf="streets?.length == 1 && selectedStreet" class="col col-12">
+      <h4 *ngIf="selectedStreet" class="display-4">{{selectedStreet.name}}</h4>
     </div>
   </div>
 
-  <div class="row border-bottom mt-1" *ngIf="selectedStreet">
-    <div class="col" *ngIf="!loading">
+  <div *ngIf="selectedStreet" class="row border-bottom mt-1">
+    <div *ngIf="!loading" class="col">
       <h6 *ngIf="selectedStreet.representative">
         Representante: {{selectedStreet.representative.name}}
         {{selectedStreet.representative.phone}}</h6>
     </div>
   </div>
 
-  <div class="d-flex justify-content-center" *ngIf="loading">
+  <div *ngIf="loading" class="d-flex justify-content-center">
     <div class="spinner-border" role="status">
       <span class="sr-only">Loading...</span>
     </div>
   </div>
 
-  <div class="mt-4" *ngIf="selectedStreet && !loading">
-    <div class="row border-bottom" *ngIf="mobile">
+  <div *ngIf="selectedStreet && !loading" class="mt-4">
+    <div *ngIf="mobile" class="row border-bottom">
       <div class="col col-3">#</div>
       <div class="col col-1 text-center">B1</div>
       <div class="col col-1 text-center">B2</div>
@@ -37,7 +38,7 @@
       <div class="col col-1 text-center">B6</div>
       <div class="col col-2 text-center">Pluma</div>
     </div>
-    <div class="row border-bottom" *ngIf="!mobile">
+    <div *ngIf="!mobile" class="row border-bottom">
       <div class="col col-1">#</div>
       <div class="col col-1">Chips</div>
       <div class="col col-2">&nbsp;</div>
@@ -49,70 +50,83 @@
       <div class="col col-1 text-center">Bim6</div>
       <div class="col col-1 text-center">Pluma</div>
     </div>
-    <div class="row pb-2 " *ngFor="let house of selectedStreet.houses;let i = index"
-         [ngClass]="{'bg-white': i % 2 == 1}">
+
+    <div *ngFor="let house of selectedStreet.houses;let i = index" [ngClass]="{'bg-white': i % 2 == 1}"
+         class="row pb-2 ">
+
       <div class="col {{mobile ? 'col-3' : 'col-1'}} pt-2">{{house.number}}</div>
-      <div class="col col-1 pt-2" *ngIf="!mobile">
+
+      <div *ngIf="!mobile" class="col col-1 pt-2">
         <div class="custom-control custom-switch ">
-          <input type="checkbox" class="custom-control-input" id="{{'chip-' + house.number}}"
-                 [(ngModel)]="house.chipsEnabled"
-                 (ngModelChange)="chipsForHouseEnabled(selectedStreet, house)">
+          <input (ngModelChange)="chipsForHouseEnabled(selectedStreet, house)" [(ngModel)]="house.chipsEnabled"
+                 class="custom-control-input"
+                 id="{{'chip-' + house.number}}"
+                 type="checkbox">
           <label class="custom-control-label" for="{{'chip-' + house.number}}"></label>
         </div>
       </div>
-      <div class="col col-2" *ngIf="!mobile">
-        <button class="btn btn-link" (click)="house.toggleChips = true"
-                *ngIf="!house.toggleChips">
+
+      <div *ngIf="!mobile" class="col col-2">
+        <button (click)="house.toggleChips = true" *ngIf="!house.toggleChips"
+                class="btn btn-link">
           <em class="bi bi-caret-down-fill"></em> Mostrar chips
         </button>
-        <button class="btn btn-link" (click)="house.toggleChips = false"
-                *ngIf="house.toggleChips">
+        <button (click)="house.toggleChips = false" *ngIf="house.toggleChips"
+                class="btn btn-link">
           <em class="bi bi-caret-up-fill"></em> Ocultar chips
         </button>
-        <app-chips-by-house *ngIf="house.toggleChips" [house]="house"
-                            [street]="selectedStreet"></app-chips-by-house>
+        <app-chips-by-house *ngIf="house.toggleChips"
+                            [house]="house"
+                            [street]="selectedStreet">
+        </app-chips-by-house>
       </div>
+
       <div
-        class="col col-1 border border-light rounded d-flex align-items-center justify-content-center"
-        [ngStyle]="{'background-color': bimesterPayment.complete ? '#B6D7A8': 'transparent'}"
         *ngFor="let bimesterPayment of house.twoMonthsPayments;let bim = index"
-      >
+        [ngStyle]="{'background-color': bimesterPayment.complete ? '#B6D7A8': 'transparent'}"
+        class="col col-1 border border-light rounded d-flex align-items-center justify-content-center">
         <div *ngIf="bimesterPayment.complete && !mobile">
           PAGADO
         </div>
-        <div *ngIf="!bimesterPayment.complete" class="btn btn-link"
-             (click)="addPayment(addPaymentDialog, house.id, bim + 1, bimesterPayment)">
+
+        <div (click)="addPayment(addPaymentDialog, bim + 1, bimesterPayment, house)"
+             *ngIf="!bimesterPayment.complete"
+             class="btn btn-link">
           {{(bimesterPayment.amount ? bimesterPayment.amount : '&nbsp;')}}
         </div>
+
       </div>
+
       <div
-        class="ml-1 col {{mobile ? 'col-2' : 'col-1'}} border border-light rounded d-flex align-items-center justify-content-center"
         [ngStyle]="{'background-color': house.parkingPenPayment.complete ? '#B6D7A8': 'transparent'}"
-      >
-        {{house.parkingPenPayment.complete ? (mobile ? '' : 'PAGADO')
-                                           : (house.parkingPenPayment.amount
-                                              ? house.parkingPenPayment.amount
-                                              : '')}}
+        class="ml-1 col {{mobile ? 'col-2' : 'col-1'}} border border-light rounded d-flex align-items-center justify-content-center">
+        {{house.parkingPenPayment.complete ? (mobile ? '' : 'PAGADO') : (house.parkingPenPayment.amount ? house.parkingPenPayment.amount : '')}}
       </div>
     </div>
+
   </div>
+
 </div>
 
 <ng-template #addPaymentDialog let-c="close" let-d="dismiss">
   <div class="modal-header">
     <h4 class="modal-title" id="modal-basic-title">Registrar pago</h4>
-    <button type="button" class="close" aria-label="Close" (click)="d('Cross click')">
+    <button (click)="d('Cross click')" aria-label="Close" class="close" type="button">
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
   <div class="modal-body">
-    <app-payment-add (dataReady)="newPaymentReady = true" (wrongData)="newPaymentReady = false"
-                     [paymentData]="newPayment"></app-payment-add>
+    <app-payment-add (dataReady)="newPaymentReady = true"
+                     (wrongData)="newPaymentReady = false"
+                     [paymentData]="newPayment"
+                     [street]="selectedStreet"
+                     [house]="house">
+    </app-payment-add>
   </div>
   <div class="modal-footer">
     <label *ngIf="!newPaymentReady" class="alert-danger">Hay datos inválidos</label>
-    <button [disabled]="!newPaymentReady" type="button" class="btn btn-outline-dark"
-            (click)="c('saved')">Guardar
+    <button (click)="c('saved')" [disabled]="!newPaymentReady" class="btn btn-outline-dark"
+            type="button">Guardar
     </button>
   </div>
 </ng-template>
