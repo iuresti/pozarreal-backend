@@ -23,5 +23,6 @@ public class House {
     private String number;
     @Column(name = "chips_enabled")
     private boolean chipsEnabled;
+    private String notes;
 
 }

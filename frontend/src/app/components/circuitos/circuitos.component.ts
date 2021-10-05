@@ -10,6 +10,7 @@ import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {PaymentService} from '../../services/payment.service';
 import {PaymentByConcept} from '../../model/payment-by-concept';
 import {environment} from '../../../environments/environment';
+import {ActivatedRoute, Router} from "@angular/router";
 
 @Component({
   selector: 'app-circuitos',
@@ -31,10 +32,13 @@ export class CircuitosComponent implements OnInit {
   constructor(private streetService: StreetService,
               private houseService: HouseService,
               private modalService: NgbModal,
-              private paymentService: PaymentService) {
+              private paymentService: PaymentService,
+              private router: Router,
+              private activatedRoute: ActivatedRoute) {
   }
 
   public ngOnInit(): void {
+
     if (window.screen.width < environment.mobileWidthScreen) {
       this.mobile = true;
     }
@@ -44,6 +48,13 @@ export class CircuitosComponent implements OnInit {
       if (streets.length === 1) {
         this.selectedStreetId = streets[0].id;
         this.selectStreet();
+      }else {
+        this.activatedRoute.params.subscribe(params => {
+          if (params['streetId']) {
+            this.selectedStreetId = params['streetId'];
+            this.selectStreet();
+          }
+        });
       }
     });
   }
@@ -94,5 +105,9 @@ export class CircuitosComponent implements OnInit {
     }, (reason) => {
       console.log('Cancel saving payment');
     });
+  }
+
+  showHouse(id: string) {
+    this.router.navigate(["house", id]);
   }
 }
