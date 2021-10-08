@@ -9,6 +9,7 @@ import {Payment} from '../../model/payment';
 import {Street} from '../../model/street';
 import {PaymentSubConcept} from '../../model/payment-sub-concept';
 import {DateFormatterService} from '../../services/date-formatter.service';
+import {HouseNumber} from "../../model/house-number";
 
 @Component({
   selector: 'app-payment-add',
@@ -17,7 +18,7 @@ import {DateFormatterService} from '../../services/date-formatter.service';
 })
 export class PaymentAddComponent implements OnInit {
   streets: Street[];
-  houses: House[];
+  houses: HouseNumber[];
   modelPaymentDate: NgbDateStruct;
   maxDate: NgbDateStruct;
   paymentConcepts: PaymentConcept[] = [];
@@ -52,8 +53,8 @@ export class PaymentAddComponent implements OnInit {
     });
 
     if (this.paymentData.streetId) {
-      this.houseService.getHousesByStreet(this.paymentData.streetId).subscribe(houses => {
-        this.houses = houses.sort((a, b) => a.number < b.number ? -1 : 1);
+      this.houseService.getHouseNumbersByStreet(this.paymentData.streetId).subscribe(houses => {
+        this.houses = houses;
       });
     }
 
@@ -80,7 +81,7 @@ export class PaymentAddComponent implements OnInit {
     this.paymentData.houseId = null;
     if (this.paymentData.streetId) {
       this.houseService.getHousesByStreet(this.paymentData.streetId).subscribe(houses => {
-        this.houses = houses.sort((a, b) => a.number < b.number ? -1 : 1);
+        this.houses = houses;
         this.formChanged();
       });
     } else {

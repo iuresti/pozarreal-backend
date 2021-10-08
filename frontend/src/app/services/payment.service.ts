@@ -1,17 +1,21 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {PaymentFilter} from '../model/payment-filter';
-import {Observable} from 'rxjs';
+import {Observable, of} from 'rxjs';
 import {PaymentView} from '../model/payment-view';
 import {environment} from '../../environments/environment';
 import {PaymentConcept} from '../model/payment-concept';
 import {Payment} from '../model/payment';
 import {PaymentSubConcept} from '../model/payment-sub-concept';
+import {tap} from "rxjs/operators";
 
 @Injectable({
   providedIn: 'root'
 })
 export class PaymentService {
+
+  private paymentConcepts: PaymentConcept[];
+  private paymentSubConcepts: Map<string, PaymentSubConcept[]> = new Map<string, PaymentSubConcept[]>();
 
   constructor(private http: HttpClient) {
   }
@@ -47,11 +51,22 @@ export class PaymentService {
   }
 
   getPaymentConcepts(): Observable<PaymentConcept[]> {
-    return this.http.get<PaymentConcept[]>(`${environment.baseUrl}/paymentConcepts`);
+    if(this.paymentConcepts){
+      return of(this.paymentConcepts);
+    }
+
+    return this.http.get<PaymentConcept[]>(`${environment.baseUrl}/paymentConcepts`)
+      .pipe(tap(paymentConcepts => this.paymentConcepts = paymentConcepts));
   }
 
   getPaymentSubConcepts(paymentConceptId: string): Observable<PaymentSubConcept[]> {
-    return this.http.get<PaymentSubConcept[]>(`${environment.baseUrl}/paymentSubConcepts/concept/${paymentConceptId}`);
+
+    if(this.paymentSubConcepts.has(paymentConceptId)){
+      return of(this.paymentSubConcepts.get(paymentConceptId));
+    }
+
+    return this.http.get<PaymentSubConcept[]>(`${environment.baseUrl}/paymentSubConcepts/concept/${paymentConceptId}`)
+      .pipe(tap(paymentSubConcepts => this.paymentSubConcepts.set(paymentConceptId, paymentSubConcepts)));
   }
 
   save(newPayment: Payment): Observable<Payment> {

@@ -9,6 +9,7 @@ import {PaymentService} from '../../services/payment.service';
 import {IDropdownSettings} from 'ng-multiselect-dropdown';
 import {HouseService} from '../../services/house.service';
 import {House} from '../../model/house';
+import {HouseNumber} from "../../model/house-number";
 
 
 @Component({
@@ -29,7 +30,7 @@ export class PaymentFilterComponent implements OnInit {
   selectedStreet: string;
   selectedHouse: string;
   selectedPaymentMode: string;
-  houses: House[];
+  houses: HouseNumber[];
 
 
   constructor(private fb: FormBuilder,
@@ -85,8 +86,8 @@ export class PaymentFilterComponent implements OnInit {
     console.log(selectedSteet);
     this.selectedStreet = selectedSteet;
     if (this.selectedStreet) {
-      this.houseService.getHousesByStreet(this.selectedStreet).subscribe(houses => {
-        this.houses = houses.sort((a, b) => a.number < b.number ? -1 : 1);
+      this.houseService.getHouseNumbersByStreet(this.selectedStreet).subscribe(houses => {
+        this.houses = houses;
       });
     } else {
       this.selectedHouse = '';
