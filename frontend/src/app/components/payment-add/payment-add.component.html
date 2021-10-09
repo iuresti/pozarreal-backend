@@ -125,7 +125,7 @@
       </ng-container>
       <ng-template #elseBlock3>
         <option [value]="paymentData.paymentConceptId">
-          {{paymentData.paymentConceptId | concept}}
+          {{labelConcept}}
         </option>
       </ng-template>
     </select>
@@ -152,7 +152,7 @@
       </ng-container>
       <ng-template #elseBlock4>
         <option [value]="paymentData.paymentSubConceptId">
-          {{paymentData.paymentSubConceptId | subConcept}}
+          {{labelSubConcept}}
         </option>
       </ng-template>
     </select>

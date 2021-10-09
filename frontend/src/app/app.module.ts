@@ -33,8 +33,6 @@ import { SmallDateFormatPipe } from './pipes/small-date-format.pipe';
 import { CommonDateFormatPipe } from './pipes/common-date-format.pipe';
 import {RouterModule} from '@angular/router';
 import {ROUTES} from './app.routes';
-import {SubConceptPipe} from "./pipes/sub-concept.pipe";
-import { ConceptPipe } from './pipes/concept.pipe';
 
 @NgModule({
   declarations: [
@@ -59,9 +57,7 @@ import { ConceptPipe } from './pipes/concept.pipe';
     CourseAssistantPaymentsComponent,
     CourseAddPaymentComponent,
     SmallDateFormatPipe,
-    CommonDateFormatPipe,
-    SubConceptPipe,
-    ConceptPipe
+    CommonDateFormatPipe
   ],
     imports: [
         NgbModule,

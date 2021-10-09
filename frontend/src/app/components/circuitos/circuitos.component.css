@@ -1,0 +1,15 @@
+a {
+  cursor: pointer;
+}
+
+.number {
+  position: absolute;
+  bottom: calc(100% - 1rem);
+  right: 0;
+  color: #000;
+  display: none;
+}
+
+.numbers {
+  position: relative;
+}

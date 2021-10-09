@@ -18,6 +18,7 @@ import {environment} from '../../../environments/environment';
 })
 export class CircuitosComponent implements OnInit {
 
+  house: House;
   title = 'pozarreal';
   selectedStreet: StreetInfo;
   streets: Street[] = [];
@@ -27,7 +28,6 @@ export class CircuitosComponent implements OnInit {
   maintenanceFee = 800;
   selectedStreetId: string;
   mobile: boolean;
-  house: House;
 
   constructor(private streetService: StreetService,
               private houseService: HouseService,
@@ -77,7 +77,7 @@ export class CircuitosComponent implements OnInit {
     });
   }
 
-  addPayment(content,bim: number, bimesterPayment: PaymentByConcept, house: House): void {
+  addPayment(content, bim: number, bimesterPayment: PaymentByConcept, house: House): void {
     this.newPayment = {} as Payment;
     this.newPayment.streetId = this.selectedStreet.id;
     this.newPayment.houseId = house.id;
@@ -97,6 +97,14 @@ export class CircuitosComponent implements OnInit {
     }, (reason) => {
       console.log('Cancel saving payment');
     });
+  }
+
+  onMouseOver(number) {
+    number.style.display = 'block';
+  }
+
+  onMouseLeave(number) {
+    number.style.display = 'none';
   }
 
 }

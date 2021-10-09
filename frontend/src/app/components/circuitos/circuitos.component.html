@@ -84,15 +84,21 @@
       <div
         *ngFor="let bimesterPayment of house.twoMonthsPayments;let bim = index"
         [ngStyle]="{'background-color': bimesterPayment.complete ? '#B6D7A8': 'transparent'}"
-        class="col col-1 border border-light rounded d-flex align-items-center justify-content-center">
+        class="col col-1 border border-light rounded d-flex align-items-center justify-content-center numbers">
         <div *ngIf="bimesterPayment.complete && !mobile">
           PAGADO
         </div>
 
         <div (click)="addPayment(addPaymentDialog, bim + 1, bimesterPayment, house)"
+             (mouseleave)="onMouseLeave(number)"
+             (mouseover)="onMouseOver(number)"
              *ngIf="!bimesterPayment.complete"
              class="btn btn-link">
           {{(bimesterPayment.amount ? bimesterPayment.amount : '&nbsp;')}}
+        </div>
+
+        <div #number class="number">
+          {{house.number}}
         </div>
 
       </div>
@@ -102,6 +108,7 @@
         class="ml-1 col {{mobile ? 'col-2' : 'col-1'}} border border-light rounded d-flex align-items-center justify-content-center">
         {{house.parkingPenPayment.complete ? (mobile ? '' : 'PAGADO') : (house.parkingPenPayment.amount ? house.parkingPenPayment.amount : '')}}
       </div>
+
     </div>
 
   </div>
@@ -118,9 +125,9 @@
   <div class="modal-body">
     <app-payment-add (dataReady)="newPaymentReady = true"
                      (wrongData)="newPaymentReady = false"
+                     [house]="house"
                      [paymentData]="newPayment"
-                     [street]="selectedStreet"
-                     [house]="house">
+                     [street]="selectedStreet">
     </app-payment-add>
   </div>
   <div class="modal-footer">
