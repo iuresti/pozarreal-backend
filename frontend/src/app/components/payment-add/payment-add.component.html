@@ -1,105 +1,195 @@
 <div class="row">
+
   <div class="col-4">
-    <label for="street" class="form-label">Circuito:</label>
+    <label class="form-label" for="street">Circuito:</label>
   </div>
+
   <div class="col-8">
-    <select [disabled]="!!paymentData.id" id="street" class="form-control" [(ngModel)]="paymentData.streetId"
-            (change)="streetSelected()"
-            [ngClass]="{'border border-danger':!isStreetValid() }">
-      <option *ngFor="let street of streets" [value]="street.id">{{street.name}}</option>
+    <select (change)="streetSelected()"
+            [(ngModel)]="paymentData.streetId"
+            [disabled]="!!paymentData.id"
+            [ngClass]="{'border border-danger':!isStreetValid() }"
+            class="form-control">
+      <ng-container *ngIf="!street; else elseBlock">
+        <option *ngFor="let street of streets"
+                id="street"
+                [value]="street.id">
+          {{street.name}}
+        </option>
+      </ng-container>
+      <ng-template #elseBlock>
+        <option [value]="street.id">
+          {{street.name}}
+        </option>
+      </ng-template>
     </select>
   </div>
+
 </div>
+
 <div class="row mt-1">
-  <div class="col-4"><label for="house" class="form-label">Casa:</label></div>
+
+  <div class="col-4">
+    <label class="form-label" for="house">Casa:</label>
+  </div>
+
   <div class="col-8">
-    <select [disabled]="!!paymentData.id" id="house" class="form-control" [(ngModel)]="paymentData.houseId"
+    <select (change)="formChanged()"
+            [(ngModel)]="paymentData.houseId"
+            [disabled]="!!paymentData.id"
             [ngClass]="{'border border-danger':!isHouseValid() }"
-            (change)="formChanged()">
-      <option *ngFor="let house of houses" [value]="house.id">{{house.number}}</option>
+            class="form-control"
+            id="house">
+      <ng-container *ngIf="!house; else elseBlock2">
+        <option *ngFor="let house of houses" [value]="house.id">
+          {{house.number}}
+        </option>
+      </ng-container>
+      <ng-template #elseBlock2>
+        <option [value]="house.id">
+          {{house.number}}
+        </option>
+      </ng-template>
     </select>
   </div>
+
 </div>
-<div class="row mt-1">
-  <div class="col-4"><label for="paymentMode" class="form-label">Modo de pago:</label></div>
-  <div class="col-8"><select id="paymentMode" class="form-control"
-                             [(ngModel)]="paymentData.paymentMode"
-                             (change)="formChanged()"
-                             [ngClass]="{'border border-danger':!isPaymentModeValid() }">
-    <option value="CASH">Efectivo</option>
-    <option value="TRANSFER">Transferencia</option>
-  </select></div>
-</div>
-<div class="row mt-1">
-  <div class="col-4"><label for="paymentDate" class="form-label">Fecha de pago:</label></div>
-  <div class="col-8">
-    <form class="form-inline">
-      <div class="form-group">
-        <div class="input-group pr-1">
-          <input class="form-control" placeholder="yyyy-mm-dd" id="paymentDate"
-                 name="dp" [(ngModel)]="modelPaymentDate" (ngModelChange)="updateDate()"
-                 ngbDatepicker #paymentDate="ngbDatepicker"
-                 [maxDate]="maxDate"
-                 [ngClass]="{'border border-danger':!isPaymentDateValid() }">
-          <div class="input-group-append">
-            <button class="btn btn-outline-secondary calendar" (click)="paymentDate.toggle()"
-                    type="button"><i class="bi bi-calendar3"></i></button>
-          </div>
-        </div>
-      </div>
-    </form>
-  </div>
-</div>
+
 <div class="row mt-1">
   <div class="col-4">
-    <label for="concept" class="form-label">Concepto:</label>
+    <label class="form-label" for="paymentMode">Modo de pago:</label>
   </div>
   <div class="col-8">
-    <select id="concept" class="form-control" [(ngModel)]="paymentData.paymentConceptId"
-            (change)="conceptUpdated()"
-            [ngClass]="{'border border-danger':!isPaymentConceptValid() }">
-      <option *ngFor="let concept of paymentConcepts"
-              [value]="concept.id">{{concept.label}}</option>
-    </select>
-  </div>
-</div>
-<div class="row mt-1" *ngIf="paymentSubConcepts.length">
-  <div class="col-4">
-    <label for="subConcept" class="form-label">Sub-Concepto:</label>
-  </div>
-  <div class="col-8">
-    <select id="subConcept" class="form form-control"
-            [(ngModel)]="paymentData.paymentSubConceptId"
-            (change)="formChanged()"
-            [ngClass]="{'border border-danger':!isPaymentSubConceptValid() }">
-      <option *ngFor="let concept of paymentSubConcepts"
-              [value]="concept.id">{{concept.label}}</option>
+    <select (change)="formChanged()"
+            [(ngModel)]="paymentData.paymentMode"
+            [ngClass]="{'border border-danger':!isPaymentModeValid() }"
+            class="form-control"
+            id="paymentMode">
+      <option value="CASH">Efectivo</option>
+      <option value="TRANSFER">Transferencia</option>
     </select>
   </div>
 </div>
 
 <div class="row mt-1">
+
   <div class="col-4">
-    <label for="amount" class="form-label">Monto:</label>
+    <label class="form-label" for="paymentDate">Fecha de pago:</label>
   </div>
+
   <div class="col-8">
-    <input id="amount"
-           class="form-control"
-           placeholder="0"
-           [(ngModel)]="paymentData.amount"
-           type="number"
-           (change)="formChanged()"
-           [ngClass]="{'border border-danger':!isPaymentAmountValid() }"
-    >
+    <form class="form-inline">
+      <div class="form-group">
+        <div class="input-group pr-1">
+          <input #paymentDate="ngbDatepicker"
+                 (ngModelChange)="updateDate()"
+                 [(ngModel)]="modelPaymentDate"
+                 [maxDate]="maxDate"
+                 [ngClass]="{'border border-danger':!isPaymentDateValid() }"
+                 class="form-control"
+                 id="paymentDate"
+                 name="dp"
+                 ngbDatepicker
+                 placeholder="yyyy-mm-dd">
+          <div class="input-group-append">
+            <button (click)="paymentDate.toggle()"
+                    class="btn btn-outline-secondary calendar"
+                    type="button">
+              <i class="bi bi-calendar3"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </form>
   </div>
+
 </div>
+
+<div class="row mt-1">
+
+  <div class="col-4">
+    <label class="form-label" for="concept">Concepto:</label>
+  </div>
+
+  <div class="col-8">
+    <select (change)="conceptUpdated()"
+            [(ngModel)]="paymentData.paymentConceptId"
+            [ngClass]="{'border border-danger':!isPaymentConceptValid() }"
+            class="form-control"
+            id="concept">
+      <ng-container *ngIf="!house; else elseBlock3">
+        <option *ngFor="let concept of paymentConcepts"
+                [value]="concept.id">
+          {{concept.label}}
+        </option>
+      </ng-container>
+      <ng-template #elseBlock3>
+        <option [value]="paymentData.paymentConceptId">
+          {{labelConcept}}
+        </option>
+      </ng-template>
+    </select>
+  </div>
+
+</div>
+
+<div *ngIf="paymentSubConcepts.length || paymentData.paymentSubConceptId" class="row mt-1">
+
+  <div class="col-4">
+    <label class="form-label" for="subConcept">Sub-Concepto:</label>
+  </div>
+
+  <div class="col-8">
+    <select (change)="formChanged()" [(ngModel)]="paymentData.paymentSubConceptId"
+            [ngClass]="{'border border-danger':!isPaymentSubConceptValid() }"
+            class="form form-control"
+            id="subConcept">
+      <ng-container *ngIf="!house; else elseBlock4">
+        <option *ngFor="let concept of paymentSubConcepts"
+                [value]="concept.id">
+          {{concept.label}}
+        </option>
+      </ng-container>
+      <ng-template #elseBlock4>
+        <option [value]="paymentData.paymentSubConceptId">
+          {{labelSubConcept}}
+        </option>
+      </ng-template>
+    </select>
+  </div>
+
+</div>
+
+<div class="row mt-1">
+
+  <div class="col-4">
+    <label class="form-label" for="amount">Monto:</label>
+  </div>
+
+  <div class="col-8">
+    <input (change)="formChanged()"
+           [(ngModel)]="paymentData.amount"
+           [ngClass]="{'border border-danger':!isPaymentAmountValid() }"
+           class="form-control"
+           id="amount"
+           placeholder="0"
+           type="number">
+  </div>
+
+</div>
+
 <div class="row mt-1">
   <div class="col-12">
-    <label for="notes" class="form-label">Notas:</label>
+    <label class="form-label" for="notes">Notas:</label>
   </div>
 </div>
+
 <div class="row">
   <div class="col-12">
-    <textarea id="notes" (change)="formChanged()" class="form-control" [(ngModel)]="paymentData.notes"></textarea>
+    <textarea
+      (change)="formChanged()"
+      [(ngModel)]="paymentData.notes"
+      class="form-control" id="notes">
+    </textarea>
   </div>
 </div>

@@ -56,7 +56,7 @@ export class PaymentService {
     }
 
     return this.http.get<PaymentConcept[]>(`${environment.baseUrl}/paymentConcepts`)
-      .pipe(tap(paymentConcepts => this.paymentConcepts = paymentConcepts));
+      .pipe(tap(paymentConcepts => this.paymentConcepts = paymentConcepts.sort((a, b) => a.label < b.label ? -1 : 1)));
   }
 
   getPaymentSubConcepts(paymentConceptId: string): Observable<PaymentSubConcept[]> {
@@ -80,4 +80,5 @@ export class PaymentService {
   getPayment(id: string): Observable<Payment> {
     return this.http.get<Payment>(`${environment.baseUrl}/payments/${id}`);
   }
+
 }
