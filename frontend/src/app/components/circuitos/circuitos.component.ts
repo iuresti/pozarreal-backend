@@ -19,6 +19,7 @@ import {ActivatedRoute, Router} from "@angular/router";
 })
 export class CircuitosComponent implements OnInit {
 
+  house: House;
   title = 'pozarreal';
   selectedStreet: StreetInfo;
   streets: Street[] = [];
@@ -87,10 +88,12 @@ export class CircuitosComponent implements OnInit {
     });
   }
 
-  addPayment(content, houseId: string, bim: number, bimesterPayment: PaymentByConcept): void {
+  addPayment(content, bim: number, bimesterPayment: PaymentByConcept, house: House): void {
     this.newPayment = {} as Payment;
     this.newPayment.streetId = this.selectedStreet.id;
-    this.newPayment.houseId = houseId;
+    this.newPayment.houseId = house.id;
+    this.house = {} as House;
+    this.house = house;
     this.newPayment.paymentConceptId = 'MAINTENANCE';
     this.newPayment.paymentSubConceptId = 'MAINTENANCE_BIM_' + bim;
     this.newPayment.amount = this.maintenanceFee - bimesterPayment.amount;
@@ -105,6 +108,14 @@ export class CircuitosComponent implements OnInit {
     }, (reason) => {
       console.log('Cancel saving payment');
     });
+  }
+
+  onMouseOver(number) {
+    number.style.display = 'block';
+  }
+
+  onMouseLeave(number) {
+    number.style.display = 'none';
   }
 
   showHouse(id: string) {
