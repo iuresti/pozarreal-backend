@@ -30,6 +30,7 @@ export class HouseInfoComponent implements OnInit {
 
   saveNotes() {
     this.houseService.saveHouseNotes(this.houseInfo.id, this.houseInfo.notes).subscribe(() => console.log("notes saved"));
+    this.back();
   }
 
   back() {

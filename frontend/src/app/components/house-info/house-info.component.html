@@ -1,8 +1,8 @@
 <div class="p-4" *ngIf="houseInfo">
   <h3>{{houseInfo.streetName}} {{houseInfo.number}}</h3>
   <hr/>
-  <textarea [(ngModel)]="houseInfo.notes" class="form-control" rows="10" ></textarea>
+  <textarea [(ngModel)]="houseInfo.notes" class="form-control" rows="10"  placeholder="Escriba anotaciones relacionadas a la casa, los dueños o los inquilinos útiles para el representante"></textarea>
   <hr/>
   <button class="btn btn-primary float-right" (click)="saveNotes()">Guardar</button>
-  <button class="btn btn-secondary float-right mr-2 ml-2" (click)="back()">Regresar</button>
+  <button class="btn btn-secondary float-right mr-2 ml-2" (click)="back()">Cancelar</button>
 </div>
