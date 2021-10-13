@@ -26,13 +26,13 @@ public class HousesController {
     }
 
     @GetMapping("/info/{houseId}")
-    @PreAuthorize("hasAnyRole('ROLE_REPRESENTATIVE')")
+    @PreAuthorize("hasAnyRole('ROLE_REPRESENTATIVE', 'ROLE_ADMIN')")
     public HouseInfo getHouseInfo(@PathVariable String houseId) {
         return housesService.getHouseInfo(houseId);
     }
 
     @PatchMapping("/{houseId}/notes")
-    @PreAuthorize("hasAnyRole('ROLE_REPRESENTATIVE')")
+    @PreAuthorize("hasAnyRole('ROLE_REPRESENTATIVE', 'ROLE_ADMIN')")
     public void saveNotes(@PathVariable String houseId, @RequestBody String notes) {
         housesService.saveNotes(houseId, notes);
     }
