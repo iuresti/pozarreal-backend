@@ -1,12 +1,11 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Observable, of} from 'rxjs';
-import {StreetInfo} from '../model/street-info';
 import {environment} from '../../environments/environment';
-import {Street} from '../model/street';
 import {House} from '../model/house';
 import {HouseNumber} from "../model/house-number";
 import {map} from "rxjs/operators";
+import {HouseInfo} from "../model/house-info";
 
 @Injectable({
   providedIn: 'root'
@@ -45,5 +44,13 @@ export class HouseService {
         }));
         return this.housesByStreet.get(selectedStreet);
       }));
+  }
+
+  getHouseInfo(houseId: string): Observable<HouseInfo> {
+    return this.http.get<HouseInfo>(`${environment.baseUrl}/house/info/${houseId}`);
+  }
+
+  saveHouseNotes(houseId: string, notes: string): Observable<void> {
+    return this.http.patch<void>(`${environment.baseUrl}/house/${houseId}/notes`, notes);
   }
 }

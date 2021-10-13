@@ -54,7 +54,7 @@
     <div *ngFor="let house of selectedStreet.houses;let i = index" [ngClass]="{'bg-white': i % 2 == 1}"
          class="row pb-2 ">
 
-      <div class="col {{mobile ? 'col-3' : 'col-1'}} pt-2">{{house.number}}</div>
+      <div class="btn btn-link col {{mobile ? 'col-3' : 'col-1'}} pt-2" (click)="showHouse(house.id)">{{house.number}}</div>
 
       <div *ngIf="!mobile" class="col col-1 pt-2">
         <div class="custom-control custom-switch ">

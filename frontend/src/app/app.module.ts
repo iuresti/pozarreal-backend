@@ -33,6 +33,7 @@ import { SmallDateFormatPipe } from './pipes/small-date-format.pipe';
 import { CommonDateFormatPipe } from './pipes/common-date-format.pipe';
 import {RouterModule} from '@angular/router';
 import {ROUTES} from './app.routes';
+import { HouseInfoComponent } from './components/house-info/house-info.component';
 
 @NgModule({
   declarations: [
@@ -57,7 +58,8 @@ import {ROUTES} from './app.routes';
     CourseAssistantPaymentsComponent,
     CourseAddPaymentComponent,
     SmallDateFormatPipe,
-    CommonDateFormatPipe
+    CommonDateFormatPipe,
+    HouseInfoComponent
   ],
     imports: [
         NgbModule,
