@@ -9,6 +9,7 @@ import {Payment} from '../../model/payment';
 import {Street} from '../../model/street';
 import {PaymentSubConcept} from '../../model/payment-sub-concept';
 import {DateFormatterService} from '../../services/date-formatter.service';
+import {HouseNumber} from "../../model/house-number";
 
 @Component({
   selector: 'app-payment-add',
@@ -17,12 +18,19 @@ import {DateFormatterService} from '../../services/date-formatter.service';
 })
 export class PaymentAddComponent implements OnInit {
   streets: Street[];
-  houses: House[];
+  houses: HouseNumber[];
   modelPaymentDate: NgbDateStruct;
   maxDate: NgbDateStruct;
   paymentConcepts: PaymentConcept[] = [];
   paymentSubConcepts: PaymentSubConcept[] = [];
+
   @Input() paymentData: Payment;
+  @Input() house: House;
+  @Input() street: Street;
+  isNew: boolean;
+  labelConcept: string;
+  labelSubConcept: string;
+
   @Output() dataReady: EventEmitter<void> = new EventEmitter<void>();
   @Output() wrongData: EventEmitter<void> = new EventEmitter<void>();
 
@@ -41,28 +49,11 @@ export class PaymentAddComponent implements OnInit {
       day: now.getDate()
     };
 
-    this.paymentService.getPaymentConcepts().subscribe(paymentConcepts => {
-      this.paymentConcepts = paymentConcepts.sort((a, b) => a.label < b.label ? -1 : 1);
-      console.log(this.paymentData.paymentConceptId);
-    });
+    this.isNew = !this.house;
 
-    this.streetService.getStreets().subscribe(streets => {
-      this.streets = streets.sort((a, b) => a.name < b.name ? -1 : 1);
-      console.log(this.paymentData.streetId);
-    });
+    this.prepareConceptsAndSubconcepts();
 
-    if (this.paymentData.streetId) {
-      this.houseService.getHousesByStreet(this.paymentData.streetId).subscribe(houses => {
-        this.houses = houses.sort((a, b) => a.number < b.number ? -1 : 1);
-      });
-    }
-
-    if (this.paymentData.paymentConceptId) {
-      console.log(this.paymentData.paymentSubConceptId);
-      this.paymentService.getPaymentSubConcepts(this.paymentData.paymentConceptId).subscribe(paymentSubConcepts => {
-        this.paymentSubConcepts = paymentSubConcepts;
-      });
-    }
+    this.prepareStreetsAndHouses();
 
     if (this.paymentData.paymentDate) {
       this.prepareStartDateFromExistentDate();
@@ -76,11 +67,44 @@ export class PaymentAddComponent implements OnInit {
 
   }
 
+  private prepareStreetsAndHouses() {
+    if (this.isNew) {
+      this.streetService.getStreets().subscribe(streets => {
+        this.streets = streets;
+      });
+
+
+      if (this.paymentData.streetId) {
+        this.houseService.getHouseNumbersByStreet(this.paymentData.streetId).subscribe(houses => {
+          this.houses = houses;
+        });
+      }
+    }
+  }
+
+  private prepareConceptsAndSubconcepts() {
+    this.paymentService.getPaymentConcepts().subscribe(paymentConcepts => {
+      this.paymentConcepts = paymentConcepts;
+      if (this.paymentData.paymentConceptId) {
+        this.labelConcept = this.paymentConcepts.find(paymentConcept => paymentConcept.id === this.paymentData.paymentConceptId)?.label;
+      }
+    });
+
+    if (this.paymentData.paymentConceptId) {
+      this.paymentService.getPaymentSubConcepts(this.paymentData.paymentConceptId).subscribe(paymentSubConcepts => {
+        this.paymentSubConcepts = paymentSubConcepts;
+        if (this.paymentData.paymentSubConceptId) {
+          this.labelSubConcept = this.paymentSubConcepts.find(paymentSybConcept => paymentSybConcept.id === this.paymentData.paymentSubConceptId)?.label;
+        }
+      });
+    }
+  }
+
   streetSelected(): void {
     this.paymentData.houseId = null;
     if (this.paymentData.streetId) {
       this.houseService.getHousesByStreet(this.paymentData.streetId).subscribe(houses => {
-        this.houses = houses.sort((a, b) => a.number < b.number ? -1 : 1);
+        this.houses = houses;
         this.formChanged();
       });
     } else {
