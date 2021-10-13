@@ -85,7 +85,9 @@
         *ngFor="let bimesterPayment of house.twoMonthsPayments;let bim = index"
         [ngStyle]="{'background-color': bimesterPayment.complete ? '#B6D7A8': 'transparent'}"
         class="col col-1 border border-light rounded d-flex align-items-center justify-content-center numbers">
-        <div *ngIf="bimesterPayment.complete && !mobile">
+        <div *ngIf="bimesterPayment.complete && !mobile"
+             (mouseleave)="onMouseLeave(number)"
+             (mouseover)="onMouseOver(number)">
           PAGADO
         </div>
 
@@ -98,7 +100,7 @@
         </div>
 
         <div #number class="number">
-          {{house.number}}
+          {{house.number}}-B{{bim + 1}}
         </div>
 
       </div>

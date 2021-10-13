@@ -51,33 +51,9 @@ export class PaymentAddComponent implements OnInit {
 
     this.isNew = !this.house;
 
-    this.paymentService.getPaymentConcepts().subscribe(paymentConcepts => {
-      this.paymentConcepts = paymentConcepts.sort((a, b) => a.label < b.label ? -1 : 1);
-      console.log(this.paymentData.paymentConceptId);
-      this.paymentConcepts.forEach(conceptId => {
-        if (this.paymentData.paymentConceptId == conceptId.id) this.labelConcept = conceptId.label;
-      });
-    });
+    this.prepareConceptsAndSubconcepts();
 
-    this.paymentService.getPaymentSubConcepts(this.paymentData.paymentConceptId).subscribe(paymentSubConcepts => {
-      this.paymentSubConcepts = paymentSubConcepts;
-      this.paymentSubConcepts.forEach(subConceptId => {
-        if (this.paymentData.paymentSubConceptId == subConceptId.id) this.labelSubConcept = subConceptId.label;
-      });
-
-    });
-
-    if (this.isNew) {
-      this.streetService.getStreets().subscribe(streets => {
-        this.streets = streets.sort((a, b) => a.name < b.name ? -1 : 1);
-        console.log(this.paymentData.streetId);
-      });
-
-      this.houseService.getHouseNumbersByStreet(this.paymentData.streetId).subscribe(houses => {
-        this.houses = houses;
-      });
-
-    }
+    this.prepareStreetsAndHouses();
 
     if (this.paymentData.paymentDate) {
       this.prepareStartDateFromExistentDate();
@@ -89,6 +65,39 @@ export class PaymentAddComponent implements OnInit {
       this.formChanged();
     }
 
+  }
+
+  private prepareStreetsAndHouses() {
+    if (this.isNew) {
+      this.streetService.getStreets().subscribe(streets => {
+        this.streets = streets;
+      });
+
+
+      if (this.paymentData.streetId) {
+        this.houseService.getHouseNumbersByStreet(this.paymentData.streetId).subscribe(houses => {
+          this.houses = houses;
+        });
+      }
+    }
+  }
+
+  private prepareConceptsAndSubconcepts() {
+    this.paymentService.getPaymentConcepts().subscribe(paymentConcepts => {
+      this.paymentConcepts = paymentConcepts;
+      if (this.paymentData.paymentConceptId) {
+        this.labelConcept = this.paymentConcepts.find(paymentConcept => paymentConcept.id === this.paymentData.paymentConceptId)?.label;
+      }
+    });
+
+    if (this.paymentData.paymentConceptId) {
+      this.paymentService.getPaymentSubConcepts(this.paymentData.paymentConceptId).subscribe(paymentSubConcepts => {
+        this.paymentSubConcepts = paymentSubConcepts;
+        if (this.paymentData.paymentSubConceptId) {
+          this.labelSubConcept = this.paymentSubConcepts.find(paymentSybConcept => paymentSybConcept.id === this.paymentData.paymentSubConceptId)?.label;
+        }
+      });
+    }
   }
 
   streetSelected(): void {

@@ -22,7 +22,7 @@ export class StreetService {
     }
 
     return this.http.get<Street[]>(`${environment.baseUrl}/streets`)
-      .pipe(tap(streets => this.streets = streets));
+      .pipe(tap(streets => this.streets = streets.sort((a, b) => a.name < b.name ? -1 : 1)));
   }
 
   getStreetInfo(streetId: string): Observable<StreetInfo> {
