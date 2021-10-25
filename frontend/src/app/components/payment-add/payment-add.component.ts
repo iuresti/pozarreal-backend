@@ -9,7 +9,7 @@ import {Payment} from '../../model/payment';
 import {Street} from '../../model/street';
 import {PaymentSubConcept} from '../../model/payment-sub-concept';
 import {DateFormatterService} from '../../services/date-formatter.service';
-import {HouseNumber} from "../../model/house-number";
+import {HouseNumber} from '../../model/house-number';
 
 @Component({
   selector: 'app-payment-add',
@@ -67,7 +67,7 @@ export class PaymentAddComponent implements OnInit {
 
   }
 
-  private prepareStreetsAndHouses() {
+  private prepareStreetsAndHouses(): void {
     if (this.isNew) {
       this.streetService.getStreets().subscribe(streets => {
         this.streets = streets;
@@ -82,7 +82,7 @@ export class PaymentAddComponent implements OnInit {
     }
   }
 
-  private prepareConceptsAndSubconcepts() {
+  private prepareConceptsAndSubconcepts(): void {
     this.paymentService.getPaymentConcepts().subscribe(paymentConcepts => {
       this.paymentConcepts = paymentConcepts;
       if (this.paymentData.paymentConceptId) {

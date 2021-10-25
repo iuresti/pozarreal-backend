@@ -34,7 +34,7 @@ public class PaymentsController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_REPRESENTATIVE')")
     public Payment save(@RequestBody Payment payment, Principal principal) {
         LoggedUser loggedUser = sessionHelper.getLoggedUser(principal);
 

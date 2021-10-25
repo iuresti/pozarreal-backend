@@ -25,7 +25,7 @@ public class PaymentConceptsController {
         return paymentConceptsService.findAll();
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_REPRESENTATIVE')")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public PaymentConcept addPaymentConcept(PaymentConcept paymentConcept) {

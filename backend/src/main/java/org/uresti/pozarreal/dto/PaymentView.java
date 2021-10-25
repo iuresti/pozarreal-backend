@@ -44,4 +44,6 @@ public class PaymentView {
 
     private String notes;
 
+    private boolean validated;
+
 }

@@ -12,4 +12,5 @@ import lombok.NoArgsConstructor;
 public class PaymentByConcept {
     boolean isComplete;
     double amount = 0;
+    boolean validated;
 }

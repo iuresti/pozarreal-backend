@@ -8,4 +8,5 @@ export interface Payment {
   paymentSubConceptId: string;
   paymentMode: string;
   notes: string;
+  validated: boolean;
 }

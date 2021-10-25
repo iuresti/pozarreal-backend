@@ -54,7 +54,9 @@
     <div *ngFor="let house of selectedStreet.houses;let i = index" [ngClass]="{'bg-white': i % 2 == 1}"
          class="row pb-2 ">
 
-      <div class="btn btn-link col {{mobile ? 'col-3' : 'col-1'}} pt-2" (click)="showHouse(house.id)">{{house.number}}</div>
+      <div class="btn btn-link col {{mobile ? 'col-3' : 'col-1'}} pt-2"
+           (click)="showHouse(house.id)">{{house.number}}
+      </div>
 
       <div *ngIf="!mobile" class="col col-1 pt-2">
         <div class="custom-control custom-switch ">
@@ -81,10 +83,9 @@
         </app-chips-by-house>
       </div>
 
-      <div
-        *ngFor="let bimesterPayment of house.twoMonthsPayments;let bim = index"
-        [ngStyle]="{'background-color': bimesterPayment.complete ? '#B6D7A8': 'transparent'}"
-        class="col col-1 border border-light rounded d-flex align-items-center justify-content-center numbers">
+      <div *ngFor="let bimesterPayment of house.twoMonthsPayments; let bim = index"
+           [ngStyle]="getStyle(bimesterPayment)"
+           class="col col-1 border border-light rounded d-flex align-items-center justify-content-center numbers">
         <div *ngIf="bimesterPayment.complete && !mobile"
              (mouseleave)="onMouseLeave(number)"
              (mouseover)="onMouseOver(number)">
