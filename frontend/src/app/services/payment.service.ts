@@ -7,7 +7,7 @@ import {environment} from '../../environments/environment';
 import {PaymentConcept} from '../model/payment-concept';
 import {Payment} from '../model/payment';
 import {PaymentSubConcept} from '../model/payment-sub-concept';
-import {tap} from "rxjs/operators";
+import {tap} from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -51,7 +51,7 @@ export class PaymentService {
   }
 
   getPaymentConcepts(): Observable<PaymentConcept[]> {
-    if(this.paymentConcepts){
+    if (this.paymentConcepts) {
       return of(this.paymentConcepts);
     }
 
@@ -61,7 +61,7 @@ export class PaymentService {
 
   getPaymentSubConcepts(paymentConceptId: string): Observable<PaymentSubConcept[]> {
 
-    if(this.paymentSubConcepts.has(paymentConceptId)){
+    if (this.paymentSubConcepts.has(paymentConceptId)) {
       return of(this.paymentSubConcepts.get(paymentConceptId));
     }
 
@@ -79,6 +79,10 @@ export class PaymentService {
 
   getPayment(id: string): Observable<Payment> {
     return this.http.get<Payment>(`${environment.baseUrl}/payments/${id}`);
+  }
+
+  updateStatus(id: string): Observable<void> {
+    return this.http.patch<void>(`${environment.baseUrl}/payments/${id}`, {});
   }
 
 }

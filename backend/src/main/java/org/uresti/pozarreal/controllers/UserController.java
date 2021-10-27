@@ -36,7 +36,6 @@ public class UserController {
         String email = sessionHelper.getEmailForLoggedUser(principal);
 
         return userService.buildUserForEmail(email);
-
     }
 
     @GetMapping("/api/users")

@@ -60,7 +60,8 @@
 
       <div *ngIf="!mobile" class="col col-1 pt-2">
         <div class="custom-control custom-switch ">
-          <input (ngModelChange)="chipsForHouseEnabled(selectedStreet, house)" [(ngModel)]="house.chipsEnabled"
+          <input (ngModelChange)="chipsForHouseEnabled(selectedStreet, house)"
+                 [(ngModel)]="house.chipsEnabled"
                  class="custom-control-input"
                  id="{{'chip-' + house.number}}"
                  type="checkbox">
@@ -84,6 +85,7 @@
       </div>
 
       <div *ngFor="let bimesterPayment of house.twoMonthsPayments; let bim = index"
+           (click)="validatePayment(bimesterPayment, house)"
            [ngStyle]="getStyle(bimesterPayment)"
            class="col col-1 border border-light rounded d-flex align-items-center justify-content-center numbers">
         <div *ngIf="bimesterPayment.complete && !mobile"
@@ -106,9 +108,8 @@
 
       </div>
 
-      <div
-        [ngStyle]="{'background-color': house.parkingPenPayment.complete ? '#B6D7A8': 'transparent'}"
-        class="ml-1 col {{mobile ? 'col-2' : 'col-1'}} border border-light rounded d-flex align-items-center justify-content-center">
+      <div [ngStyle]="{'background-color': house.parkingPenPayment.complete ? '#B6D7A8': 'transparent'}"
+           class="ml-1 col {{mobile ? 'col-2' : 'col-1'}} border border-light rounded d-flex align-items-center justify-content-center">
         {{house.parkingPenPayment.complete ? (mobile ? '' : 'PAGADO') : (house.parkingPenPayment.amount ? house.parkingPenPayment.amount : '')}}
       </div>
 
@@ -121,7 +122,10 @@
 <ng-template #addPaymentDialog let-c="close" let-d="dismiss">
   <div class="modal-header">
     <h4 class="modal-title" id="modal-basic-title">Registrar pago</h4>
-    <button (click)="d('Cross click')" aria-label="Close" class="close" type="button">
+    <button (click)="d('Cross click')"
+            aria-label="Close"
+            class="close"
+            type="button">
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
@@ -135,8 +139,12 @@
   </div>
   <div class="modal-footer">
     <label *ngIf="!newPaymentReady" class="alert-danger">Hay datos inválidos</label>
-    <button (click)="c('saved')" [disabled]="!newPaymentReady" class="btn btn-outline-dark"
-            type="button">Guardar
+    <button (click)="c('saved')"
+            [disabled]="!newPaymentReady"
+            class="btn btn-outline-dark"
+            type="button">
+      Guardar
     </button>
   </div>
 </ng-template>
+

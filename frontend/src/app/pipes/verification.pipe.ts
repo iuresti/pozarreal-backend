@@ -5,10 +5,7 @@ import { Pipe, PipeTransform } from '@angular/core';
 })
 export class VerificationPipe implements PipeTransform {
 
-  transform(value: string, ...args: unknown[]): string {
-    return {
-      true: 'Validado',
-      false: 'Validación pendiente',
-    }[value];
+  transform(value: boolean, ...args: unknown[]): string {
+    return value ? 'Validado' : 'Validación pendiente';
   }
 }

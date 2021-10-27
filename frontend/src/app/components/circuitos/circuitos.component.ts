@@ -1,4 +1,4 @@
-import {Component, ElementRef, OnInit} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {StreetInfo} from '../../model/street-info';
 import {Street} from '../../model/street';
 import {StreetService} from '../../services/street.service';
@@ -103,7 +103,6 @@ export class CircuitosComponent implements OnInit {
     this.newPayment.paymentConceptId = 'MAINTENANCE';
     this.newPayment.paymentSubConceptId = 'MAINTENANCE_BIM_' + bim;
     this.newPayment.amount = this.maintenanceFee - bimesterPayment.amount;
-    this.newPayment.validated = this.userHasRoles(['ROLE_ADMIN']);
     console.log(bimesterPayment);
 
     this.modalService.open(content, {ariaLabelledBy: 'modal-basic-title'}).result.then((result) => {
@@ -143,6 +142,25 @@ export class CircuitosComponent implements OnInit {
     }
     if (bimesterPayment.complete && !bimesterPayment.validated) {
       return {backgroundColor: '#FADC00'};
+    }
+  }
+
+  validatePayment(bimesterPayment: PaymentByConcept, house: House): void {
+    if (!bimesterPayment.validated && bimesterPayment.complete) {
+      Swal.fire({
+        title: `¿Validar pago por $ ${bimesterPayment.amount} de la casa ${house.number}?`,
+        showDenyButton: true,
+        showCancelButton: false,
+        confirmButtonText: `Sí`,
+        denyButtonText: `No`,
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.paymentService.updateStatus(bimesterPayment.id).subscribe(() => {
+            Swal.fire('Validado!', '', 'success').then(console.log);
+            bimesterPayment.validated = true;
+          });
+        }
+      });
     }
   }
 
