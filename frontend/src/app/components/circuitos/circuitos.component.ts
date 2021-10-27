@@ -103,7 +103,6 @@ export class CircuitosComponent implements OnInit {
     this.newPayment.paymentConceptId = 'MAINTENANCE';
     this.newPayment.paymentSubConceptId = 'MAINTENANCE_BIM_' + bim;
     this.newPayment.amount = this.maintenanceFee - bimesterPayment.amount;
-    this.newPayment.validated = this.userHasRoles(['ROLE_ADMIN']);
     console.log(bimesterPayment);
 
     this.modalService.open(content, {ariaLabelledBy: 'modal-basic-title'}).result.then((result) => {
@@ -111,7 +110,7 @@ export class CircuitosComponent implements OnInit {
       console.log(this.newPayment);
       this.paymentService.save(this.newPayment).subscribe(() => {
         console.log('Saving payment');
-        bimesterPayment.validated = this.newPayment.validated;
+        bimesterPayment.validated = this.userHasRoles(['ROLE_ADMIN']);
         bimesterPayment.amount += this.newPayment.amount;
         bimesterPayment.complete = this.maintenanceFee <= bimesterPayment.amount;
       });
