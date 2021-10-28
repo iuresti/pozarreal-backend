@@ -1,6 +1,3 @@
-import {Login} from './login';
-import {House} from './house';
-
 export interface User {
   id: string;
   name: string;

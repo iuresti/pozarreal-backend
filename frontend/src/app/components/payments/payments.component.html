@@ -29,6 +29,7 @@
       <th>Concepto</th>
       <th>Modo de pago</th>
       <th>Notas</th>
+      <th>Verificación</th>
       <th>&nbsp;</th>
     </tr>
     </thead>
@@ -41,6 +42,7 @@
       <td>{{payment.paymentConcept + (payment.paymentSubConcept ? ' - ' + payment.paymentSubConcept : '')}}</td>
       <td>{{payment.paymentMode | paymentMode}}</td>
       <td>{{payment.notes}}</td>
+      <td>{{payment.validated | verification}}</td>
       <td>
         <i class="bi bi-trash btn btn-link"
            (click)="deletePayment(payment)"
