@@ -85,6 +85,7 @@
       <div
         *ngFor="let bimesterPayment of house.twoMonthsPayments;let bim = index"
         [ngStyle]="getStyle(bimesterPayment)"
+        (click)="validatePayment(bimesterPayment, house)"
         class="col col-1 border border-light rounded d-flex align-items-center justify-content-center numbers">
         <div *ngIf="bimesterPayment.complete && !mobile"
              (mouseleave)="onMouseLeave(number)"
@@ -92,7 +93,7 @@
           PAGADO
         </div>
 
-        <div (click)="addPayment(addPaymentDialog, bim + 1, bimesterPayment, house)"
+        <div (click)="addPayment(addPaymentDialog, bim + 1, bimesterPayment, house, $event)"
              (mouseleave)="onMouseLeave(number)"
              (mouseover)="onMouseOver(number)"
              *ngIf="!bimesterPayment.complete"

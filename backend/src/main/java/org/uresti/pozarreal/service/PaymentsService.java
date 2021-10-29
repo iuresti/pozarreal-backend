@@ -15,4 +15,6 @@ public interface PaymentsService {
     void delete(String paymentId);
 
     Payment getPayment(String paymentId, String userIdForLoggedUser);
+
+    Payment updateValidated(String paymentId);
 }

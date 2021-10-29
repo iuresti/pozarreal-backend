@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PaymentByConcept {
+    String id;
     boolean isComplete;
     double amount = 0;
     boolean validated;

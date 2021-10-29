@@ -2,7 +2,6 @@ import {Component, OnInit} from '@angular/core';
 import {SessionService} from './services/session.service';
 import {User} from './model/user';
 
-
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',

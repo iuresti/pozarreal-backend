@@ -11,6 +11,8 @@ import {PaymentService} from '../../services/payment.service';
 import {PaymentByConcept} from '../../model/payment-by-concept';
 import {environment} from '../../../environments/environment';
 import {ActivatedRoute, Router} from '@angular/router';
+import {User} from '../../model/user';
+import {SessionService} from '../../services/session.service';
 
 @Component({
   selector: 'app-circuitos',
@@ -19,6 +21,7 @@ import {ActivatedRoute, Router} from '@angular/router';
 })
 export class CircuitosComponent implements OnInit {
 
+  user: User;
   house: House;
   title = 'pozarreal';
   selectedStreet: StreetInfo;
@@ -31,6 +34,7 @@ export class CircuitosComponent implements OnInit {
   mobile: boolean;
 
   constructor(private streetService: StreetService,
+              private sessionService: SessionService,
               private houseService: HouseService,
               private modalService: NgbModal,
               private paymentService: PaymentService,
@@ -51,8 +55,8 @@ export class CircuitosComponent implements OnInit {
         this.selectStreet();
       } else {
         this.activatedRoute.params.subscribe(params => {
-          if (params['streetId']) {
-            this.selectedStreetId = params['streetId'];
+          if (params.streetId) {
+            this.selectedStreetId = params.streetId;
             this.selectStreet();
           }
         });
@@ -88,7 +92,8 @@ export class CircuitosComponent implements OnInit {
     });
   }
 
-  addPayment(content, bim: number, bimesterPayment: PaymentByConcept, house: House): void {
+  addPayment(content, bim: number, bimesterPayment: PaymentByConcept, house: House, event: MouseEvent): void {
+    event.stopPropagation();
     this.newPayment = {} as Payment;
     this.newPayment.streetId = this.selectedStreet.id;
     this.newPayment.houseId = house.id;
@@ -123,13 +128,36 @@ export class CircuitosComponent implements OnInit {
     this.router.navigate(['house', id]);
   }
 
-  getStyle(bimesterPayment: PaymentByConcept) {
+  getStyle(bimesterPayment: PaymentByConcept): any {
     if (bimesterPayment.validated && bimesterPayment.complete) {
       return {backgroundColor: '#B6D7A8'};
     }
-    if (bimesterPayment.complete && !bimesterPayment.validated) {
+    if (!bimesterPayment.validated && bimesterPayment.amount > 0) {
       return {backgroundColor: '#FADC00'};
     }
   }
 
+  validatePayment(bimesterPayment: PaymentByConcept, house: House): void {
+    this.sessionService.getUser().subscribe(user => this.user = user);
+    if (!bimesterPayment.validated && bimesterPayment.amount > 0 && this.userHasRoles(['ROLE_ADMIN'])) {
+      Swal.fire({
+        title: `¿Validar pago por $${bimesterPayment.amount} de la casa ${house.number}?`,
+        showDenyButton: true,
+        showCancelButton: false,
+        confirmButtonText: `Sí`,
+        denyButtonText: `No`,
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.paymentService.updateValidated(bimesterPayment.id).subscribe((payment) => {
+            Swal.fire('Validado!', '', 'success').then(console.log);
+            bimesterPayment.validated = payment.validated;
+          });
+        }
+      });
+    }
+  }
+
+  userHasRoles(roles: string[]): boolean {
+    return this.user.roles.some(r => roles.includes(r));
+  }
 }
