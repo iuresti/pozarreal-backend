@@ -63,7 +63,8 @@ export class PaymentsComponent implements OnInit {
 
   }
 
-  deletePayment(payment: PaymentView): void {
+  deletePayment(payment: PaymentView, event): void {
+    event.stopPropagation();
     Swal.fire({
       title: `¿Confirmas la eliminación de este pago para ${payment.streetName} ${payment.houseNumber}?`,
       showDenyButton: true,
@@ -80,7 +81,8 @@ export class PaymentsComponent implements OnInit {
     });
   }
 
-  editPayment(content, payment: PaymentView): void {
+  editPayment(content, payment: PaymentView, event): void {
+    event.stopPropagation();
     this.newPayment = {} as Payment;
 
     this.newPayment.paymentConceptId = payment.paymentConceptId;
@@ -138,4 +140,28 @@ export class PaymentsComponent implements OnInit {
     link.click();
   }
 
+  showVouchers(): void {
+    console.log('Here show Vouchers');
+  }
+
+  onChange(payment: PaymentView, event): void {
+    if (event.target.value === 'true') {
+      Swal.fire({
+        title: `¿Confirmas la validación de este pago para ${payment.streetName} ${payment.houseNumber}?`,
+        showDenyButton: true,
+        showCancelButton: false,
+        confirmButtonText: `Sí`,
+        denyButtonText: `No`,
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.paymentService.updateValidated(payment.id).subscribe(p => {
+            payment.validated = p.validated;
+            Swal.fire('Validado!', '', 'success').then(console.log);
+          });
+        } else {
+          event.target.value = 'false';
+        }
+      });
+    }
+  }
 }
