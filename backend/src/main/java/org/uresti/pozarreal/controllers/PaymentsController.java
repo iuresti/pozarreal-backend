@@ -34,13 +34,13 @@ public class PaymentsController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_REPRESENTATIVE')")
     public Payment save(@RequestBody Payment payment, Principal principal) {
         LoggedUser loggedUser = sessionHelper.getLoggedUser(principal);
 
         log.info("Saving payment (house: {}, amount: $ {}, concept: {}, user: {} - {})", payment.getHouseId(), payment.getAmount(), payment.getPaymentConceptId(), loggedUser.getName(), loggedUser.getUserId());
 
-        return paymentsService.save(payment, sessionHelper.getUserIdForLoggedUser(principal));
+        return paymentsService.save(payment, principal);
     }
 
     @GetMapping("/{paymentId}")

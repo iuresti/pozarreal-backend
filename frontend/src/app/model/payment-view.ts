@@ -14,4 +14,5 @@ export interface PaymentView {
   paymentSubConcept: string;
   paymentMode: string;
   notes: string;
+  validated: boolean;
 }

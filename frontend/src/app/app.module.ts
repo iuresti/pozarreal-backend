@@ -34,6 +34,7 @@ import { CommonDateFormatPipe } from './pipes/common-date-format.pipe';
 import {RouterModule} from '@angular/router';
 import {ROUTES} from './app.routes';
 import { HouseInfoComponent } from './components/house-info/house-info.component';
+import { VerificationPipe } from './pipes/verification.pipe';
 
 @NgModule({
   declarations: [
@@ -59,7 +60,8 @@ import { HouseInfoComponent } from './components/house-info/house-info.component
     CourseAddPaymentComponent,
     SmallDateFormatPipe,
     CommonDateFormatPipe,
-    HouseInfoComponent
+    HouseInfoComponent,
+    VerificationPipe
   ],
     imports: [
         NgbModule,

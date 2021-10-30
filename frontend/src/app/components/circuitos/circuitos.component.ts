@@ -10,7 +10,7 @@ import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {PaymentService} from '../../services/payment.service';
 import {PaymentByConcept} from '../../model/payment-by-concept';
 import {environment} from '../../../environments/environment';
-import {ActivatedRoute, Router} from "@angular/router";
+import {ActivatedRoute, Router} from '@angular/router';
 
 @Component({
   selector: 'app-circuitos',
@@ -49,7 +49,7 @@ export class CircuitosComponent implements OnInit {
       if (streets.length === 1) {
         this.selectedStreetId = streets[0].id;
         this.selectStreet();
-      }else {
+      } else {
         this.activatedRoute.params.subscribe(params => {
           if (params['streetId']) {
             this.selectedStreetId = params['streetId'];
@@ -100,8 +100,9 @@ export class CircuitosComponent implements OnInit {
     this.modalService.open(content, {ariaLabelledBy: 'modal-basic-title'}).result.then((result) => {
       console.log('Saving payment');
       console.log(this.newPayment);
-      this.paymentService.save(this.newPayment).subscribe(() => {
+      this.paymentService.save(this.newPayment).subscribe((payment) => {
         console.log('Saving payment');
+        bimesterPayment.validated = payment.validated;
         bimesterPayment.amount += this.newPayment.amount;
         bimesterPayment.complete = this.maintenanceFee <= bimesterPayment.amount;
       });
@@ -110,15 +111,25 @@ export class CircuitosComponent implements OnInit {
     });
   }
 
-  onMouseOver(number) {
-    number.style.display = 'block';
+  onMouseOver({style}: HTMLDivElement): void {
+    style.display = 'block';
   }
 
-  onMouseLeave(number) {
-    number.style.display = 'none';
+  onMouseLeave({style}: HTMLDivElement): void {
+    style.display = 'none';
   }
 
-  showHouse(id: string) {
-    this.router.navigate(["house", id]);
+  showHouse(id: string): void {
+    this.router.navigate(['house', id]);
   }
+
+  getStyle(bimesterPayment: PaymentByConcept) {
+    if (bimesterPayment.validated && bimesterPayment.complete) {
+      return {backgroundColor: '#B6D7A8'};
+    }
+    if (bimesterPayment.complete && !bimesterPayment.validated) {
+      return {backgroundColor: '#FADC00'};
+    }
+  }
+
 }
