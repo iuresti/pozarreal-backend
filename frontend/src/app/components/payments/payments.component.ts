@@ -154,7 +154,7 @@ export class PaymentsComponent implements OnInit {
         denyButtonText: `No`,
       }).then((result) => {
         if (result.isConfirmed) {
-          this.paymentService.updateValidated(payment.id).subscribe(p => {
+          this.paymentService.validatePayment(payment.id).subscribe(p => {
             payment.validated = p.validated;
             Swal.fire('Validado!', '', 'success').then(console.log);
           });
