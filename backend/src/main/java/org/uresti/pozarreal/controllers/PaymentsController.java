@@ -65,7 +65,6 @@ public class PaymentsController {
     }
 
     @PatchMapping("/{paymentId}")
-    @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     public Payment validatePayment(Principal principal, @PathVariable String paymentId) {
         LoggedUser loggedUser = sessionHelper.getLoggedUser(principal);
