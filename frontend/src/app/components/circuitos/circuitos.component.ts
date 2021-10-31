@@ -148,7 +148,7 @@ export class CircuitosComponent implements OnInit {
         denyButtonText: `No`,
       }).then((result) => {
         if (result.isConfirmed) {
-          this.paymentService.updateValidated(bimesterPayment.id).subscribe((payment) => {
+          this.paymentService.validatePayment(bimesterPayment.id).subscribe((payment) => {
             Swal.fire('Validado!', '', 'success').then(console.log);
             bimesterPayment.validated = payment.validated;
           });

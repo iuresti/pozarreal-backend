@@ -16,5 +16,5 @@ public interface PaymentsService {
 
     Payment getPayment(String paymentId, String userIdForLoggedUser);
 
-    Payment updateValidated(String paymentId);
+    Payment validatePayment(String paymentId);
 }

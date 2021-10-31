@@ -67,11 +67,11 @@ public class PaymentsController {
     @PatchMapping("/{paymentId}")
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
-    public Payment updateValidated(Principal principal, @PathVariable String paymentId) {
+    public Payment validatePayment(Principal principal, @PathVariable String paymentId) {
         LoggedUser loggedUser = sessionHelper.getLoggedUser(principal);
 
         log.info("Updating payment: {} by user: {} - {}", paymentId, loggedUser.getName(), loggedUser.getUserId());
 
-        return paymentsService.updateValidated(paymentId);
+        return paymentsService.validatePayment(paymentId);
     }
 }

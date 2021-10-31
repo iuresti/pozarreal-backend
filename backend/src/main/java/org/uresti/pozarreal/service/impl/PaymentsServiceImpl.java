@@ -80,7 +80,7 @@ public class PaymentsServiceImpl implements PaymentsService {
     }
 
     @Override
-    public Payment updateValidated(String paymentId) {
+    public Payment validatePayment(String paymentId) {
         org.uresti.pozarreal.model.Payment payment = paymentRepository.findById(paymentId).orElseThrow();
 
         payment.setValidated(true);
