@@ -13,6 +13,7 @@ import {environment} from '../../../environments/environment';
 import {ActivatedRoute, Router} from '@angular/router';
 import {User} from '../../model/user';
 import {SessionService} from '../../services/session.service';
+import {UploadFileService} from '../../services/upload-file.service';
 
 @Component({
   selector: 'app-circuitos',
@@ -38,6 +39,7 @@ export class CircuitosComponent implements OnInit {
               private houseService: HouseService,
               private modalService: NgbModal,
               private paymentService: PaymentService,
+              private uploadFileService: UploadFileService,
               private router: Router,
               private activatedRoute: ActivatedRoute) {
   }
@@ -110,6 +112,12 @@ export class CircuitosComponent implements OnInit {
         bimesterPayment.validated = payment.validated;
         bimesterPayment.amount += this.newPayment.amount;
         bimesterPayment.complete = this.maintenanceFee <= bimesterPayment.amount;
+        const files = this.newPayment.files;
+        if (files) {
+          for (let i = 0; i < files.length; i++) {
+            this.uploadFileService.uploadFilesPayment(files.item(i), payment.id).subscribe();
+          }
+        }
       });
     }, (reason) => {
       console.log('Cancel saving payment');
@@ -148,7 +156,7 @@ export class CircuitosComponent implements OnInit {
         denyButtonText: `No`,
       }).then((result) => {
         if (result.isConfirmed) {
-          this.paymentService.updateValidated(bimesterPayment.id).subscribe((payment) => {
+          this.paymentService.validatePayment(bimesterPayment.id).subscribe((payment) => {
             Swal.fire('Validado!', '', 'success').then(console.log);
             bimesterPayment.validated = payment.validated;
           });

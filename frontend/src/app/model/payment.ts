@@ -9,4 +9,5 @@ export interface Payment {
   paymentMode: string;
   notes: string;
   validated: boolean;
+  files: FileList;
 }

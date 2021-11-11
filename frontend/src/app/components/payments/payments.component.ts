@@ -6,6 +6,7 @@ import {NgbModal, NgbModalConfig} from '@ng-bootstrap/ng-bootstrap';
 import {Payment} from '../../model/payment';
 import Swal from 'sweetalert2';
 import {SessionService} from '../../services/session.service';
+import {UploadFileService} from '../../services/upload-file.service';
 
 @Component({
   selector: 'app-payments',
@@ -24,6 +25,7 @@ export class PaymentsComponent implements OnInit {
 
   constructor(private paymentService: PaymentService,
               private modalService: NgbModal,
+              private uploadFileService: UploadFileService,
               private sessionService: SessionService,
               config: NgbModalConfig) {
     config.backdrop = 'static';
@@ -99,6 +101,12 @@ export class PaymentsComponent implements OnInit {
       console.log('Saving payment');
       console.log(this.newPayment);
       this.paymentService.save(this.newPayment).subscribe(() => {
+        const files = this.newPayment.files;
+        if (files) {
+          for (let i = 0; i < files.length; i++) {
+            this.uploadFileService.uploadFilesPayment(files.item(i), payment.id).subscribe();
+          }
+        }
         if (this.lastFilter) {
           this.doSearch(this.lastFilter);
         }
