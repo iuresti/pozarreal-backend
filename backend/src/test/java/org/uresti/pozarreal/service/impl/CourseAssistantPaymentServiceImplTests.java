@@ -254,6 +254,7 @@ public class CourseAssistantPaymentServiceImplTests {
         coursePayment.setReceiptNumber("123");
 
         lista.add(coursePayment);
+        Mockito.doNothing().when(courseAssistantPaymentRepository).deleteById("123456");
         Mockito.when(courseAssistantPaymentRepository.save(coursePayment)).thenReturn(coursePayment);
         Mockito.when(courseAssistantPaymentRepository.findAllByCourseAssistantIdOrderByPaymentDateDesc("abc"))
                 .thenReturn(lista);
