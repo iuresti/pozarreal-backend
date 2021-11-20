@@ -128,9 +128,6 @@ public class CoursesServiceImplTests {
         // When:
         List<Course> courses = coursesService.findAll();
 
-        String startTime = String.format("%02d:%02d", scheduleByCourse.getStartTime() / 100, scheduleByCourse.getStartTime() % 100);
-        String endTime = String.format("%02d:%02d", scheduleByCourse.getEndTime() / 100, scheduleByCourse.getEndTime() % 100);
-
         // Then:
         Assertions.assertTrue(mockSessionHelper.hasRole(user, Role.ROLE_SCHOOL_MANAGER));
         Assertions.assertEquals(1, courses.size());
@@ -142,8 +139,8 @@ public class CoursesServiceImplTests {
         Assertions.assertEquals(courseOccurrence.getStartTime(), courses.get(0).getOccurrences().get(0).getStartTime());
         Assertions.assertEquals(courseOccurrence.getEndTime(), courses.get(0).getOccurrences().get(0).getEndTime());
         Assertions.assertEquals(courseOccurrence.getLabel(), courses.get(0).getOccurrences().get(0).getLabel());
-        Assertions.assertEquals(startTime, courses.get(0).getOccurrences().get(0).getStartTime());
-        Assertions.assertEquals(endTime, courses.get(0).getOccurrences().get(0).getEndTime());
+        Assertions.assertEquals("10:00", courses.get(0).getOccurrences().get(0).getStartTime());
+        Assertions.assertEquals("12:00", courses.get(0).getOccurrences().get(0).getEndTime());
     }
 
     @Test
