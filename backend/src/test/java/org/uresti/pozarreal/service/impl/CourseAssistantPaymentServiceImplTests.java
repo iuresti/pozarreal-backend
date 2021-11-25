@@ -1,12 +1,10 @@
 package org.uresti.pozarreal.service.impl;
 
-import org.junit.jupiter.api.Assertions;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
-import org.uresti.pozarreal.config.Role;
-import org.uresti.pozarreal.controllers.SessionHelper;
 import org.uresti.pozarreal.dto.CoursePayment;
-import org.uresti.pozarreal.dto.LoggedUser;
 import org.uresti.pozarreal.repository.CourseAssistantPaymentRepository;
 import org.uresti.pozarreal.service.mappers.CourseAssistantPaymentMapper;
 
@@ -17,261 +15,205 @@ import java.util.List;
 
 public class CourseAssistantPaymentServiceImplTests {
     @Test
-    public void givenAnEmptyCoursePayment_whenGetCoursePayment_thenEmptyListIsReturned() {
+    public void givenAnEmptyCoursePayment_whenFindAllByCourseAssistant_thenEmptyListIsReturned() {
         // Given:
         CourseAssistantPaymentRepository courseAssistantPaymentRepository = Mockito.mock(CourseAssistantPaymentRepository.class);
-        SessionHelper mockSessionHelper = Mockito.mock(SessionHelper.class);
-        CourseAssistantPaymentServiceImpl courseAssistantPaymentService = new CourseAssistantPaymentServiceImpl(courseAssistantPaymentRepository);
-        LoggedUser user = LoggedUser.builder().build();
-        List<org.uresti.pozarreal.model.CoursePayment> lista = new LinkedList<>();
 
-        Mockito.when(courseAssistantPaymentRepository.findAllByCourseAssistantIdOrderByPaymentDateDesc(null)).thenReturn(lista);
-        Mockito.when(mockSessionHelper.hasRole(user, Role.ROLE_SCHOOL_MANAGER)).thenReturn(true);
+        CourseAssistantPaymentServiceImpl courseAssistantPaymentService = new CourseAssistantPaymentServiceImpl(courseAssistantPaymentRepository);
+
+        List<org.uresti.pozarreal.model.CoursePayment> coursePaymentList = new LinkedList<>();
+
+        Mockito.when(courseAssistantPaymentRepository.findAllByCourseAssistantIdOrderByPaymentDateDesc(null)).thenReturn(coursePaymentList);
 
         // When:
         List<CoursePayment> courses = courseAssistantPaymentService.findAllByCourseAssistant(null);
 
         // Then:
-        Assertions.assertTrue(courses.isEmpty());
+        Assertions.assertThat(courses.isEmpty()).isTrue();
     }
 
     @Test
-    public void givenAnCoursePaymentWithTwoElements_whenGetCoursesPayment_thenListWithTwoElementsIsReturned() {
+    public void givenAnCoursePaymentWithTwoElements_whenFindAllByCourseAssistant_thenListWithTwoElementsIsReturned() {
         // Given:
         CourseAssistantPaymentRepository courseAssistantPaymentRepository = Mockito
                 .mock(CourseAssistantPaymentRepository.class);
-        SessionHelper mockSessionHelper = Mockito.mock(SessionHelper.class);
+
         CourseAssistantPaymentServiceImpl courseAssistantPaymentService = new
                 CourseAssistantPaymentServiceImpl(courseAssistantPaymentRepository);
-        LoggedUser user = LoggedUser.builder().build();
-        List<org.uresti.pozarreal.model.CoursePayment> lista = new LinkedList<>();
+
+        List<org.uresti.pozarreal.model.CoursePayment> coursePaymentList = new LinkedList<>();
         LocalDate now = LocalDate.now();
 
-        org.uresti.pozarreal.model.CoursePayment coursePayment1 = new org.uresti.pozarreal.model.CoursePayment();
-        coursePayment1.setId("id1");
-        coursePayment1.setPaymentDate(now);
-        coursePayment1.setUserId("User 1");
-        coursePayment1.setAmount(new BigDecimal(50));
-        coursePayment1.setCourseAssistantId("abc");
-        coursePayment1.setReceiptNumber("123");
-        coursePayment1.setNotes("hello");
-        coursePayment1.setConcept("Concept 1");
-        lista.add(coursePayment1);
+        org.uresti.pozarreal.model.CoursePayment coursePayment1 = org.uresti.pozarreal.model.CoursePayment.builder()
+                .id("id1")
+                .paymentDate(now)
+                .amount(new BigDecimal(50))
+                .courseAssistantId("abc")
+                .receiptNumber("12345")
+                .notes("hello")
+                .userId("User 1")
+                .concept("Concept 1")
+                .build();
 
-        org.uresti.pozarreal.model.CoursePayment coursePayment2 = new org.uresti.pozarreal.model.CoursePayment();
-        coursePayment2.setId("id2");
-        coursePayment2.setCourseAssistantId("abc");
-        coursePayment2.setAmount(new BigDecimal(50));
-        coursePayment2.setUserId("User 2");
-        coursePayment2.setReceiptNumber("123");
-        coursePayment2.setNotes("hello");
-        coursePayment2.setConcept("Concept 2");
-        coursePayment2.setPaymentDate(now);
-        lista.add(coursePayment2);
+        org.uresti.pozarreal.model.CoursePayment coursePayment2 = org.uresti.pozarreal.model.CoursePayment.builder()
+                .id("id2")
+                .paymentDate(now)
+                .amount(new BigDecimal(50))
+                .courseAssistantId("abc")
+                .receiptNumber("12345")
+                .notes("hello")
+                .userId("User 2")
+                .concept("Concept 2")
+                .build();
+
+        coursePaymentList.add(coursePayment1);
+        coursePaymentList.add(coursePayment2);
 
         Mockito.when(courseAssistantPaymentRepository.findAllByCourseAssistantIdOrderByPaymentDateDesc("abc"))
-                .thenReturn(lista);
-        Mockito.when(mockSessionHelper.hasRole(user, Role.ROLE_SCHOOL_MANAGER)).thenReturn(true);
+                .thenReturn(coursePaymentList);
 
         // When:
         List<CoursePayment> courseAssistant = courseAssistantPaymentService
                 .findAllByCourseAssistant("abc");
 
         // Then:
-        Assertions.assertTrue(mockSessionHelper.hasRole(user, Role.ROLE_SCHOOL_MANAGER));
-        Assertions.assertEquals(2, courseAssistant.size());
-        Assertions.assertEquals("id1", courseAssistant.get(0).getId());
-        Assertions.assertEquals(now, courseAssistant.get(0).getPaymentDate());
-        Assertions.assertEquals("User 1", courseAssistant.get(0).getUserId());
-        Assertions.assertEquals(new BigDecimal(50), courseAssistant.get(0).getAmount());
-        Assertions.assertEquals("abc", courseAssistant.get(0).getCourseAssistantId());
-        Assertions.assertEquals("123", courseAssistant.get(0).getReceiptNumber());
-        Assertions.assertEquals("hello", courseAssistant.get(0).getNotes());
-        Assertions.assertEquals("Concept 1", courseAssistant.get(0).getConcept());
-        Assertions.assertEquals("id2", courseAssistant.get(1).getId());
-        Assertions.assertEquals(now, courseAssistant.get(1).getPaymentDate());
-        Assertions.assertEquals("User 2", courseAssistant.get(1).getUserId());
-        Assertions.assertEquals(new BigDecimal(50), courseAssistant.get(1).getAmount());
-        Assertions.assertEquals("abc", courseAssistant.get(1).getCourseAssistantId());
-        Assertions.assertEquals("123", courseAssistant.get(1).getReceiptNumber());
-        Assertions.assertEquals("hello", courseAssistant.get(1).getNotes());
-        Assertions.assertEquals("Concept 2", courseAssistant.get(1).getConcept());
+        Assertions.assertThat(courseAssistant.size()).isEqualTo(2);
+        Assertions.assertThat(courseAssistant.get(0).getId()).isEqualTo("id1");
+        Assertions.assertThat(courseAssistant.get(0).getPaymentDate()).isEqualTo(now);
+        Assertions.assertThat(courseAssistant.get(0).getUserId()).isEqualTo("User 1");
+        Assertions.assertThat(courseAssistant.get(0).getAmount()).isEqualTo(new BigDecimal(50));
+        Assertions.assertThat(courseAssistant.get(0).getCourseAssistantId()).isEqualTo("abc");
+        Assertions.assertThat(courseAssistant.get(0).getReceiptNumber()).isEqualTo("12345");
+        Assertions.assertThat(courseAssistant.get(0).getNotes()).isEqualTo("hello");
+        Assertions.assertThat(courseAssistant.get(0).getConcept()).isEqualTo("Concept 1");
+        Assertions.assertThat(courseAssistant.get(1).getId()).isEqualTo("id2");
+        Assertions.assertThat(courseAssistant.get(1).getPaymentDate()).isEqualTo(now);
+        Assertions.assertThat(courseAssistant.get(1).getUserId()).isEqualTo("User 2");
+        Assertions.assertThat(courseAssistant.get(1).getAmount()).isEqualTo(new BigDecimal(50));
+        Assertions.assertThat(courseAssistant.get(1).getCourseAssistantId()).isEqualTo("abc");
+        Assertions.assertThat(courseAssistant.get(1).getReceiptNumber()).isEqualTo("12345");
+        Assertions.assertThat(courseAssistant.get(1).getNotes()).isEqualTo("hello");
+        Assertions.assertThat(courseAssistant.get(1).getConcept()).isEqualTo("Concept 2");
     }
 
     @Test
-    public void givenAnCoursePayment_whenGetCoursePayment_thenIsSaved() {
+    public void givenAnCoursePayment_whenSaved_thenIsSaved() {
         // Given:
         CourseAssistantPaymentRepository courseAssistantPaymentRepository = Mockito
                 .mock(CourseAssistantPaymentRepository.class);
-        SessionHelper mockSessionHelper = Mockito.mock(SessionHelper.class);
+
         CourseAssistantPaymentServiceImpl courseAssistantPaymentService = new
                 CourseAssistantPaymentServiceImpl(courseAssistantPaymentRepository);
-        LoggedUser user = LoggedUser.builder().build();
+
         LocalDate now = LocalDate.now();
 
-        List<org.uresti.pozarreal.model.CoursePayment> lista = new LinkedList<>();
+        org.uresti.pozarreal.model.CoursePayment coursePayment = org.uresti.pozarreal.model.CoursePayment.builder()
+                .id("id1")
+                .paymentDate(now)
+                .amount(new BigDecimal(50))
+                .courseAssistantId("abc")
+                .receiptNumber("12345")
+                .notes("hello")
+                .userId("User 1")
+                .concept("Concept 1")
+                .build();
 
-        org.uresti.pozarreal.model.CoursePayment coursePayment = new org.uresti.pozarreal.model.CoursePayment();
-        coursePayment.setId("id1");
-        coursePayment.setPaymentDate(now);
-        coursePayment.setUserId("User 1");
-        coursePayment.setAmount(new BigDecimal(50));
-        coursePayment.setCourseAssistantId("abc");
-        coursePayment.setNotes("hello");
-        coursePayment.setConcept("Concept 1");
-        coursePayment.setReceiptNumber("123");
-
-        lista.add(coursePayment);
         Mockito.when(courseAssistantPaymentRepository.save(coursePayment)).thenReturn(coursePayment);
-        Mockito.when(courseAssistantPaymentRepository.findAllByCourseAssistantIdOrderByPaymentDateDesc("abc"))
-                .thenReturn(lista);
-        Mockito.when(mockSessionHelper.hasRole(user, Role.ROLE_SCHOOL_MANAGER)).thenReturn(true);
 
         // When:
         CoursePayment courseAssistant = courseAssistantPaymentService
                 .save(CourseAssistantPaymentMapper.entityToDto(coursePayment));
 
         // Then:
-        Assertions.assertTrue(mockSessionHelper.hasRole(user, Role.ROLE_SCHOOL_MANAGER));
-        Assertions.assertNotNull(courseAssistant);
-        Assertions.assertEquals("id1", courseAssistant.getId());
-        Assertions.assertEquals(now, courseAssistant.getPaymentDate());
-        Assertions.assertEquals("User 1", courseAssistant.getUserId());
-        Assertions.assertEquals(new BigDecimal(50), courseAssistant.getAmount());
-        Assertions.assertEquals("abc", courseAssistant.getCourseAssistantId());
-        Assertions.assertEquals("123", courseAssistant.getReceiptNumber());
-        Assertions.assertEquals("hello", courseAssistant.getNotes());
-        Assertions.assertEquals("Concept 1", courseAssistant.getConcept());
+        Assertions.assertThat(courseAssistant).isNotNull();
+        Assertions.assertThat(courseAssistant.getId()).isEqualTo("id1");
+        Assertions.assertThat(courseAssistant.getPaymentDate()).isEqualTo(now);
+        Assertions.assertThat(courseAssistant.getUserId()).isEqualTo("User 1");
+        Assertions.assertThat(courseAssistant.getAmount()).isEqualTo(new BigDecimal(50));
+        Assertions.assertThat(courseAssistant.getCourseAssistantId()).isEqualTo("abc");
+        Assertions.assertThat(courseAssistant.getReceiptNumber()).isEqualTo("12345");
+        Assertions.assertThat(courseAssistant.getNotes()).isEqualTo("hello");
+        Assertions.assertThat(courseAssistant.getConcept()).isEqualTo("Concept 1");
     }
 
     @Test
-    public void givenAnCoursePayment_whenGetCoursePaymentIdIsNull_thenIsSavedAndSetId() {
+    public void givenAnCoursePaymentIdNull_whenSave_thenIsSavedAndSetId() {
         // Given:
         CourseAssistantPaymentRepository courseAssistantPaymentRepository = Mockito
                 .mock(CourseAssistantPaymentRepository.class);
-        SessionHelper mockSessionHelper = Mockito.mock(SessionHelper.class);
+
         CourseAssistantPaymentServiceImpl courseAssistantPaymentService = new
                 CourseAssistantPaymentServiceImpl(courseAssistantPaymentRepository);
-        LoggedUser user = LoggedUser.builder().build();
-        List<org.uresti.pozarreal.model.CoursePayment> lista = new LinkedList<>();
+
+        ArgumentCaptor<org.uresti.pozarreal.model.CoursePayment> argumentCaptor =
+                ArgumentCaptor.forClass(org.uresti.pozarreal.model.CoursePayment.class);
+
         LocalDate now = LocalDate.now();
 
-        org.uresti.pozarreal.model.CoursePayment coursePayment1 = new org.uresti.pozarreal.model.CoursePayment();
-        coursePayment1.setUserId("User 1");
-        coursePayment1.setPaymentDate(now);
-        coursePayment1.setAmount(new BigDecimal(50));
-        coursePayment1.setCourseAssistantId("abc");
-        coursePayment1.setReceiptNumber("123");
-        coursePayment1.setNotes("hello");
-        coursePayment1.setConcept("Concept 1");
-        lista.add(coursePayment1);
+        org.uresti.pozarreal.model.CoursePayment coursePayment = org.uresti.pozarreal.model.CoursePayment.builder()
+                .id("id1")
+                .paymentDate(now)
+                .amount(new BigDecimal(50))
+                .courseAssistantId("abc")
+                .receiptNumber("12345")
+                .notes("hello")
+                .userId("User 1")
+                .concept("Concept 1")
+                .build();
 
-        Mockito.when(courseAssistantPaymentRepository.findAllByCourseAssistantIdOrderByPaymentDateDesc("abc"))
-                .thenReturn(lista);
-        Mockito.when(mockSessionHelper.hasRole(user, Role.ROLE_SCHOOL_MANAGER)).thenReturn(true);
+        CoursePayment coursePaymentDto = CoursePayment.builder()
+                .paymentDate(now)
+                .amount(new BigDecimal(60))
+                .courseAssistantId("abcd")
+                .receiptNumber("123456")
+                .notes("hello2")
+                .userId("User 2")
+                .concept("Concept 2")
+                .build();
+
+        Mockito.when(courseAssistantPaymentRepository.save(argumentCaptor.capture())).thenReturn(coursePayment);
 
         // When:
-        List<CoursePayment> courseAssistant = courseAssistantPaymentService
-                .findAllByCourseAssistant("abc");
+        CoursePayment courseAssistant = courseAssistantPaymentService.save(coursePaymentDto);
 
         // Then:
-        Assertions.assertTrue(mockSessionHelper.hasRole(user, Role.ROLE_SCHOOL_MANAGER));
-        Assertions.assertEquals(1, courseAssistant.size());
-        Assertions.assertEquals(now, courseAssistant.get(0).getPaymentDate());
-        Assertions.assertEquals("User 1", courseAssistant.get(0).getUserId());
-        Assertions.assertEquals(new BigDecimal(50), courseAssistant.get(0).getAmount());
-        Assertions.assertEquals("abc", courseAssistant.get(0).getCourseAssistantId());
-        Assertions.assertEquals("123", courseAssistant.get(0).getReceiptNumber());
-        Assertions.assertEquals("hello", courseAssistant.get(0).getNotes());
-        Assertions.assertEquals("Concept 1", courseAssistant.get(0).getConcept());
+        org.uresti.pozarreal.model.CoursePayment parameter = argumentCaptor.getValue();
+
+        Assertions.assertThat(parameter.getId()).isNotNull();
+        Assertions.assertThat(parameter.getPaymentDate()).isEqualTo(now);
+        Assertions.assertThat(parameter.getUserId()).isEqualTo("User 2");
+        Assertions.assertThat(parameter.getCourseAssistantId()).isEqualTo("abcd");
+        Assertions.assertThat(parameter.getReceiptNumber()).isEqualTo("123456");
+        Assertions.assertThat(parameter.getAmount()).isEqualTo(new BigDecimal(60));
+        Assertions.assertThat(parameter.getNotes()).isEqualTo("hello2");
+        Assertions.assertThat(parameter.getConcept()).isEqualTo("Concept 2");
+
+        Assertions.assertThat(courseAssistant.getPaymentDate()).isEqualTo(now);
+        Assertions.assertThat(courseAssistant.getId()).isEqualTo("id1");
+        Assertions.assertThat(courseAssistant.getUserId()).isEqualTo("User 1");
+        Assertions.assertThat(courseAssistant.getCourseAssistantId()).isEqualTo("abc");
+        Assertions.assertThat(courseAssistant.getReceiptNumber()).isEqualTo("12345");
+        Assertions.assertThat(courseAssistant.getAmount()).isEqualTo(new BigDecimal(50));
+        Assertions.assertThat(courseAssistant.getNotes()).isEqualTo("hello");
+        Assertions.assertThat(courseAssistant.getConcept()).isEqualTo("Concept 1");
+
+        Assertions.assertThat(courseAssistant.getId()).isNotEqualTo(parameter.getId());
     }
 
     @Test
-    public void givenAnCoursePayment_whenGetCoursePaymentIdCorrect_thenIsDeleted() {
+    public void givenAnCourseAssistantPaymentId_whenDelete_thenIsDeleted() {
         // Given:
         CourseAssistantPaymentRepository courseAssistantPaymentRepository = Mockito
                 .mock(CourseAssistantPaymentRepository.class);
-        SessionHelper mockSessionHelper = Mockito.mock(SessionHelper.class);
+
         CourseAssistantPaymentServiceImpl courseAssistantPaymentService = new
                 CourseAssistantPaymentServiceImpl(courseAssistantPaymentRepository);
-        LoggedUser user = LoggedUser.builder().build();
-        LocalDate now = LocalDate.now();
-
-        List<org.uresti.pozarreal.model.CoursePayment> lista = new LinkedList<>();
-
-        org.uresti.pozarreal.model.CoursePayment coursePayment = new org.uresti.pozarreal.model.CoursePayment();
-        coursePayment.setId("id1");
-        coursePayment.setPaymentDate(now);
-        coursePayment.setUserId("User 1");
-        coursePayment.setAmount(new BigDecimal(50));
-        coursePayment.setCourseAssistantId("abc");
-        coursePayment.setNotes("hello");
-        coursePayment.setConcept("Concept 1");
-        coursePayment.setReceiptNumber("123");
-
-        lista.add(coursePayment);
-        Mockito.when(courseAssistantPaymentRepository.save(coursePayment)).thenReturn(coursePayment);
-        Mockito.when(courseAssistantPaymentRepository.findAllByCourseAssistantIdOrderByPaymentDateDesc("abc"))
-                .thenReturn(lista);
-        courseAssistantPaymentRepository.deleteById("id1");
-        Mockito.when(mockSessionHelper.hasRole(user, Role.ROLE_SCHOOL_MANAGER)).thenReturn(true);
 
         // When:
-        courseAssistantPaymentService.delete("id1");
-
-        CoursePayment courseAssistant = courseAssistantPaymentService
-                .save(CourseAssistantPaymentMapper.entityToDto(coursePayment));
-
-        List<CoursePayment> coursePaymentList = courseAssistantPaymentService.findAllByCourseAssistant("id1");
-
         // Then:
-        Assertions.assertTrue(mockSessionHelper.hasRole(user, Role.ROLE_SCHOOL_MANAGER));
-        Assertions.assertEquals(0, coursePaymentList.size());
-        Assertions.assertNotNull(courseAssistant);
+        courseAssistantPaymentService.delete("abc");
+
+        Mockito.verify(courseAssistantPaymentRepository).deleteById("abc");
     }
 
-    @Test
-    public void givenAnCoursePayment_whenGetCoursePaymentIdWrong_thenIsNotDeleted() {
-        // Given:
-        CourseAssistantPaymentRepository courseAssistantPaymentRepository = Mockito
-                .mock(CourseAssistantPaymentRepository.class);
-        SessionHelper mockSessionHelper = Mockito.mock(SessionHelper.class);
-        CourseAssistantPaymentServiceImpl courseAssistantPaymentService = new
-                CourseAssistantPaymentServiceImpl(courseAssistantPaymentRepository);
-        LoggedUser user = LoggedUser.builder().build();
-        LocalDate now = LocalDate.now();
-
-        List<org.uresti.pozarreal.model.CoursePayment> lista = new LinkedList<>();
-
-        org.uresti.pozarreal.model.CoursePayment coursePayment = new org.uresti.pozarreal.model.CoursePayment();
-        coursePayment.setId("id1");
-        coursePayment.setPaymentDate(now);
-        coursePayment.setUserId("User 1");
-        coursePayment.setAmount(new BigDecimal(50));
-        coursePayment.setCourseAssistantId("abc");
-        coursePayment.setNotes("hello");
-        coursePayment.setConcept("Concept 1");
-        coursePayment.setReceiptNumber("123");
-
-        lista.add(coursePayment);
-        Mockito.doNothing().when(courseAssistantPaymentRepository).deleteById("123456");
-        Mockito.when(courseAssistantPaymentRepository.save(coursePayment)).thenReturn(coursePayment);
-        Mockito.when(courseAssistantPaymentRepository.findAllByCourseAssistantIdOrderByPaymentDateDesc("abc"))
-                .thenReturn(lista);
-        courseAssistantPaymentRepository.deleteById("id1");
-        Mockito.when(mockSessionHelper.hasRole(user, Role.ROLE_SCHOOL_MANAGER)).thenReturn(true);
-
-        // When:
-        courseAssistantPaymentService.delete("123456");
-
-        CoursePayment courseAssistant = courseAssistantPaymentService
-                .save(CourseAssistantPaymentMapper.entityToDto(coursePayment));
-
-        List<CoursePayment> coursePaymentList = courseAssistantPaymentService.findAllByCourseAssistant("abc");
-
-        // Then:
-        Assertions.assertTrue(mockSessionHelper.hasRole(user, Role.ROLE_SCHOOL_MANAGER));
-        Assertions.assertEquals(1, coursePaymentList.size());
-        Assertions.assertNotNull(courseAssistant);
-    }
 }
