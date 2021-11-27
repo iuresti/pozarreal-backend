@@ -221,8 +221,8 @@ public class CourseAssistantPaymentServiceImplTests {
 
         // When:
         courseAssistantPaymentService.delete("abc");
-        // Then:
 
+        // Then:
         Mockito.verify(courseAssistantPaymentRepository).deleteById("abc");
     }
 }
