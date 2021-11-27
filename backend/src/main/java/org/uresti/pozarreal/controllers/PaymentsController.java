@@ -63,4 +63,14 @@ public class PaymentsController {
 
         paymentsService.delete(paymentId);
     }
+
+    @PatchMapping("/{paymentId}")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+    public Payment validatePayment(Principal principal, @PathVariable String paymentId) {
+        LoggedUser loggedUser = sessionHelper.getLoggedUser(principal);
+
+        log.info("Updating payment: {} by user: {} - {}", paymentId, loggedUser.getName(), loggedUser.getUserId());
+
+        return paymentsService.validatePayment(paymentId);
+    }
 }
