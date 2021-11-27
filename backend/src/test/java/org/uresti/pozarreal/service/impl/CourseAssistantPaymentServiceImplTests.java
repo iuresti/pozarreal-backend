@@ -6,7 +6,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.uresti.pozarreal.dto.CoursePayment;
 import org.uresti.pozarreal.repository.CourseAssistantPaymentRepository;
-import org.uresti.pozarreal.service.mappers.CourseAssistantPaymentMapper;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -97,7 +96,7 @@ public class CourseAssistantPaymentServiceImplTests {
     }
 
     @Test
-    public void givenAnCoursePayment_whenSaved_thenIsSaved() {
+    public void givenAnCoursePayment_whenSave_thenIsSaved() {
         // Given:
         CourseAssistantPaymentRepository courseAssistantPaymentRepository = Mockito
                 .mock(CourseAssistantPaymentRepository.class);
@@ -118,11 +117,22 @@ public class CourseAssistantPaymentServiceImplTests {
                 .concept("Concept 1")
                 .build();
 
+        CoursePayment coursePaymentDto = CoursePayment.builder()
+                .id("id1")
+                .paymentDate(now)
+                .amount(new BigDecimal(50))
+                .courseAssistantId("abc")
+                .receiptNumber("12345")
+                .notes("hello")
+                .userId("User 1")
+                .concept("Concept 1")
+                .build();
+
         Mockito.when(courseAssistantPaymentRepository.save(coursePayment)).thenReturn(coursePayment);
 
         // When:
         CoursePayment courseAssistant = courseAssistantPaymentService
-                .save(CourseAssistantPaymentMapper.entityToDto(coursePayment));
+                .save(coursePaymentDto);
 
         // Then:
         Assertions.assertThat(courseAssistant).isNotNull();
@@ -164,7 +174,7 @@ public class CourseAssistantPaymentServiceImplTests {
         CoursePayment coursePaymentDto = CoursePayment.builder()
                 .paymentDate(now)
                 .amount(new BigDecimal(60))
-                .courseAssistantId("abcd")
+                .courseAssistantId("abc")
                 .receiptNumber("123456")
                 .notes("hello2")
                 .userId("User 2")
@@ -182,7 +192,7 @@ public class CourseAssistantPaymentServiceImplTests {
         Assertions.assertThat(parameter.getId()).isNotNull();
         Assertions.assertThat(parameter.getPaymentDate()).isEqualTo(now);
         Assertions.assertThat(parameter.getUserId()).isEqualTo("User 2");
-        Assertions.assertThat(parameter.getCourseAssistantId()).isEqualTo("abcd");
+        Assertions.assertThat(parameter.getCourseAssistantId()).isEqualTo("abc");
         Assertions.assertThat(parameter.getReceiptNumber()).isEqualTo("123456");
         Assertions.assertThat(parameter.getAmount()).isEqualTo(new BigDecimal(60));
         Assertions.assertThat(parameter.getNotes()).isEqualTo("hello2");
@@ -210,10 +220,9 @@ public class CourseAssistantPaymentServiceImplTests {
                 CourseAssistantPaymentServiceImpl(courseAssistantPaymentRepository);
 
         // When:
-        // Then:
         courseAssistantPaymentService.delete("abc");
+        // Then:
 
         Mockito.verify(courseAssistantPaymentRepository).deleteById("abc");
     }
-
 }
