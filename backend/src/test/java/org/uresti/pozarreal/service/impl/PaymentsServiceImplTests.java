@@ -510,7 +510,7 @@ public class PaymentsServiceImplTests {
     }
 
     @Test
-    public void givenAPaymentIdNoExistent_whenGetPayment_thenReturnPaymentNull() {
+    public void givenAPaymentIdNoExistent_whenGetPayment_thenThrowNoSuchElementException() {
         // Given:
         CustomPaymentRepository customPaymentRepository = Mockito.mock(CustomPaymentRepository.class);
         PaymentRepository paymentRepository = Mockito.mock(PaymentRepository.class);
