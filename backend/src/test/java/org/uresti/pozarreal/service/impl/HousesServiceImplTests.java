@@ -1,4 +1,4 @@
-HousesServiceImplTpackage org.uresti.pozarreal.service.impl;
+package org.uresti.pozarreal.service.impl;
 
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -23,14 +23,19 @@ import java.util.UUID;
 public class HousesServiceImplTests {
 
     @Test
-    public void givenAnNullStringId_thenReturnEmptyList() {
+    public void givenAnNullStringId_whenGetHousesByStreet_thenReturnEmptyList() {
         // Given:
         HousesRepository housesRepository = Mockito.mock(HousesRepository.class);
         StreetRepository streetRepository = Mockito.mock(StreetRepository.class);
         RepresentativeRepository representativeRepository = Mockito.mock(RepresentativeRepository.class);
         SessionHelper mockSessionHelper = Mockito.mock(SessionHelper.class);
         Principal principal = Mockito.mock(Principal.class);
-        HousesServiceImpl housesService = new HousesServiceImpl(housesRepository, streetRepository, representativeRepository, mockSessionHelper);
+
+        HousesServiceImpl housesService = new HousesServiceImpl(
+                housesRepository,
+                streetRepository,
+                representativeRepository,
+                mockSessionHelper);
 
         List<org.uresti.pozarreal.model.House> houses = new LinkedList<>();
 
@@ -43,31 +48,38 @@ public class HousesServiceImplTests {
     }
 
     @Test
-    public void givenAHousesWithOneElement_whenGetHouses_thenReturnListWithOneElement() {
+    public void givenAnHousesWithOneElement_whenGetHousesByStreet_thenReturnListWithOneElement() {
         // Given:
         HousesRepository housesRepository = Mockito.mock(HousesRepository.class);
         StreetRepository streetRepository = Mockito.mock(StreetRepository.class);
         RepresentativeRepository representativeRepository = Mockito.mock(RepresentativeRepository.class);
         SessionHelper mockSessionHelper = Mockito.mock(SessionHelper.class);
         Principal principal = Mockito.mock(Principal.class);
-        HousesServiceImpl housesService = new HousesServiceImpl(housesRepository, streetRepository, representativeRepository, mockSessionHelper);
+
+        HousesServiceImpl housesService = new HousesServiceImpl(
+                housesRepository,
+                streetRepository,
+                representativeRepository,
+                mockSessionHelper);
 
         List<org.uresti.pozarreal.model.House> houses = new LinkedList<>();
 
-        org.uresti.pozarreal.model.House house = new org.uresti.pozarreal.model.House();
-        house.setId("1");
-        house.setNotes("hello");
-        house.setStreet("Street 1");
-        house.setNumber("123456");
-        house.setChipsEnabled(true);
+        org.uresti.pozarreal.model.House house = org.uresti.pozarreal.model.House.builder()
+                .id("1")
+                .notes("hello")
+                .street("Street 1")
+                .number("123456")
+                .chipsEnabled(true)
+                .build();
+
         houses.add(house);
 
-        // When:
         Mockito.when(housesRepository.findAllByStreetOrderByNumber("123")).thenReturn(houses);
 
-        // Then:
+        // When:
         List<House> housesByStreet = housesService.getHousesByStreet("123", mockSessionHelper.getLoggedUser(principal));
 
+        // Then:
         Assertions.assertThat(housesByStreet.size()).isEqualTo(1);
         Assertions.assertThat(housesByStreet.get(0).getId()).isEqualTo("1");
         Assertions.assertThat(housesByStreet.get(0).getStreet()).isEqualTo("Street 1");
@@ -75,14 +87,18 @@ public class HousesServiceImplTests {
     }
 
     @Test
-    public void givenAnStreetId_whenRepresentativeStreetNotEqualsToStreetId_thenThrowBadRequestDataException() {
+    public void givenNotEqualStreetIdAndStreet_whenGetHousesByStreet_thenThrowBadRequestDataException() {
         // Given:
         HousesRepository housesRepository = Mockito.mock(HousesRepository.class);
         StreetRepository streetRepository = Mockito.mock(StreetRepository.class);
         RepresentativeRepository representativeRepository = Mockito.mock(RepresentativeRepository.class);
         SessionHelper mockSessionHelper = Mockito.mock(SessionHelper.class);
 
-        HousesServiceImpl housesService = new HousesServiceImpl(housesRepository, streetRepository, representativeRepository, mockSessionHelper);
+        HousesServiceImpl housesService = new HousesServiceImpl(
+                housesRepository,
+                streetRepository,
+                representativeRepository,
+                mockSessionHelper);
 
         String userId = UUID.randomUUID().toString();
         LoggedUser user = LoggedUser.builder().claims(Collections.singletonMap("userId", userId)).build();
@@ -106,79 +122,79 @@ public class HousesServiceImplTests {
     }
 
     @Test
-    public void givenAnHouseId_thenToggleChipStatusRequest() {
+    public void givenAnHouseId_wheToggleChipStatusRequest_thenEnableChip() {
         // Given:
         HousesRepository housesRepository = Mockito.mock(HousesRepository.class);
         StreetRepository streetRepository = Mockito.mock(StreetRepository.class);
         RepresentativeRepository representativeRepository = Mockito.mock(RepresentativeRepository.class);
         SessionHelper mockSessionHelper = Mockito.mock(SessionHelper.class);
-        HousesServiceImpl housesService = new HousesServiceImpl(housesRepository, streetRepository, representativeRepository, mockSessionHelper);
 
-        org.uresti.pozarreal.model.House house = new org.uresti.pozarreal.model.House();
-        house.setId("1");
-        house.setNotes("hello");
-        house.setStreet("Street 1");
-        house.setNumber("123456");
-        house.setChipsEnabled(true);
+        HousesServiceImpl housesService = new HousesServiceImpl(
+                housesRepository,
+                streetRepository,
+                representativeRepository,
+                mockSessionHelper);
 
-        Street street = new Street();
-
-        street.setId("1");
-        street.setName("name 1");
+        org.uresti.pozarreal.model.House house = org.uresti.pozarreal.model.House.builder()
+                .id("1")
+                .notes("hello")
+                .street("Street 1")
+                .number("123456")
+                .chipsEnabled(false)
+                .build();
 
         Mockito.when(housesRepository.save(house)).thenReturn(house);
-        Mockito.when(streetRepository.findById(house.getStreet())).thenReturn(java.util.Optional.of(street));
         Mockito.when(housesRepository.findById("1")).thenReturn(java.util.Optional.of(house));
 
         // When:
         housesService.toggleChipStatusRequest("1", false);
-        HouseInfo houseInfo = housesService.getHouseInfo("1");
 
         // Then:
-        Assertions.assertThat(houseInfo.getNotes()).isEqualTo("hello");
-        Assertions.assertThat(houseInfo.getStreet()).isEqualTo("Street 1");
-        Assertions.assertThat(houseInfo.getNumber()).isEqualTo("123456");
-        Assertions.assertThat(houseInfo.getId()).isEqualTo("1");
-        Assertions.assertThat(houseInfo.isChipsEnabled()).isFalse();
+        Mockito.verify(housesRepository).save(house);
+        Mockito.verify(housesRepository).findById("1");
     }
 
     @Test
-    public void givenAnCorrectHouseId_thenReturnHouseInfo() {
+    public void givenAnCorrectHouseId_whenGetHouseInfo_thenReturnHouseInfo() {
         //Given:
         HousesRepository housesRepository = Mockito.mock(HousesRepository.class);
         StreetRepository streetRepository = Mockito.mock(StreetRepository.class);
         RepresentativeRepository representativeRepository = Mockito.mock(RepresentativeRepository.class);
         SessionHelper mockSessionHelper = Mockito.mock(SessionHelper.class);
-        HousesServiceImpl housesService = new HousesServiceImpl(housesRepository, streetRepository, representativeRepository, mockSessionHelper);
 
-        List<org.uresti.pozarreal.model.House> houses = new LinkedList<>();
+        HousesServiceImpl housesService = new HousesServiceImpl(
+                housesRepository,
+                streetRepository,
+                representativeRepository,
+                mockSessionHelper);
 
-        org.uresti.pozarreal.model.House house = new org.uresti.pozarreal.model.House();
-        house.setId("1");
-        house.setNotes("hello");
-        house.setStreet("123");
-        house.setNumber("123456");
-        house.setChipsEnabled(true);
-        houses.add(house);
+        org.uresti.pozarreal.model.House house = org.uresti.pozarreal.model.House.builder()
+                .id("1")
+                .notes("hello")
+                .street("Street 1")
+                .number("123456")
+                .chipsEnabled(true)
+                .build();
 
-        Street street = new Street();
+        Street street = Street.builder()
+                .id("1")
+                .name("name 1")
+                .build();
 
-        street.setId("1");
-        street.setName("name 1");
-
-        // When:
-        Mockito.when(housesRepository.findAllByStreetOrderByNumber("123")).thenReturn(houses);
         Mockito.when(housesRepository.findById("1")).thenReturn(java.util.Optional.of(house));
         Mockito.when(streetRepository.findById(house.getStreet())).thenReturn(java.util.Optional.of(street));
 
-        // Then:
+        // When:
         HouseInfo houseInfo = housesService.getHouseInfo("1");
 
-        Assertions.assertThat(houseInfo.getNotes()).isEqualTo("hello");
-        Assertions.assertThat(houseInfo.getStreet()).isEqualTo("123");
-        Assertions.assertThat(houseInfo.getNumber()).isEqualTo("123456");
-        Assertions.assertThat(houseInfo.getStreetName()).isEqualTo("name 1");
+        // Then:
+        Assertions.assertThat(houseInfo).isNotNull();
         Assertions.assertThat(houseInfo.getId()).isEqualTo("1");
+        Assertions.assertThat(houseInfo.getNotes()).isEqualTo("hello");
+        Assertions.assertThat(houseInfo.getStreet()).isEqualTo("Street 1");
+        Assertions.assertThat(houseInfo.getStreetName()).isEqualTo("name 1");
+        Assertions.assertThat(houseInfo.getNumber()).isEqualTo("123456");
+        Assertions.assertThat(houseInfo.isChipsEnabled()).isTrue();
     }
 
     @Test
@@ -188,36 +204,29 @@ public class HousesServiceImplTests {
         StreetRepository streetRepository = Mockito.mock(StreetRepository.class);
         RepresentativeRepository representativeRepository = Mockito.mock(RepresentativeRepository.class);
         SessionHelper mockSessionHelper = Mockito.mock(SessionHelper.class);
-        HousesServiceImpl housesService = new HousesServiceImpl(housesRepository, streetRepository, representativeRepository, mockSessionHelper);
 
-        List<org.uresti.pozarreal.model.House> houses = new LinkedList<>();
+        HousesServiceImpl housesService = new HousesServiceImpl(
+                housesRepository,
+                streetRepository,
+                representativeRepository,
+                mockSessionHelper);
 
-        org.uresti.pozarreal.model.House house = new org.uresti.pozarreal.model.House();
-        house.setId("1");
-        house.setStreet("123");
-        house.setNumber("123456");
-        house.setChipsEnabled(true);
-        houses.add(house);
+        org.uresti.pozarreal.model.House house = org.uresti.pozarreal.model.House.builder()
+                .id("1")
+                .notes("hello")
+                .street("Street 1")
+                .number("123456")
+                .chipsEnabled(false)
+                .build();
 
-        Street street = new Street();
-
-        street.setId("1");
-        street.setName("name 1");
+        Mockito.when(housesRepository.findById("1")).thenReturn(java.util.Optional.of(house));
+        Mockito.when(housesRepository.save(house)).thenReturn(house);
 
         // When:
-        Mockito.when(housesRepository.findAllByStreetOrderByNumber("123")).thenReturn(houses);
-        Mockito.when(housesRepository.findById("1")).thenReturn(java.util.Optional.of(house));
-        Mockito.when(streetRepository.findById(house.getStreet())).thenReturn(java.util.Optional.of(street));
+        housesService.saveNotes("1", "hello");
 
         // Then:
-        housesService.saveNotes("1", "hello");
-        HouseInfo houseInfo = housesService.getHouseInfo("1");
-
-        Assertions.assertThat(houseInfo.getNotes()).isEqualTo("hello");
-        Assertions.assertThat(houseInfo.getStreet()).isEqualTo("123");
-        Assertions.assertThat(houseInfo.getNumber()).isEqualTo("123456");
-        Assertions.assertThat(houseInfo.getStreetName()).isEqualTo("name 1");
-        Assertions.assertThat(houseInfo.getId()).isEqualTo("1");
-        Assertions.assertThat(houseInfo.isChipsEnabled()).isTrue();
+        Mockito.verify(housesRepository).save(house);
+        Mockito.verify(housesRepository).findById("1");
     }
 }
