@@ -452,8 +452,9 @@ public class PaymentsServiceImplTests {
                 pozarrealConfig);
 
         // When:
-        // Then:
         paymentsService.delete("id");
+        
+        // Then:
 
         Mockito.verify(paymentRepository).deleteById("id");
     }
