@@ -14,7 +14,6 @@ import org.uresti.pozarreal.repository.HousesRepository;
 import org.uresti.pozarreal.repository.RepresentativeRepository;
 import org.uresti.pozarreal.repository.StreetRepository;
 
-import java.security.Principal;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
