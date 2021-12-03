@@ -29,7 +29,6 @@ public class HousesServiceImplTests {
         StreetRepository streetRepository = Mockito.mock(StreetRepository.class);
         RepresentativeRepository representativeRepository = Mockito.mock(RepresentativeRepository.class);
         SessionHelper mockSessionHelper = Mockito.mock(SessionHelper.class);
-        Principal principal = Mockito.mock(Principal.class);
 
         HousesServiceImpl housesService = new HousesServiceImpl(
                 housesRepository,
@@ -37,13 +36,15 @@ public class HousesServiceImplTests {
                 representativeRepository,
                 mockSessionHelper);
 
+        LoggedUser loggedUser = LoggedUser.builder().build();
+
         List<org.uresti.pozarreal.model.House> houses = new LinkedList<>();
 
         // When:
         Mockito.when(housesRepository.findAllByStreetOrderByNumber("123")).thenReturn(houses);
 
         // Then:
-        List<House> housesByStreet = housesService.getHousesByStreet("123", mockSessionHelper.getLoggedUser(principal));
+        List<House> housesByStreet = housesService.getHousesByStreet("123", loggedUser);
         Assertions.assertThat(housesByStreet).isEmpty();
     }
 
@@ -54,13 +55,14 @@ public class HousesServiceImplTests {
         StreetRepository streetRepository = Mockito.mock(StreetRepository.class);
         RepresentativeRepository representativeRepository = Mockito.mock(RepresentativeRepository.class);
         SessionHelper mockSessionHelper = Mockito.mock(SessionHelper.class);
-        Principal principal = Mockito.mock(Principal.class);
 
         HousesServiceImpl housesService = new HousesServiceImpl(
                 housesRepository,
                 streetRepository,
                 representativeRepository,
                 mockSessionHelper);
+
+        LoggedUser loggedUser = LoggedUser.builder().build();
 
         List<org.uresti.pozarreal.model.House> houses = new LinkedList<>();
 
@@ -77,7 +79,7 @@ public class HousesServiceImplTests {
         Mockito.when(housesRepository.findAllByStreetOrderByNumber("123")).thenReturn(houses);
 
         // When:
-        List<House> housesByStreet = housesService.getHousesByStreet("123", mockSessionHelper.getLoggedUser(principal));
+        List<House> housesByStreet = housesService.getHousesByStreet("123", loggedUser);
 
         // Then:
         Assertions.assertThat(housesByStreet.size()).isEqualTo(1);
