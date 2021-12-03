@@ -64,7 +64,6 @@ public class RepresentativesServiceImplTests {
                 .isInstanceOf(BadRequestDataException.class)
                 .hasMessage("UserId does not match with request body to update representative", "WRONG_USER_ID");
 
-        Mockito.verifyNoMoreInteractions(representativeRepository);
         Mockito.verifyNoInteractions(representativeRepository);
     }
 
