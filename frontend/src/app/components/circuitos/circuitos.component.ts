@@ -104,7 +104,7 @@ export class CircuitosComponent implements OnInit {
     this.newPayment.paymentConceptId = 'MAINTENANCE';
     this.newPayment.paymentSubConceptId = 'MAINTENANCE_BIM_' + bim;
     this.newPayment.amount = this.maintenanceFee - bimesterPayment.amount;
-    this.modalService.open(content, {ariaLabelledBy: 'modal-basic-title'}).result.then((result) => {
+    this.modalService.open(content, {ariaLabelledBy: 'modal-basic-title'}).result.then((_) => {
       console.log('Saving payment');
       console.log(this.newPayment);
       this.paymentService.save(this.newPayment).subscribe((payment) => {
@@ -114,12 +114,12 @@ export class CircuitosComponent implements OnInit {
         bimesterPayment.complete = this.maintenanceFee <= bimesterPayment.amount;
         const files = this.newPayment.files;
         if (files) {
-          for (let i = 0; i < files.length; i++) {
-            this.uploadFileService.uploadFilesPayment(files.item(i), payment.id).subscribe();
-          }
+          Array.from(files).forEach((file) => {
+            this.uploadFileService.uploadFilesPayment(file, payment.id).subscribe();
+          });
         }
       });
-    }, (reason) => {
+    }, (_) => {
       console.log('Cancel saving payment');
     });
   }

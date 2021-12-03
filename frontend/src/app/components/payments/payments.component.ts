@@ -51,7 +51,7 @@ export class PaymentsComponent implements OnInit {
 
   open(content): void {
     this.newPayment = {} as Payment;
-    this.modalService.open(content, {ariaLabelledBy: 'modal-basic-title'}).result.then((result) => {
+    this.modalService.open(content, {ariaLabelledBy: 'modal-basic-title'}).result.then((_) => {
       console.log('Saving payment');
       console.log(this.newPayment);
       this.paymentService.save(this.newPayment).subscribe(() => {
@@ -59,7 +59,7 @@ export class PaymentsComponent implements OnInit {
           this.doSearch(this.lastFilter);
         }
       });
-    }, (reason) => {
+    }, (_) => {
       console.log('Cancel saving payment');
     });
 
@@ -97,21 +97,21 @@ export class PaymentsComponent implements OnInit {
     this.newPayment.houseId = payment.houseId;
     this.newPayment.streetId = payment.streetId;
 
-    this.modalService.open(content, {ariaLabelledBy: 'modal-basic-title'}).result.then((result) => {
+    this.modalService.open(content, {ariaLabelledBy: 'modal-basic-title'}).result.then((_) => {
       console.log('Saving payment');
       console.log(this.newPayment);
       this.paymentService.save(this.newPayment).subscribe(() => {
         const files = this.newPayment.files;
         if (files) {
-          for (let i = 0; i < files.length; i++) {
-            this.uploadFileService.uploadFilesPayment(files.item(i), payment.id).subscribe();
-          }
+          Array.from(files).forEach((file) => {
+            this.uploadFileService.uploadFilesPayment(file, payment.id).subscribe();
+          });
         }
         if (this.lastFilter) {
           this.doSearch(this.lastFilter);
         }
       });
-    }, (reason) => {
+    }, (_) => {
       console.log('Cancel saving payment');
     });
   }

@@ -11,6 +11,7 @@ import org.springframework.util.FileSystemUtils;
 import org.springframework.web.multipart.MultipartFile;
 import org.uresti.pozarreal.config.DropBoxConfig;
 import org.uresti.pozarreal.dto.LoggedUser;
+import org.uresti.pozarreal.exception.PozarrealSystemException;
 import org.uresti.pozarreal.model.Chip;
 import org.uresti.pozarreal.model.PaymentEvidence;
 import org.uresti.pozarreal.repository.PaymentEvidenceRepository;
@@ -113,7 +114,7 @@ public class FilesStorageServiceImpl implements FilesStorageService {
 
             return sharingRequests.getUrl();
         } catch (Exception e) {
-            throw new RuntimeException("Could not store the file. Error: " + e.getMessage());
+            throw new PozarrealSystemException("Could not store the file. Error: " + e.getMessage(), "ERROR_SAVING_FILES");
         }
     }
 
