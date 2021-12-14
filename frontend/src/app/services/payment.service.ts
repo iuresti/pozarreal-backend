@@ -84,4 +84,8 @@ export class PaymentService {
   validatePayment(id: string): Observable<Payment> {
     return this.http.patch<Payment>(`${environment.baseUrl}/payments/${id}`, {});
   }
+
+  conflictPayment(id: string): Observable<Payment> {
+    return this.http.put<Payment>(`${environment.baseUrl}/payments/${id}`, {});
+  }
 }

@@ -101,7 +101,8 @@
           {{(bimesterPayment.amount ? bimesterPayment.amount : '&nbsp;')}}
         </div>
 
-        <div #number class="number">
+        <div #number class="number"
+        (click)="conflictPayment($event, bimesterPayment, house)">
           {{house.number}}-B{{bim + 1}}
         </div>
 

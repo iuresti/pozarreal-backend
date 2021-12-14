@@ -14,4 +14,5 @@ public class PaymentByConcept {
     boolean isComplete;
     double amount = 0;
     boolean validated;
+    boolean conflict;
 }

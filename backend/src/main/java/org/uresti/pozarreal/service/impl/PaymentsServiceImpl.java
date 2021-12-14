@@ -88,6 +88,15 @@ public class PaymentsServiceImpl implements PaymentsService {
         return PaymentMapper.entityToDto(paymentRepository.save(payment));
     }
 
+    @Override
+    public Payment conflictPayment(String paymentId) {
+        org.uresti.pozarreal.model.Payment payment = paymentRepository.findById(paymentId).orElseThrow();
+
+        payment.setConflict(true);
+
+        return PaymentMapper.entityToDto(paymentRepository.save(payment));
+    }
+
     private void validateMaintenancePayment(Payment payment) {
         if (!MAINTENANCE_ANNUITY.equals(payment.getPaymentSubConceptId())) {
             List<org.uresti.pozarreal.model.Payment> payments = paymentRepository.findAllByHouseIdAndPaymentSubConceptId(payment.getHouseId(), payment.getPaymentSubConceptId());

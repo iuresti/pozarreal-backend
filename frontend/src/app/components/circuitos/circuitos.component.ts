@@ -102,16 +102,17 @@ export class CircuitosComponent implements OnInit {
     this.newPayment.paymentConceptId = 'MAINTENANCE';
     this.newPayment.paymentSubConceptId = 'MAINTENANCE_BIM_' + bim;
     this.newPayment.amount = this.maintenanceFee - bimesterPayment.amount;
-    this.modalService.open(content, {ariaLabelledBy: 'modal-basic-title'}).result.then((result) => {
+    this.modalService.open(content, {ariaLabelledBy: 'modal-basic-title'}).result.then((_) => {
       console.log('Saving payment');
       console.log(this.newPayment);
-      this.paymentService.save(this.newPayment).subscribe((payment) => {
+      this.paymentService.save(this.newPayment).subscribe(payment => {
         console.log('Saving payment');
         bimesterPayment.validated = payment.validated;
         bimesterPayment.amount += this.newPayment.amount;
         bimesterPayment.complete = this.maintenanceFee <= bimesterPayment.amount;
+        bimesterPayment.conflict = payment.conflict;
       });
-    }, (reason) => {
+    }, (_) => {
       console.log('Cancel saving payment');
     });
   }
@@ -146,11 +147,31 @@ export class CircuitosComponent implements OnInit {
         showCancelButton: false,
         confirmButtonText: `Sí`,
         denyButtonText: `No`,
-      }).then((result) => {
+      }).then(result => {
         if (result.isConfirmed) {
-          this.paymentService.validatePayment(bimesterPayment.id).subscribe((payment) => {
+          this.paymentService.validatePayment(bimesterPayment.id).subscribe(payment => {
             Swal.fire('Validado!', '', 'success').then(console.log);
             bimesterPayment.validated = payment.validated;
+          });
+        }
+      });
+    }
+  }
+
+  conflictPayment($event: MouseEvent, bimesterPayment: PaymentByConcept, house: House): void {
+    this.sessionService.getUser().subscribe(user => this.user = user);
+    if (!bimesterPayment.conflict && this.userHasRoles(['ROLE_REPRESENTATIVE'])) {
+      Swal.fire({
+        title: `¿Hay conflicto en el pago por $${bimesterPayment.amount} de la casa ${house.number}?`,
+        showDenyButton: true,
+        showCancelButton: false,
+        confirmButtonText: `Sí`,
+        denyButtonText: `No`,
+      }).then(result => {
+        if (result.isConfirmed) {
+          this.paymentService.conflictPayment(bimesterPayment.id).subscribe(payment => {
+            Swal.fire('', '', 'success').then(console.log);
+            bimesterPayment.conflict = payment.conflict;
           });
         }
       });

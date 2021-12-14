@@ -166,6 +166,7 @@ public class StreetServiceImpl implements StreetsService {
                         paymentInfo.get(i).setAmount(paymentInfo.get(i).getAmount() + payment.getAmount());
                         paymentInfo.get(i).setComplete(paymentInfo.get(i).getAmount()  >= feeConfig.getBiMonthlyMaintenanceFee());
                         paymentInfo.get(i).setValidated(payment.isValidated());
+                        paymentInfo.get(i).setConflict(payment.isConflict());
                         break;
                     }
                 }
