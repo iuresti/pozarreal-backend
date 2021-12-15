@@ -17,4 +17,6 @@ public interface PaymentsService {
     Payment getPayment(String paymentId, String userIdForLoggedUser);
 
     Payment validatePayment(String paymentId);
+
+    Payment conflictPayment(String paymentId);
 }

@@ -16,6 +16,7 @@ public class PaymentMapper {
                 .registrationDate(paymentDto.getRegistrationDate())
                 .userId(paymentDto.getUserId())
                 .validated(paymentDto.isValidated())
+                .conflict(paymentDto.isConflict())
                 .build();
     }
 
@@ -32,6 +33,7 @@ public class PaymentMapper {
                 .registrationDate(paymentModel.getRegistrationDate())
                 .userId(paymentModel.getUserId())
                 .validated(paymentModel.isValidated())
+                .conflict(paymentModel.isConflict())
                 .build();
     }
 

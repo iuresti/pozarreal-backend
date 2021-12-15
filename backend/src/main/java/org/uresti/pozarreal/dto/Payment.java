@@ -30,5 +30,5 @@ public class Payment {
     private String paymentMode;
     private String notes;
     private boolean validated;
-
+    private boolean conflict;
 }

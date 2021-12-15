@@ -45,4 +45,5 @@ public class Payment {
 
     private boolean validated;
 
+    private boolean conflict;
 }

@@ -73,4 +73,14 @@ public class PaymentsController {
 
         return paymentsService.validatePayment(paymentId);
     }
+
+    @PutMapping("/{paymentId}")
+    @PreAuthorize("hasAnyRole('ROLE_REPRESENTATIVE')")
+    public Payment conflictPayment(Principal principal, @PathVariable String paymentId) {
+        LoggedUser loggedUser = sessionHelper.getLoggedUser(principal);
+
+        log.info("Updating payment: {} by user: {} - {}", paymentId, loggedUser.getName(), loggedUser.getUserId());
+
+        return paymentsService.conflictPayment(paymentId);
+    }
 }
