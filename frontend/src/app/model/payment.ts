@@ -10,4 +10,5 @@ export interface Payment {
   notes: string;
   validated: boolean;
   conflict: boolean;
+  files: FileList;
 }

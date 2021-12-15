@@ -40,7 +40,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public List<String> removeRole(String userId, String role) {
 
-        this.rolesRepository.deleteRoleByUserIdAndRole(userId, role);
+        rolesRepository.deleteRoleByUserIdAndRole(userId, role);
 
         return rolesRepository.findRolesByUser(userId);
     }
@@ -67,11 +67,10 @@ public class UserServiceImpl implements UserService {
                 .peek(user -> user.setRoles(rolesRepository.findRolesByUser(user.getId())))
                 .peek(user -> {
                     if (user.getRoles().contains(Role.ROLE_REPRESENTATIVE.name())) {
-                        this.representativeRepository.findById(user.getId()).ifPresent(representative -> user.setStreet(representative.getStreet()));
+                        representativeRepository.findById(user.getId()).ifPresent(representative -> user.setStreet(representative.getStreet()));
                     }
                 })
                 .collect(Collectors.toList());
-
 
     }
 
@@ -111,7 +110,6 @@ public class UserServiceImpl implements UserService {
     public org.uresti.pozarreal.model.User findOrRegister(String email, String picture, String name) {
         return userRepository.findByEmail(email).or(() -> registerUser(email, picture, name)).orElseThrow();
     }
-
 
     private Optional<org.uresti.pozarreal.model.User> registerUser(String email, String picture, String name) {
         org.uresti.pozarreal.model.User user = new org.uresti.pozarreal.model.User();

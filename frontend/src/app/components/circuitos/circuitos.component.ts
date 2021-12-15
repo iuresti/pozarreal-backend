@@ -13,6 +13,7 @@ import {environment} from '../../../environments/environment';
 import {ActivatedRoute, Router} from '@angular/router';
 import {User} from '../../model/user';
 import {SessionService} from '../../services/session.service';
+import {UploadFileService} from '../../services/upload-file.service';
 
 @Component({
   selector: 'app-circuitos',
@@ -38,6 +39,7 @@ export class CircuitosComponent implements OnInit {
               private houseService: HouseService,
               private modalService: NgbModal,
               private paymentService: PaymentService,
+              private uploadFileService: UploadFileService,
               private router: Router,
               private activatedRoute: ActivatedRoute) {
   }
@@ -111,6 +113,13 @@ export class CircuitosComponent implements OnInit {
         bimesterPayment.amount += this.newPayment.amount;
         bimesterPayment.complete = this.maintenanceFee <= bimesterPayment.amount;
         bimesterPayment.conflict = payment.conflict;
+
+        const files = this.newPayment.files;
+        if (files) {
+          Array.from(files).forEach((file) => {
+            this.uploadFileService.uploadFilesPayment(file, payment.id).subscribe();
+          });
+        }
       });
     }, (_) => {
       console.log('Cancel saving payment');
