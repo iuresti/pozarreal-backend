@@ -34,7 +34,8 @@
     </tr>
     </thead>
     <tbody>
-    <tr *ngFor="let payment of payments">
+    <tr *ngFor="let payment of payments"
+        (click)="showVouchers()">
       <td>{{payment.streetName}}</td>
       <td>{{payment.houseNumber}}</td>
       <td>{{payment.paymentDate | commonDateFormat}}</td>
@@ -42,15 +43,24 @@
       <td>{{payment.paymentConcept + (payment.paymentSubConcept ? ' - ' + payment.paymentSubConcept : '')}}</td>
       <td>{{payment.paymentMode | paymentMode}}</td>
       <td>{{payment.notes}}</td>
-      <td>{{payment.validated | verification}}</td>
+      <td>
+        <select *ngIf="(isAdmin && !payment.validated);else showResult"
+                class="form-control"
+                (click)="$event.stopPropagation()"
+                (change)="onChange(payment,$event)">
+          <option [value]="false">{{payment.validated | verification}}</option>
+          <option [value]="true">{{!payment.validated | verification}}</option>
+        </select>
+        <ng-template #showResult>{{payment.validated | verification}}</ng-template>
+      </td>
       <td>
         <i class="bi bi-trash btn btn-link"
-           (click)="deletePayment(payment)"
+           (click)="deletePayment(payment, $event)"
            *ngIf="isAdmin">
         </i> &nbsp;
         <i class="bi bi-pencil btn btn-link"
            disabled="true"
-           (click)="editPayment(addPaymentDialog, payment)"
+           (click)="editPayment(addPaymentDialog, payment, $event)"
            *ngIf="isAdmin">
         </i>
       </td>

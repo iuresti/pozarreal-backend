@@ -19,3 +19,7 @@ pozarreal:
     biMonthlyMaintenanceFee: 800
     yearlyMaintenanceFee: 4560
     parkingPenFee: 1500
+
+dropbox:
+  accessToken: ${DROPBOX_ACCESS_TOKEN}
+  clientIdentifier: ${DROPBOX_CLIENT_IDENTIFIER:'pozarreal'}

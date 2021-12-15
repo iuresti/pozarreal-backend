@@ -6,6 +6,7 @@ import {NgbModal, NgbModalConfig} from '@ng-bootstrap/ng-bootstrap';
 import {Payment} from '../../model/payment';
 import Swal from 'sweetalert2';
 import {SessionService} from '../../services/session.service';
+import {UploadFileService} from '../../services/upload-file.service';
 
 @Component({
   selector: 'app-payments',
@@ -24,6 +25,7 @@ export class PaymentsComponent implements OnInit {
 
   constructor(private paymentService: PaymentService,
               private modalService: NgbModal,
+              private uploadFileService: UploadFileService,
               private sessionService: SessionService,
               config: NgbModalConfig) {
     config.backdrop = 'static';
@@ -49,7 +51,7 @@ export class PaymentsComponent implements OnInit {
 
   open(content): void {
     this.newPayment = {} as Payment;
-    this.modalService.open(content, {ariaLabelledBy: 'modal-basic-title'}).result.then((result) => {
+    this.modalService.open(content, {ariaLabelledBy: 'modal-basic-title'}).result.then((_) => {
       console.log('Saving payment');
       console.log(this.newPayment);
       this.paymentService.save(this.newPayment).subscribe(() => {
@@ -57,13 +59,14 @@ export class PaymentsComponent implements OnInit {
           this.doSearch(this.lastFilter);
         }
       });
-    }, (reason) => {
+    }, (_) => {
       console.log('Cancel saving payment');
     });
 
   }
 
-  deletePayment(payment: PaymentView): void {
+  deletePayment(payment: PaymentView, event): void {
+    event.stopPropagation();
     Swal.fire({
       title: `¿Confirmas la eliminación de este pago para ${payment.streetName} ${payment.houseNumber}?`,
       showDenyButton: true,
@@ -80,7 +83,8 @@ export class PaymentsComponent implements OnInit {
     });
   }
 
-  editPayment(content, payment: PaymentView): void {
+  editPayment(content, payment: PaymentView, event): void {
+    event.stopPropagation();
     this.newPayment = {} as Payment;
 
     this.newPayment.paymentConceptId = payment.paymentConceptId;
@@ -93,15 +97,21 @@ export class PaymentsComponent implements OnInit {
     this.newPayment.houseId = payment.houseId;
     this.newPayment.streetId = payment.streetId;
 
-    this.modalService.open(content, {ariaLabelledBy: 'modal-basic-title'}).result.then((result) => {
+    this.modalService.open(content, {ariaLabelledBy: 'modal-basic-title'}).result.then((_) => {
       console.log('Saving payment');
       console.log(this.newPayment);
       this.paymentService.save(this.newPayment).subscribe(() => {
+        const files = this.newPayment.files;
+        if (files) {
+          Array.from(files).forEach((file) => {
+            this.uploadFileService.uploadFilesPayment(file, payment.id).subscribe();
+          });
+        }
         if (this.lastFilter) {
           this.doSearch(this.lastFilter);
         }
       });
-    }, (reason) => {
+    }, (_) => {
       console.log('Cancel saving payment');
     });
   }
@@ -138,4 +148,28 @@ export class PaymentsComponent implements OnInit {
     link.click();
   }
 
+  showVouchers(): void {
+    console.log('Here show Vouchers');
+  }
+
+  onChange(payment: PaymentView, event): void {
+    if (event.target.value === 'true') {
+      Swal.fire({
+        title: `¿Confirmas la validación de este pago para ${payment.streetName} ${payment.houseNumber}?`,
+        showDenyButton: true,
+        showCancelButton: false,
+        confirmButtonText: `Sí`,
+        denyButtonText: `No`,
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.paymentService.validatePayment(payment.id).subscribe(p => {
+            payment.validated = p.validated;
+            Swal.fire('Validado!', '', 'success').then(console.log);
+          });
+        } else {
+          event.target.value = 'false';
+        }
+      });
+    }
+  }
 }

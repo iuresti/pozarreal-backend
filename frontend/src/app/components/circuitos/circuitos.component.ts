@@ -13,6 +13,7 @@ import {environment} from '../../../environments/environment';
 import {ActivatedRoute, Router} from '@angular/router';
 import {User} from '../../model/user';
 import {SessionService} from '../../services/session.service';
+import {UploadFileService} from '../../services/upload-file.service';
 
 @Component({
   selector: 'app-circuitos',
@@ -38,6 +39,7 @@ export class CircuitosComponent implements OnInit {
               private houseService: HouseService,
               private modalService: NgbModal,
               private paymentService: PaymentService,
+              private uploadFileService: UploadFileService,
               private router: Router,
               private activatedRoute: ActivatedRoute) {
   }
@@ -102,7 +104,7 @@ export class CircuitosComponent implements OnInit {
     this.newPayment.paymentConceptId = 'MAINTENANCE';
     this.newPayment.paymentSubConceptId = 'MAINTENANCE_BIM_' + bim;
     this.newPayment.amount = this.maintenanceFee - bimesterPayment.amount;
-    this.modalService.open(content, {ariaLabelledBy: 'modal-basic-title'}).result.then((result) => {
+    this.modalService.open(content, {ariaLabelledBy: 'modal-basic-title'}).result.then((_) => {
       console.log('Saving payment');
       console.log(this.newPayment);
       this.paymentService.save(this.newPayment).subscribe((payment) => {
@@ -110,8 +112,14 @@ export class CircuitosComponent implements OnInit {
         bimesterPayment.validated = payment.validated;
         bimesterPayment.amount += this.newPayment.amount;
         bimesterPayment.complete = this.maintenanceFee <= bimesterPayment.amount;
+        const files = this.newPayment.files;
+        if (files) {
+          Array.from(files).forEach((file) => {
+            this.uploadFileService.uploadFilesPayment(file, payment.id).subscribe();
+          });
+        }
       });
-    }, (reason) => {
+    }, (_) => {
       console.log('Cancel saving payment');
     });
   }
