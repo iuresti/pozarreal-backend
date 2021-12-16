@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
-import {ActivatedRoute, Router} from "@angular/router";
-import {HouseService} from "../../services/house.service";
-import {HouseInfo} from "../../model/house-info";
+import {ActivatedRoute, Router} from '@angular/router';
+import {HouseService} from '../../services/house.service';
+import {HouseInfo} from '../../model/house-info';
 
 @Component({
   selector: 'app-house-info',
@@ -20,20 +20,20 @@ export class HouseInfoComponent implements OnInit {
 
   ngOnInit(): void {
     this.activatedRoute.params.subscribe(params => {
-      if (params['houseId']) {
-        this.houseService.getHouseInfo(params['houseId']).subscribe(houseInfo => {
+      if (params.houseId) {
+        this.houseService.getHouseInfo(params.houseId).subscribe(houseInfo => {
           this.houseInfo = houseInfo;
-        })
+        });
       }
     });
   }
 
-  saveNotes() {
-    this.houseService.saveHouseNotes(this.houseInfo.id, this.houseInfo.notes).subscribe(() => console.log("notes saved"));
+  saveNotes(): void {
+    this.houseService.saveHouseNotes(this.houseInfo.id, this.houseInfo.notes).subscribe(() => console.log('notes saved'));
     this.back();
   }
 
-  back() {
-    this.router.navigate(["streets", this.houseInfo.street]);
+  back(): void{
+    this.router.navigate(['streets', this.houseInfo.street]).then(() => {});
   }
 }

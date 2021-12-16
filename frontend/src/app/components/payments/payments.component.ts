@@ -2,7 +2,7 @@ import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {PaymentFilter} from '../../model/payment-filter';
 import {PaymentView} from '../../model/payment-view';
 import {PaymentService} from '../../services/payment.service';
-import {NgbModal, NgbModalConfig} from '@ng-bootstrap/ng-bootstrap';
+import {NgbDateStruct, NgbModal, NgbModalConfig} from '@ng-bootstrap/ng-bootstrap';
 import {Payment} from '../../model/payment';
 import Swal from 'sweetalert2';
 import {SessionService} from '../../services/session.service';
@@ -23,6 +23,10 @@ export class PaymentsComponent implements OnInit {
   loading: boolean;
   isAdmin = false;
 
+  maxDate: NgbDateStruct;
+  minDate: NgbDateStruct;
+  date: string;
+
   constructor(private paymentService: PaymentService,
               private modalService: NgbModal,
               private uploadFileService: UploadFileService,
@@ -33,6 +37,21 @@ export class PaymentsComponent implements OnInit {
   }
 
   ngOnInit(): void {
+
+    const now = new Date();
+
+    this.maxDate = {
+      year: now.getFullYear() + 1,
+      month: now.getMonth() + 1,
+      day: now.getDate()
+    };
+
+    this.minDate = {
+      year: now.getFullYear() - 2,
+      month: now.getMonth() + 1,
+      day: now.getDate()
+    };
+
     this.newPaymentReady = false;
 
     this.sessionService.getUser().subscribe(user => {
@@ -51,7 +70,8 @@ export class PaymentsComponent implements OnInit {
 
   open(content): void {
     this.newPayment = {} as Payment;
-    this.modalService.open(content, {ariaLabelledBy: 'modal-basic-title'}).result.then((_) => {
+    this.newPayment.paymentDate = this.date;
+    this.modalService.open(content, {ariaLabelledBy: 'modal-basic-title'}).result.then(() => {
       console.log('Saving payment');
       console.log(this.newPayment);
       this.paymentService.save(this.newPayment).subscribe(() => {
@@ -59,7 +79,7 @@ export class PaymentsComponent implements OnInit {
           this.doSearch(this.lastFilter);
         }
       });
-    }, (_) => {
+    }, () => {
       console.log('Cancel saving payment');
     });
 
@@ -77,7 +97,7 @@ export class PaymentsComponent implements OnInit {
       if (result.isConfirmed) {
         this.paymentService.delete(payment.id).subscribe(() => {
           this.doSearch(this.lastFilter);
-          Swal.fire('Eliminado!', '', 'success');
+          Swal.fire('Eliminado!', '', 'success').then(() => {});
         });
       }
     });
@@ -97,7 +117,7 @@ export class PaymentsComponent implements OnInit {
     this.newPayment.houseId = payment.houseId;
     this.newPayment.streetId = payment.streetId;
 
-    this.modalService.open(content, {ariaLabelledBy: 'modal-basic-title'}).result.then((_) => {
+    this.modalService.open(content, {ariaLabelledBy: 'modal-basic-title'}).result.then(() => {
       console.log('Saving payment');
       console.log(this.newPayment);
       this.paymentService.save(this.newPayment).subscribe(() => {
@@ -111,7 +131,7 @@ export class PaymentsComponent implements OnInit {
           this.doSearch(this.lastFilter);
         }
       });
-    }, (_) => {
+    }, () => {
       console.log('Cancel saving payment');
     });
   }
@@ -171,5 +191,9 @@ export class PaymentsComponent implements OnInit {
         }
       });
     }
+  }
+
+  changeDate(event: string): void {
+    this.date = event;
   }
 }

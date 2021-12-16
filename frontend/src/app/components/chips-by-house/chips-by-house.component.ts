@@ -74,7 +74,7 @@ export class ChipsByHouseComponent implements OnInit {
       denyButtonText: `No`,
     }).then((result) => {
       if (result.isConfirmed) {
-        this.chipService.removeChip(chip).subscribe(removedChip => {
+        this.chipService.removeChip(chip).subscribe(() => {
           this.showChips();
         });
       }

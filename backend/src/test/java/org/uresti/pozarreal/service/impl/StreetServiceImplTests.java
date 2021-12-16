@@ -242,7 +242,7 @@ public class StreetServiceImplTests {
 
         // When:
         // Then:
-        Assertions.assertThatThrownBy(() -> streetService.getStreetInfo("street2", loggedUser))
+        Assertions.assertThatThrownBy(() -> streetService.getStreetInfo("street2", loggedUser, "2021", "2022"))
                 .isInstanceOf(BadRequestDataException.class)
                 .hasMessage("Invalid street for representative query", "INVALID_STREET");
 
@@ -286,7 +286,7 @@ public class StreetServiceImplTests {
         Mockito.when(streetRepository.findById("street")).thenReturn(Optional.ofNullable(street));
 
         // When:
-        StreetInfo streetInfo = streetService.getStreetInfo("street", loggedUser);
+        StreetInfo streetInfo = streetService.getStreetInfo("street", loggedUser, "2021", "2022");
 
         // Then:
         Assertions.assertThat(streetInfo).isNotNull();
@@ -351,7 +351,7 @@ public class StreetServiceImplTests {
         Mockito.when(housesRepository.findById("house")).thenReturn(Optional.ofNullable(house));
 
         // When:
-        StreetInfo streetInfo = streetService.getStreetInfo("street", loggedUser);
+        StreetInfo streetInfo = streetService.getStreetInfo("street", loggedUser, "2021", "2022");
 
         // Then:
         Assertions.assertThat(streetInfo).isNotNull();
@@ -404,7 +404,9 @@ public class StreetServiceImplTests {
                 .id("StreetId")
                 .build();
 
-        LocalDate startOfYear = LocalDate.now().withDayOfYear(1);
+        LocalDate startOfYear = LocalDate.now().withDayOfYear(1).withYear(2021);
+        LocalDate endOfYear = LocalDate.now().withDayOfYear(1).withYear(2022);
+
         LocalDate registrationDate = LocalDate.now();
 
         List<Payment> payments = new LinkedList<>();
@@ -454,12 +456,12 @@ public class StreetServiceImplTests {
         Mockito.when(mockSessionHelper.hasRole(loggedUser, Role.ROLE_ADMIN)).thenReturn(true);
         Mockito.when(mockSessionHelper.hasRole(loggedUser, Role.ROLE_REPRESENTATIVE)).thenReturn(true);
         Mockito.when(streetRepository.findById("street")).thenReturn(Optional.ofNullable(street));
-        Mockito.when(paymentRepository.findAllByStreetAndPaymentDateIsGreaterThanEqual("street", startOfYear)).thenReturn(payments);
+        Mockito.when(paymentRepository.findAllByStreetAndPaymentDateBetween("street", startOfYear, endOfYear)).thenReturn(payments);
         Mockito.when(housesRepository.findAllByStreetOrderByNumber("street")).thenReturn(houses);
         Mockito.when(paymentRepository.findAllByHouseIdAndPaymentConceptId("houseId", PaymentConcept.PARKING_PEN)).thenReturn(payments);
 
         // When:
-        StreetInfo streetInfo = streetService.getStreetInfo("street", loggedUser);
+        StreetInfo streetInfo = streetService.getStreetInfo("street", loggedUser, "2021", "2022");
 
         // Then:
         Assertions.assertThat(streetInfo).isNotNull();
@@ -523,7 +525,8 @@ public class StreetServiceImplTests {
                 .id("StreetId")
                 .build();
 
-        LocalDate startOfYear = LocalDate.now().withDayOfYear(1);
+        LocalDate startOfYear = LocalDate.now().withDayOfYear(1).withYear(2021);
+        LocalDate endOfYear = LocalDate.now().withDayOfYear(1).withYear(2022);
         LocalDate registrationDate = LocalDate.now();
 
         List<Payment> payments = new LinkedList<>();
@@ -573,12 +576,12 @@ public class StreetServiceImplTests {
         Mockito.when(mockSessionHelper.hasRole(loggedUser, Role.ROLE_ADMIN)).thenReturn(true);
         Mockito.when(mockSessionHelper.hasRole(loggedUser, Role.ROLE_REPRESENTATIVE)).thenReturn(true);
         Mockito.when(streetRepository.findById("street")).thenReturn(Optional.ofNullable(street));
-        Mockito.when(paymentRepository.findAllByStreetAndPaymentDateIsGreaterThanEqual("street", startOfYear)).thenReturn(payments);
+        Mockito.when(paymentRepository.findAllByStreetAndPaymentDateBetween("street", startOfYear, endOfYear)).thenReturn(payments);
         Mockito.when(housesRepository.findAllByStreetOrderByNumber("street")).thenReturn(houses);
         Mockito.when(paymentRepository.findAllByHouseIdAndPaymentConceptId("houseId", PaymentConcept.PARKING_PEN)).thenReturn(payments);
 
         // When:
-        StreetInfo streetInfo = streetService.getStreetInfo("street", loggedUser);
+        StreetInfo streetInfo = streetService.getStreetInfo("street", loggedUser, "2021", "2022");
 
         // Then:
         Assertions.assertThat(streetInfo).isNotNull();

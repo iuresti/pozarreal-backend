@@ -24,10 +24,11 @@ export class PaymentAddComponent implements OnInit {
   streets: Street[];
   houses: HouseNumber[];
   modelPaymentDate: NgbDateStruct;
-  maxDate: NgbDateStruct;
   paymentConcepts: PaymentConcept[] = [];
   paymentSubConcepts: PaymentSubConcept[] = [];
 
+  @Input() maxDate: NgbDateStruct;
+  @Input() minDate: NgbDateStruct;
   @Input() paymentData: Payment;
   @Input() house: House;
   @Input() street: Street;
@@ -35,6 +36,7 @@ export class PaymentAddComponent implements OnInit {
   labelConcept: string;
   labelSubConcept: string;
 
+  @Output() date: EventEmitter<string> = new EventEmitter<string>();
   @Output() dataReady: EventEmitter<void> = new EventEmitter<void>();
   @Output() wrongData: EventEmitter<void> = new EventEmitter<void>();
 
@@ -46,19 +48,11 @@ export class PaymentAddComponent implements OnInit {
 
   ngOnInit(): void {
 
-    const now = new Date();
-
     this.sessionService.getUser().subscribe(user => this.user = user);
-
-    this.maxDate = {
-      year: now.getFullYear(),
-      month: now.getMonth() + 1,
-      day: now.getDate()
-    };
 
     this.isNew = !this.house;
 
-    this.prepareConceptsAndSubconcepts();
+    this.prepareConceptsAndSubConcepts();
 
     this.prepareStreetsAndHouses();
 
@@ -89,7 +83,7 @@ export class PaymentAddComponent implements OnInit {
     }
   }
 
-  private prepareConceptsAndSubconcepts(): void {
+  private prepareConceptsAndSubConcepts(): void {
     this.paymentService.getPaymentConcepts().subscribe(paymentConcepts => {
       this.paymentConcepts = paymentConcepts;
       if (this.paymentData.paymentConceptId) {
@@ -137,6 +131,7 @@ export class PaymentAddComponent implements OnInit {
   updateDate(): void {
     this.paymentData.paymentDate = DateFormatterService.formatDate(this.modelPaymentDate);
     this.formChanged();
+    this.date.emit(this.paymentData.paymentDate);
   }
 
   formChanged(): void {
@@ -176,7 +171,7 @@ export class PaymentAddComponent implements OnInit {
   }
 
   isPaymentDateValid(): boolean {
-    return this.modelPaymentDate.year >= new Date().getFullYear();
+    return this.modelPaymentDate.year >= this.minDate.year && this.modelPaymentDate.year <= this.maxDate.year;
   }
 
   isPaymentSubConceptValid(): boolean {

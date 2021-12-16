@@ -69,7 +69,7 @@ public class StreetServiceImpl implements StreetsService {
 
     @Override
     @Transactional(readOnly = true)
-    public StreetInfo getStreetInfo(String streetId, LoggedUser user) {
+    public StreetInfo getStreetInfo(String streetId, LoggedUser user, String startYear, String endYear) {
 
         if (sessionHelper.hasRole(user, Role.ROLE_REPRESENTATIVE) && !sessionHelper.hasRole(user, Role.ROLE_ADMIN)) {
             Representative representative = representativeRepository.findById(user.getUserId()).orElseThrow();
@@ -82,9 +82,11 @@ public class StreetServiceImpl implements StreetsService {
         Street street = streetRepository.findById(streetId).orElseThrow();
         StreetInfo streetInfo = new StreetInfo();
 
-        LocalDate startOfYear = LocalDate.now().withDayOfYear(1);
+        LocalDate startOfYear = LocalDate.now().withDayOfYear(1).withYear(Integer.parseInt(startYear));
 
-        Map<String, List<Payment>> streetPaymentsByHouse = paymentRepository.findAllByStreetAndPaymentDateIsGreaterThanEqual(streetId, startOfYear)
+        LocalDate endOfYear = LocalDate.now().withDayOfYear(1).withYear(Integer.parseInt(endYear));
+
+        Map<String, List<Payment>> streetPaymentsByHouse = paymentRepository.findAllByStreetAndPaymentDateBetween(streetId, startOfYear, endOfYear)
                 .stream().collect(Collectors.groupingBy(Payment::getHouseId));
 
         streetInfo.setId(streetId);

@@ -82,9 +82,10 @@
       <div class="form-group">
         <div class="input-group pr-1">
           <input #paymentDate="ngbDatepicker"
-                 (ngModelChange)="updateDate()"
                  [(ngModel)]="modelPaymentDate"
+                 (ngModelChange)="updateDate()"
                  [maxDate]="maxDate"
+                 [minDate]="minDate"
                  [ngClass]="{'border border-danger':!isPaymentDateValid() }"
                  class="form-control"
                  id="paymentDate"

@@ -4,7 +4,7 @@ import {Street} from '../model/street';
 import {StreetInfo} from '../model/street-info';
 import {HttpClient} from '@angular/common/http';
 import {environment} from '../../environments/environment';
-import {tap} from "rxjs/operators";
+import {tap} from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -17,7 +17,7 @@ export class StreetService {
   }
 
   getStreets(): Observable<Street[]> {
-    if(this.streets){
+    if (this.streets) {
       return of(this.streets);
     }
 
@@ -25,7 +25,7 @@ export class StreetService {
       .pipe(tap(streets => this.streets = streets.sort((a, b) => a.name < b.name ? -1 : 1)));
   }
 
-  getStreetInfo(streetId: string): Observable<StreetInfo> {
-    return this.http.get<StreetInfo>(`${environment.baseUrl}/streetInfo/${streetId}`);
+  getStreetInfo(streetId: string, startOfYear: string, endOfYear: string): Observable<StreetInfo> {
+    return this.http.get<StreetInfo>(`${environment.baseUrl}/streetInfo/${streetId}/${startOfYear}/${endOfYear}`);
   }
 }

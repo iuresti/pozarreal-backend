@@ -28,11 +28,13 @@ public class StreetInfoController {
         this.sessionHelper = sessionHelper;
     }
 
-    @GetMapping("/{streetId}")
+    @GetMapping("/{streetId}/{startYear}/{endYear}")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_REPRESENTATIVE')")
-    public ResponseEntity<StreetInfo> getStreetInfo(@PathVariable("streetId") String streetId, Principal principal) {
+    public ResponseEntity<StreetInfo> getStreetInfo(@PathVariable("streetId") String streetId,
+                                                    @PathVariable("startYear") String startYear,
+                                                    @PathVariable("endYear") String endYear, Principal principal) {
         LoggedUser userLogged = sessionHelper.getLoggedUser(principal);
 
-        return new ResponseEntity<>(streetsService.getStreetInfo(streetId, userLogged), HttpStatus.OK);
+        return new ResponseEntity<>(streetsService.getStreetInfo(streetId, userLogged, startYear, endYear), HttpStatus.OK);
     }
 }

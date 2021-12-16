@@ -52,7 +52,7 @@ export class CourseAssistantPaymentsComponent implements OnInit {
 
   savePayment(): void {
     this.newPayment.courseAssistantId = this.courseAssistantId;
-    this.coursePaymentService.save(this.newPayment).subscribe(payment => {
+    this.coursePaymentService.save(this.newPayment).subscribe(() => {
       this.newPayment = {} as CourseAssistantPayment;
       this.loadPayments();
     });
@@ -69,7 +69,7 @@ export class CourseAssistantPaymentsComponent implements OnInit {
       if (result.isConfirmed) {
         this.coursePaymentService.deletePayment(paymentId).subscribe(payment => {
           this.loadPayments();
-          Swal.fire('Eliminado!', '', 'success');
+          Swal.fire('Eliminado!', '', 'success').then(() => {});
         });
       }
     });

@@ -6,7 +6,7 @@ import {HouseService} from '../../services/house.service';
 import {House} from '../../model/house';
 import Swal from 'sweetalert2';
 import {Payment} from '../../model/payment';
-import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
+import {NgbDateStruct, NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {PaymentService} from '../../services/payment.service';
 import {PaymentByConcept} from '../../model/payment-by-concept';
 import {environment} from '../../../environments/environment';
@@ -33,6 +33,12 @@ export class CircuitosComponent implements OnInit {
   maintenanceFee = 800;
   selectedStreetId: string;
   mobile: boolean;
+  years = [];
+  selectedYear: number;
+  date: string;
+
+  maxDate: NgbDateStruct;
+  minDate: NgbDateStruct;
 
   constructor(private streetService: StreetService,
               private sessionService: SessionService,
@@ -45,6 +51,26 @@ export class CircuitosComponent implements OnInit {
   }
 
   public ngOnInit(): void {
+
+    const now = new Date();
+
+    this.maxDate = {
+      year: now.getFullYear(),
+      month: now.getMonth() + 1,
+      day: now.getDate()
+    };
+
+    this.minDate = {
+      year: now.getFullYear(),
+      month: now.getMonth(),
+      day: now.getDate()
+    };
+
+    this.selectedYear = new Date().getFullYear();
+
+    for (let i = this.selectedYear - 4; i <= this.selectedYear; i++) {
+      this.years.push(i);
+    }
 
     if (window.screen.width < environment.mobileWidthScreen) {
       this.mobile = true;
@@ -69,9 +95,10 @@ export class CircuitosComponent implements OnInit {
   selectStreet(): void {
     this.loading = true;
     this.selectedStreet = null;
-    this.streetService.getStreetInfo(this.selectedStreetId).subscribe(streetInfo => {
+    const startOfYear = this.selectedYear.toString();
+    const endOfYear = (Number(this.selectedYear) + 1).toString();
+    this.streetService.getStreetInfo(this.selectedStreetId, startOfYear, endOfYear).subscribe(streetInfo => {
       this.selectedStreet = streetInfo;
-      console.log(this.selectedStreet);
       this.loading = false;
     });
   }
@@ -86,7 +113,8 @@ export class CircuitosComponent implements OnInit {
     }).then((result) => {
       if (result.isConfirmed) {
         this.houseService.enableChips(house.id, house.chipsEnabled).subscribe(() => {
-          Swal.fire('Guardado!', '', 'success');
+          Swal.fire('Guardado!', '', 'success').then(() => {
+          });
         });
       } else {
         house.chipsEnabled = !house.chipsEnabled;
@@ -103,8 +131,9 @@ export class CircuitosComponent implements OnInit {
     this.house = house;
     this.newPayment.paymentConceptId = 'MAINTENANCE';
     this.newPayment.paymentSubConceptId = 'MAINTENANCE_BIM_' + bim;
+    this.newPayment.paymentDate = this.date;
     this.newPayment.amount = this.maintenanceFee - bimesterPayment.amount;
-    this.modalService.open(content, {ariaLabelledBy: 'modal-basic-title'}).result.then((_) => {
+    this.modalService.open(content, {ariaLabelledBy: 'modal-basic-title'}).result.then(() => {
       console.log('Saving payment');
       console.log(this.newPayment);
       this.paymentService.save(this.newPayment).subscribe(payment => {
@@ -121,7 +150,7 @@ export class CircuitosComponent implements OnInit {
           });
         }
       });
-    }, (_) => {
+    }, () => {
       console.log('Cancel saving payment');
     });
   }
@@ -187,7 +216,19 @@ export class CircuitosComponent implements OnInit {
     }
   }
 
+  changePaymentsOfYear(startOfYear: string): void {
+    const endOfYear = (Number(startOfYear) + 1).toString();
+    this.streetService.getStreetInfo(this.selectedStreetId, startOfYear, endOfYear).subscribe(streetInfo => {
+      this.selectedStreet = streetInfo;
+      this.loading = false;
+    });
+  }
+
   userHasRoles(roles: string[]): boolean {
     return this.user.roles.some(r => roles.includes(r));
+  }
+
+  saveDate(event: string): void{
+    this.date = event;
   }
 }
