@@ -32,6 +32,7 @@ export class PaymentAddComponent implements OnInit {
   @Input() paymentData: Payment;
   @Input() house: House;
   @Input() street: Street;
+  @Input() paymentDateReadOnly: boolean;
   isNew: boolean;
   labelConcept: string;
   labelSubConcept: string;

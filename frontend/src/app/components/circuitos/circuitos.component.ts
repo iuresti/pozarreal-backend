@@ -56,7 +56,7 @@ export class CircuitosComponent implements OnInit {
 
     this.maxDate = {
       year: now.getFullYear(),
-      month: now.getMonth() + 1,
+      month: now.getMonth(),
       day: now.getDate()
     };
 
@@ -71,6 +71,7 @@ export class CircuitosComponent implements OnInit {
     for (let i = this.selectedYear - 4; i <= this.selectedYear; i++) {
       this.years.push(i);
     }
+    this.years.push(2022)
 
     if (window.screen.width < environment.mobileWidthScreen) {
       this.mobile = true;
@@ -95,9 +96,7 @@ export class CircuitosComponent implements OnInit {
   selectStreet(): void {
     this.loading = true;
     this.selectedStreet = null;
-    const startOfYear = this.selectedYear.toString();
-    const endOfYear = (Number(this.selectedYear) + 1).toString();
-    this.streetService.getStreetInfo(this.selectedStreetId, startOfYear, endOfYear).subscribe(streetInfo => {
+    this.streetService.getStreetInfo(this.selectedStreetId, this.selectedYear).subscribe(streetInfo => {
       this.selectedStreet = streetInfo;
       this.loading = false;
     });
@@ -164,7 +163,7 @@ export class CircuitosComponent implements OnInit {
   }
 
   showHouse(id: string): void {
-    this.router.navigate(['house', id]);
+    this.router.navigate(['house', id]).then(() => {});
   }
 
   getStyle(bimesterPayment: PaymentByConcept): any {
@@ -216,9 +215,8 @@ export class CircuitosComponent implements OnInit {
     }
   }
 
-  changePaymentsOfYear(startOfYear: string): void {
-    const endOfYear = (Number(startOfYear) + 1).toString();
-    this.streetService.getStreetInfo(this.selectedStreetId, startOfYear, endOfYear).subscribe(streetInfo => {
+  changePaymentsOfYear(startOfYear: number): void {
+    this.streetService.getStreetInfo(this.selectedStreetId, startOfYear).subscribe(streetInfo => {
       this.selectedStreet = streetInfo;
       this.loading = false;
     });

@@ -55,7 +55,7 @@ public class PaymentsServiceImpl implements PaymentsService {
         }
 
         if (payment.getPaymentConceptId().equals(MAINTENANCE)) {
-            validateMaintenancePayment(payment, payment.getPaymentDate().getYear(), payment.getPaymentDate().getYear() + 1);
+            validateMaintenancePayment(payment, payment.getPaymentDate().getYear());
         }
 
         if (sessionHelper.hasRole(sessionHelper.getLoggedUser(principal), Role.ROLE_ADMIN)) {
@@ -97,15 +97,16 @@ public class PaymentsServiceImpl implements PaymentsService {
         return PaymentMapper.entityToDto(paymentRepository.save(payment));
     }
 
-    private void validateMaintenancePayment(Payment payment, int startYear, int endYear) {
+    private void validateMaintenancePayment(Payment payment, int startYear) {
         if (!MAINTENANCE_ANNUITY.equals(payment.getPaymentSubConceptId())) {
 
             LocalDate startOfYear = LocalDate.now().withDayOfYear(1).withYear(startYear);
 
-            LocalDate endOfYear = LocalDate.now().withDayOfYear(1).withYear(endYear);
+            LocalDate endOfYear = LocalDate.now().withDayOfYear(1).withYear(startYear + 1);
 
             List<org.uresti.pozarreal.model.Payment> payments = paymentRepository
-                    .findAllByHouseIdAndPaymentSubConceptIdAndPaymentDateBetween(payment.getHouseId(), payment.getPaymentSubConceptId(), startOfYear, endOfYear);
+                    .findAllByHouseIdAndPaymentSubConceptIdAndPaymentDateBetween(payment.getHouseId(),
+                            payment.getPaymentSubConceptId(), startOfYear, endOfYear);
 
             double totalPayments = payment.getAmount() + payments.stream()
                     .filter(paymentIt -> payment.getId() == null || !paymentIt.getId().equals(payment.getId()))

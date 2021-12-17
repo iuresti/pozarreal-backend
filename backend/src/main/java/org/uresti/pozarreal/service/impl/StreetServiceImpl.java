@@ -69,7 +69,7 @@ public class StreetServiceImpl implements StreetsService {
 
     @Override
     @Transactional(readOnly = true)
-    public StreetInfo getStreetInfo(String streetId, LoggedUser user, String startYear, String endYear) {
+    public StreetInfo getStreetInfo(String streetId, LoggedUser user, Integer startYear) {
 
         if (sessionHelper.hasRole(user, Role.ROLE_REPRESENTATIVE) && !sessionHelper.hasRole(user, Role.ROLE_ADMIN)) {
             Representative representative = representativeRepository.findById(user.getUserId()).orElseThrow();
@@ -82,11 +82,17 @@ public class StreetServiceImpl implements StreetsService {
         Street street = streetRepository.findById(streetId).orElseThrow();
         StreetInfo streetInfo = new StreetInfo();
 
-        LocalDate startOfYear = LocalDate.now().withDayOfYear(1).withYear(Integer.parseInt(startYear));
+        LocalDate startOfYear = LocalDate.now().withDayOfYear(1);
 
-        LocalDate endOfYear = LocalDate.now().withDayOfYear(1).withYear(Integer.parseInt(endYear));
+        LocalDate endOfYear = LocalDate.now().withDayOfYear(1);
 
-        Map<String, List<Payment>> streetPaymentsByHouse = paymentRepository.findAllByStreetAndPaymentDateBetween(streetId, startOfYear, endOfYear)
+        if(startYear != null) {
+            startOfYear = startOfYear.withYear(startYear);
+            endOfYear = endOfYear.withYear(startYear + 1);
+        }
+
+        Map<String, List<Payment>> streetPaymentsByHouse = paymentRepository
+                .findAllByStreetAndPaymentDateBetween(streetId, startOfYear, endOfYear)
                 .stream().collect(Collectors.groupingBy(Payment::getHouseId));
 
         streetInfo.setId(streetId);
@@ -166,7 +172,7 @@ public class StreetServiceImpl implements StreetsService {
                     if (twoMonthsPaymentIds[i].equals(payment.getPaymentSubConceptId())) {
                         paymentInfo.get(i).setId(payment.getId());
                         paymentInfo.get(i).setAmount(paymentInfo.get(i).getAmount() + payment.getAmount());
-                        paymentInfo.get(i).setComplete(paymentInfo.get(i).getAmount()  >= feeConfig.getBiMonthlyMaintenanceFee());
+                        paymentInfo.get(i).setComplete(paymentInfo.get(i).getAmount() >= feeConfig.getBiMonthlyMaintenanceFee());
                         paymentInfo.get(i).setValidated(payment.isValidated());
                         paymentInfo.get(i).setConflict(payment.isConflict());
                         break;

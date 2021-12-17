@@ -25,7 +25,7 @@ export class StreetService {
       .pipe(tap(streets => this.streets = streets.sort((a, b) => a.name < b.name ? -1 : 1)));
   }
 
-  getStreetInfo(streetId: string, startOfYear: string, endOfYear: string): Observable<StreetInfo> {
-    return this.http.get<StreetInfo>(`${environment.baseUrl}/streetInfo/${streetId}/${startOfYear}/${endOfYear}`);
+  getStreetInfo(streetId: string, year: number): Observable<StreetInfo> {
+    return this.http.get<StreetInfo>(`${environment.baseUrl}/streetInfo/${streetId}?year=${year}`);
   }
 }

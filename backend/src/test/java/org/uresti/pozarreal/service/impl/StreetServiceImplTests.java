@@ -242,7 +242,7 @@ public class StreetServiceImplTests {
 
         // When:
         // Then:
-        Assertions.assertThatThrownBy(() -> streetService.getStreetInfo("street2", loggedUser, "2021", "2022"))
+        Assertions.assertThatThrownBy(() -> streetService.getStreetInfo("street2", loggedUser, 2021))
                 .isInstanceOf(BadRequestDataException.class)
                 .hasMessage("Invalid street for representative query", "INVALID_STREET");
 
@@ -286,7 +286,7 @@ public class StreetServiceImplTests {
         Mockito.when(streetRepository.findById("street")).thenReturn(Optional.ofNullable(street));
 
         // When:
-        StreetInfo streetInfo = streetService.getStreetInfo("street", loggedUser, "2021", "2022");
+        StreetInfo streetInfo = streetService.getStreetInfo("street", loggedUser, 2021);
 
         // Then:
         Assertions.assertThat(streetInfo).isNotNull();
@@ -351,7 +351,7 @@ public class StreetServiceImplTests {
         Mockito.when(housesRepository.findById("house")).thenReturn(Optional.ofNullable(house));
 
         // When:
-        StreetInfo streetInfo = streetService.getStreetInfo("street", loggedUser, "2021", "2022");
+        StreetInfo streetInfo = streetService.getStreetInfo("street", loggedUser, 2021);
 
         // Then:
         Assertions.assertThat(streetInfo).isNotNull();
@@ -461,7 +461,7 @@ public class StreetServiceImplTests {
         Mockito.when(paymentRepository.findAllByHouseIdAndPaymentConceptId("houseId", PaymentConcept.PARKING_PEN)).thenReturn(payments);
 
         // When:
-        StreetInfo streetInfo = streetService.getStreetInfo("street", loggedUser, "2021", "2022");
+        StreetInfo streetInfo = streetService.getStreetInfo("street", loggedUser, 2021);
 
         // Then:
         Assertions.assertThat(streetInfo).isNotNull();
@@ -581,7 +581,7 @@ public class StreetServiceImplTests {
         Mockito.when(paymentRepository.findAllByHouseIdAndPaymentConceptId("houseId", PaymentConcept.PARKING_PEN)).thenReturn(payments);
 
         // When:
-        StreetInfo streetInfo = streetService.getStreetInfo("street", loggedUser, "2021", "2022");
+        StreetInfo streetInfo = streetService.getStreetInfo("street", loggedUser, 2021);
 
         // Then:
         Assertions.assertThat(streetInfo).isNotNull();

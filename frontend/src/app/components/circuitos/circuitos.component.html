@@ -13,14 +13,15 @@
     </div>
   </div>
 
-  <div *ngIf="selectedStreet" class="row border-bottom mt-1">
-    <div *ngIf="!loading" class="col">
+  <div *ngIf="!loading && selectedStreet" class="d-flex justify-content-between m-1">
+    <div class="border-bottom mt-1">
       <h6 *ngIf="selectedStreet.representative">
         Representante: {{selectedStreet.representative.name}}
-        {{selectedStreet.representative.phone}}</h6>
+        {{selectedStreet.representative.phone}}
+      </h6>
     </div>
 
-    <div class="col" *ngIf="!loading">
+    <div>
       <select class="custom-select" [(ngModel)]="selectedYear" (ngModelChange)="changePaymentsOfYear($event)">
         <option *ngFor="let year of years; let i = index"
                 [selected]="year == selectedYear" [value]="year">
@@ -144,6 +145,7 @@
                      [minDate]="minDate"
                      [maxDate]="maxDate"
                      [paymentData]="newPayment"
+                     [paymentDateReadOnly]="true"
                      [street]="selectedStreet">
     </app-payment-add>
   </div>
