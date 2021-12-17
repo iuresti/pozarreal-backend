@@ -71,7 +71,6 @@ export class CircuitosComponent implements OnInit {
     for (let i = this.selectedYear - 4; i <= this.selectedYear; i++) {
       this.years.push(i);
     }
-    this.years.push(2022)
 
     if (window.screen.width < environment.mobileWidthScreen) {
       this.mobile = true;
