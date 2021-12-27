@@ -23,18 +23,21 @@ import {PaymentAddComponent} from './components/payment-add/payment-add.componen
 import {StreetComponent} from './components/street/street.component';
 import {AuthInterceptorService} from './services/auth-interceptor.service';
 import {CookieService} from 'ngx-cookie-service';
-import { CoursesComponent } from './components/courses/courses.component';
-import { CourseInfoComponent } from './components/course-info/course-info.component';
-import { WeekdayLabelPipe } from './pipes/weekday-label.pipe';
-import { StudentAddComponent } from './components/student-add/student-add.component';
-import { CourseAssistantPaymentsComponent } from './components/course-assistant-payments/course-assistant-payments.component';
-import { CourseAddPaymentComponent } from './components/course-add-payment/course-add-payment.component';
-import { SmallDateFormatPipe } from './pipes/small-date-format.pipe';
-import { CommonDateFormatPipe } from './pipes/common-date-format.pipe';
+import {CoursesComponent} from './components/courses/courses.component';
+import {CourseInfoComponent} from './components/course-info/course-info.component';
+import {WeekdayLabelPipe} from './pipes/weekday-label.pipe';
+import {StudentAddComponent} from './components/student-add/student-add.component';
+import {
+  CourseAssistantPaymentsComponent
+} from './components/course-assistant-payments/course-assistant-payments.component';
+import {CourseAddPaymentComponent} from './components/course-add-payment/course-add-payment.component';
+import {SmallDateFormatPipe} from './pipes/small-date-format.pipe';
+import {CommonDateFormatPipe} from './pipes/common-date-format.pipe';
 import {RouterModule} from '@angular/router';
 import {ROUTES} from './app.routes';
-import { HouseInfoComponent } from './components/house-info/house-info.component';
-import { VerificationPipe } from './pipes/verification.pipe';
+import {HouseInfoComponent} from './components/house-info/house-info.component';
+import {VerificationPipe} from './pipes/verification.pipe';
+import {NotificationsComponent} from './components/notifications/notifications.component';
 
 @NgModule({
   declarations: [
@@ -61,18 +64,19 @@ import { VerificationPipe } from './pipes/verification.pipe';
     SmallDateFormatPipe,
     CommonDateFormatPipe,
     HouseInfoComponent,
-    VerificationPipe
+    VerificationPipe,
+    NotificationsComponent
   ],
-    imports: [
-        NgbModule,
-        BrowserModule,
-        FormsModule,
-        HttpClientModule,
-        NgDragDropModule.forRoot(),
-        ReactiveFormsModule,
-        NgMultiSelectDropDownModule.forRoot(),
-        RouterModule.forRoot(ROUTES, {useHash: false})
-    ],
+  imports: [
+    NgbModule,
+    BrowserModule,
+    FormsModule,
+    HttpClientModule,
+    NgDragDropModule.forRoot(),
+    ReactiveFormsModule,
+    NgMultiSelectDropDownModule.forRoot(),
+    RouterModule.forRoot(ROUTES, {useHash: false})
+  ],
   providers: [
     {provide: NgbDateParserFormatter, useClass: NgbDateCustomParserFormatter},
     {provide: HTTP_INTERCEPTORS, useClass: AuthInterceptorService, multi: true},

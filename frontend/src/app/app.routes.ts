@@ -6,6 +6,7 @@ import {ChipsUpdaterComponent} from './components/chips-updater/chips-updater.co
 import {CoursesComponent} from './components/courses/courses.component';
 import {UsersComponent} from './components/users/users.component';
 import {HouseInfoComponent} from './components/house-info/house-info.component';
+import {NotificationsComponent} from './components/notifications/notifications.component';
 
 export const ROUTES: Routes = [
   {path: 'account', component: UserAccountComponent},
@@ -16,6 +17,7 @@ export const ROUTES: Routes = [
   {path: 'users', component: UsersComponent},
   {path: 'house/:houseId', component: HouseInfoComponent},
   {path: 'streets/:streetId', component: CircuitosComponent},
+  {path: 'notifications', component: NotificationsComponent},
   {path: '**', redirectTo: 'account', pathMatch: 'full'}
 ];
 

@@ -4,28 +4,31 @@
 
     <img [src]="user.picture" style="width: 40px">
 
-    <button class="navbar-toggler navbar-toggler-right" type="button" aria-controls="appNavigation"
-            aria-expanded="!isCollapsed" aria-label="Toggle navigation" (click)="toggleMenu()">
+    <button (click)="toggleMenu()" aria-controls="appNavigation" aria-expanded="!isCollapsed"
+            aria-label="Toggle navigation" class="navbar-toggler navbar-toggler-right" type="button">
       <span class="navbar-toggler-icon"></span>
     </button>
 
-    <div class="collapse navbar-collapse" id="appNavigation" [ngbCollapse]="isCollapsed">
+    <div [ngbCollapse]="isCollapsed" class="collapse navbar-collapse" id="appNavigation">
       <div class="navbar-nav mr-auto">
         <a (click)="toggleMenu()" class="nav-item nav-link" routerLink="/account"
            routerLinkActive="active">Mi Cuenta</a>
-        <a (click)="toggleMenu()" class="nav-item nav-link" routerLink="/streets"
-           routerLinkActive="active" *ngIf="userHasRoles(['ROLE_ADMIN', 'ROLE_REPRESENTATIVE'])">Circuitos</a>
-        <a (click)="toggleMenu()" class="nav-item nav-link" routerLink="/payments"
-           routerLinkActive="active" *ngIf="userHasRoles(['ROLE_ADMIN', 'ROLE_REPRESENTATIVE'])">Pagos</a>
-        <a (click)="toggleMenu()" class="nav-item nav-link" routerLink="/chipsUpdates"
-           routerLinkActive="active" *ngIf="userHasRoles(['ROLE_CHIPS_UPDATER'])">Actualización de
+        <a (click)="toggleMenu()" *ngIf="userHasRoles(['ROLE_ADMIN', 'ROLE_REPRESENTATIVE'])" class="nav-item nav-link"
+           routerLink="/streets" routerLinkActive="active">Circuitos</a>
+        <a (click)="toggleMenu()" *ngIf="userHasRoles(['ROLE_ADMIN', 'ROLE_REPRESENTATIVE'])" class="nav-item nav-link"
+           routerLink="/payments" routerLinkActive="active">Pagos</a>
+        <a (click)="toggleMenu()" *ngIf="userHasRoles(['ROLE_CHIPS_UPDATER'])" class="nav-item nav-link"
+           routerLink="/chipsUpdates" routerLinkActive="active">Actualización de
           chips</a>
-        <a (click)="toggleMenu()" class="nav-item nav-link" routerLink="/classes"
-           routerLinkActive="active" *ngIf="userHasRoles(['ROLE_SCHOOL_MANAGER'])">Clases</a>
-        <a (click)="toggleMenu()" class="nav-item nav-link" routerLink="/users"
-           routerLinkActive="active" *ngIf="userHasRoles(['ROLE_USER_MANAGER'])">Usuarios</a>
-        <a href="/logout" class="nav-item nav-link">Salir</a>
+        <a (click)="toggleMenu()" *ngIf="userHasRoles(['ROLE_SCHOOL_MANAGER'])" class="nav-item nav-link"
+           routerLink="/classes" routerLinkActive="active">Clases</a>
+        <a (click)="toggleMenu()" *ngIf="userHasRoles(['ROLE_USER_MANAGER'])" class="nav-item nav-link"
+           routerLink="/users" routerLinkActive="active">Usuarios</a>
+        <a class="nav-item nav-link" href="/logout">Salir</a>
       </div>
+      <a (click)="toggleMenu()" class="nav-item nav-link" routerLink="/notifications" routerLinkActive="active">
+        <i class="bi bi-bell-fill bell"></i>
+      </a>
     </div>
 
   </nav>
@@ -38,18 +41,18 @@
 <div *ngIf="failedLogin" class="container">
   <div class="row mt-3">
     <div class="col col-3">Usuario:</div>
-    <div class="col col-9"><input class="form-control" type="text" #userInput></div>
+    <div class="col col-9"><input #userInput class="form-control" type="text"></div>
   </div>
   <div class="row mt-2">
     <div class="col col-3">Password:</div>
-    <div class="col col-9"><input class="form-control" type="password" #pwdInput></div>
+    <div class="col col-9"><input #pwdInput class="form-control" type="password"></div>
   </div>
   <div class="row mt-2">
     <div class="col col-10 ">
 
     </div>
     <div class="col col-2 text-right">
-      <button class="btn btn-success" (click)="apiLogin(userInput.value, pwdInput.value)">Entrar
+      <button (click)="apiLogin(userInput.value, pwdInput.value)" class="btn btn-success">Entrar
       </button>
     </div>
   </div>
