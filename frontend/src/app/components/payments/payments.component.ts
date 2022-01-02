@@ -21,7 +21,7 @@ export class PaymentsComponent implements OnInit {
   lastFilter: PaymentFilter;
   newPaymentReady: boolean;
   loading: boolean;
-  isAdmin = false;
+  havePermission: boolean;
 
   maxDate: NgbDateStruct;
   minDate: NgbDateStruct;
@@ -55,7 +55,7 @@ export class PaymentsComponent implements OnInit {
     this.newPaymentReady = false;
 
     this.sessionService.getUser().subscribe(user => {
-      this.isAdmin = user.roles.filter(role => role === 'ROLE_ADMIN').length > 0;
+      this.havePermission = user.roles.filter(role => role === 'ROLE_ADMIN' || role === 'ROLE_REPRESENTATIVE').length > 0;
     });
   }
 
