@@ -1,10 +1,9 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {User} from '../../model/user';
 import {StreetService} from '../../services/street.service';
 import {HouseService} from '../../services/house.service';
 import {UserService} from '../../services/user.service';
 import {SessionService} from '../../services/session.service';
-import {logger} from 'codelyzer/util/logger';
 
 @Component({
   selector: 'app-user-account',
@@ -31,7 +30,7 @@ export class UserAccountComponent implements OnInit {
   }
 
   saveUserInfo(): void {
-    this.userService.saveUser(this.user).subscribe(user => {
+    this.userService.saveUser(this.user).subscribe(() => {
       this.sessionService.updateUser();
     });
   }

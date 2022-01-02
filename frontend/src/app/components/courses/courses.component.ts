@@ -56,7 +56,7 @@ export class CoursesComponent implements OnInit {
 
   openStudentDialog(content): void {
     this.newStudent = {} as CourseAssistant;
-    this.modalService.open(content, {ariaLabelledBy: 'modal-basic-title'}).result.then((result) => {
+    this.modalService.open(content, {ariaLabelledBy: 'modal-basic-title'}).result.then(() => {
       console.log('Saving student');
       console.log(this.newStudent);
       this.newStudent.courseId = this.selectedCourseId;
@@ -65,7 +65,7 @@ export class CoursesComponent implements OnInit {
         this.loadStudents();
       });
 
-    }, (reason) => {
+    }, () => {
       console.log('Cancel saving student');
     });
 
@@ -92,7 +92,7 @@ export class CoursesComponent implements OnInit {
       if (result.isConfirmed) {
         this.courseAssistantService.delete(student.id).subscribe(() => {
           this.loadStudents();
-          Swal.fire('Eliminado!', '', 'success');
+          Swal.fire('Eliminado!', '', 'success').then(() => {});
         });
       }
     });

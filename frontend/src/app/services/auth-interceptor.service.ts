@@ -13,7 +13,7 @@ export class AuthInterceptorService implements HttpInterceptor {
   }
 
   private static handleError(error: any): Observable<never> {
-    let errorMessage = '';
+    let errorMessage: string;
     console.log('handling error');
     console.log(error);
     if (error instanceof ErrorEvent) {
@@ -32,8 +32,7 @@ export class AuthInterceptorService implements HttpInterceptor {
         showDenyButton: false,
         showCancelButton: false,
         confirmButtonText: `Cerrar`
-      }).then((result) => {
-      });
+      }).then(() => {});
     }
 
     return throwError(errorMessage);

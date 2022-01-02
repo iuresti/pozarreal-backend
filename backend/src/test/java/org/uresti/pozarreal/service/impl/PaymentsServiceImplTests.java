@@ -453,9 +453,8 @@ public class PaymentsServiceImplTests {
 
         // When:
         paymentsService.delete("id");
-        
-        // Then:
 
+        // Then:
         Mockito.verify(paymentRepository).deleteById("id");
     }
 
@@ -527,6 +526,132 @@ public class PaymentsServiceImplTests {
         // When:
         // Then:
         Assertions.assertThatThrownBy(() -> paymentsService.getPayment("id", null))
+                .isInstanceOf(NoSuchElementException.class);
+    }
+
+    @Test
+    public void givenAPaymentId_whenValidatePayment_thenUpdatePaymentWithValidateFlag() {
+        // Given:
+        CustomPaymentRepository customPaymentRepository = Mockito.mock(CustomPaymentRepository.class);
+        PaymentRepository paymentRepository = Mockito.mock(PaymentRepository.class);
+        SessionHelper sessionHelper = Mockito.mock(SessionHelper.class);
+        PozarrealConfig pozarrealConfig = Mockito.mock(PozarrealConfig.class);
+
+        ArgumentCaptor<org.uresti.pozarreal.model.Payment> argumentCaptor = ArgumentCaptor.forClass(org.uresti.pozarreal.model.Payment.class);
+
+        PaymentsServiceImpl paymentsService = new PaymentsServiceImpl(
+                customPaymentRepository,
+                paymentRepository,
+                sessionHelper,
+                pozarrealConfig);
+
+        String paymentId = UUID.randomUUID().toString();
+
+        org.uresti.pozarreal.model.Payment payment = org.uresti.pozarreal.model.Payment.builder()
+                .amount(100.0)
+                .id(paymentId)
+                .validated(false)
+                .build();
+
+
+        Mockito.when(paymentRepository.findById(paymentId)).thenReturn(Optional.ofNullable(payment));
+        Mockito.when(paymentRepository.save(argumentCaptor.capture())).thenReturn(payment);
+
+        // When:
+        Payment validatePayment = paymentsService.validatePayment(paymentId);
+
+        // Then:
+        org.uresti.pozarreal.model.Payment parameter = argumentCaptor.getValue();
+
+        Assertions.assertThat(validatePayment).isNotNull();
+        Assertions.assertThat(parameter).isNotNull();
+        Assertions.assertThat(parameter.isValidated()).isTrue();
+        Assertions.assertThat(validatePayment.getAmount()).isEqualTo(100.0);
+        Assertions.assertThat(parameter.getAmount()).isEqualTo(100.0);
+        Assertions.assertThat(parameter.getId()).isEqualTo(paymentId);
+        Assertions.assertThat(validatePayment.getId()).isEqualTo(paymentId);
+    }
+
+    @Test
+    public void givenAnNoExistentPaymentId_whenValidatePayment_theThrowNoSuchElementException() {
+        // Given:
+        CustomPaymentRepository customPaymentRepository = Mockito.mock(CustomPaymentRepository.class);
+        PaymentRepository paymentRepository = Mockito.mock(PaymentRepository.class);
+        SessionHelper sessionHelper = Mockito.mock(SessionHelper.class);
+        PozarrealConfig pozarrealConfig = Mockito.mock(PozarrealConfig.class);
+
+        PaymentsServiceImpl paymentsService = new PaymentsServiceImpl(
+                customPaymentRepository,
+                paymentRepository,
+                sessionHelper,
+                pozarrealConfig);
+
+        // When:
+        // Then:
+        Assertions.assertThatThrownBy(() -> paymentsService.validatePayment(null))
+                .isInstanceOf(NoSuchElementException.class);
+    }
+
+    @Test
+    public void givenAPaymentId_whenConflictPayment_thenUpdatePaymentWithConflictFlag() {
+        // Given:
+        CustomPaymentRepository customPaymentRepository = Mockito.mock(CustomPaymentRepository.class);
+        PaymentRepository paymentRepository = Mockito.mock(PaymentRepository.class);
+        SessionHelper sessionHelper = Mockito.mock(SessionHelper.class);
+        PozarrealConfig pozarrealConfig = Mockito.mock(PozarrealConfig.class);
+
+        ArgumentCaptor<org.uresti.pozarreal.model.Payment> argumentCaptor = ArgumentCaptor.forClass(org.uresti.pozarreal.model.Payment.class);
+
+        PaymentsServiceImpl paymentsService = new PaymentsServiceImpl(
+                customPaymentRepository,
+                paymentRepository,
+                sessionHelper,
+                pozarrealConfig);
+
+        String paymentId = UUID.randomUUID().toString();
+
+        org.uresti.pozarreal.model.Payment payment = org.uresti.pozarreal.model.Payment.builder()
+                .amount(100.0)
+                .id(paymentId)
+                .conflict(false)
+                .build();
+
+
+        Mockito.when(paymentRepository.findById(paymentId)).thenReturn(Optional.ofNullable(payment));
+        Mockito.when(paymentRepository.save(argumentCaptor.capture())).thenReturn(payment);
+
+        // When:
+        Payment conflictPayment = paymentsService.conflictPayment(paymentId);
+
+        // Then:
+        org.uresti.pozarreal.model.Payment parameter = argumentCaptor.getValue();
+
+        Assertions.assertThat(conflictPayment).isNotNull();
+        Assertions.assertThat(parameter).isNotNull();
+        Assertions.assertThat(parameter.isConflict()).isTrue();
+        Assertions.assertThat(conflictPayment.getAmount()).isEqualTo(100.0);
+        Assertions.assertThat(parameter.getAmount()).isEqualTo(100.0);
+        Assertions.assertThat(parameter.getId()).isEqualTo(paymentId);
+        Assertions.assertThat(conflictPayment.getId()).isEqualTo(paymentId);
+    }
+
+    @Test
+    public void givenAnNoExistentPaymentId_whenConflictPayment_theThrowNoSuchElementException() {
+        // Given:
+        CustomPaymentRepository customPaymentRepository = Mockito.mock(CustomPaymentRepository.class);
+        PaymentRepository paymentRepository = Mockito.mock(PaymentRepository.class);
+        SessionHelper sessionHelper = Mockito.mock(SessionHelper.class);
+        PozarrealConfig pozarrealConfig = Mockito.mock(PozarrealConfig.class);
+
+        PaymentsServiceImpl paymentsService = new PaymentsServiceImpl(
+                customPaymentRepository,
+                paymentRepository,
+                sessionHelper,
+                pozarrealConfig);
+
+        // When:
+        // Then:
+        Assertions.assertThatThrownBy(() -> paymentsService.conflictPayment(null))
                 .isInstanceOf(NoSuchElementException.class);
     }
 }

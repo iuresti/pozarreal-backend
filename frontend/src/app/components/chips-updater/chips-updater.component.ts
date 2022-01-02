@@ -43,7 +43,7 @@ export class ChipsUpdaterComponent implements OnInit {
           this.urlFile = event.body.fileInfo.url;
         }
       },
-      err => {
+      () => {
         this.progress = 0;
         this.message = 'No fue posible actualizar la base de datos!';
         this.currentFile = undefined;

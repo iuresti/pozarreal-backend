@@ -82,9 +82,11 @@
       <div class="form-group">
         <div class="input-group pr-1">
           <input #paymentDate="ngbDatepicker"
-                 (ngModelChange)="updateDate()"
                  [(ngModel)]="modelPaymentDate"
+                 (ngModelChange)="updateDate()"
                  [maxDate]="maxDate"
+                 [minDate]="minDate"
+                 [readonly]="paymentDateReadOnly"
                  [ngClass]="{'border border-danger':!isPaymentDateValid() }"
                  class="form-control"
                  id="paymentDate"
@@ -147,7 +149,7 @@
       <ng-container *ngIf="!house; else elseBlock4">
         <option *ngFor="let concept of paymentSubConcepts"
                 [value]="concept.id">
-          {{concept.label}}
+          {{concept.label}} - {{modelPaymentDate.year}}
         </option>
       </ng-container>
       <ng-template #elseBlock4>

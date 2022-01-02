@@ -8,8 +8,7 @@ import {PaymentConcept} from '../../model/payment-concept';
 import {PaymentService} from '../../services/payment.service';
 import {IDropdownSettings} from 'ng-multiselect-dropdown';
 import {HouseService} from '../../services/house.service';
-import {House} from '../../model/house';
-import {HouseNumber} from "../../model/house-number";
+import {HouseNumber} from '../../model/house-number';
 
 
 @Component({
