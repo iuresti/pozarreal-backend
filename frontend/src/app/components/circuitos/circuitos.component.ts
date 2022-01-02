@@ -215,6 +215,7 @@ export class CircuitosComponent implements OnInit {
   }
 
   changePaymentsOfYear(startOfYear: number): void {
+    this.loading = true;
     this.streetService.getStreetInfo(this.selectedStreetId, startOfYear).subscribe(streetInfo => {
       this.selectedStreet = streetInfo;
       this.loading = false;
