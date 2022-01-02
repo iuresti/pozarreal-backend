@@ -215,7 +215,7 @@ export class CircuitosComponent implements OnInit {
   }
 
   changePaymentsOfYear(startOfYear: number): void {
-
+    this.loading = true;
     const now = new Date();
 
     if (startOfYear < now.getFullYear()) {
@@ -243,7 +243,7 @@ export class CircuitosComponent implements OnInit {
         day: now.getDate()
       };
     }
-
+    
     this.streetService.getStreetInfo(this.selectedStreetId, startOfYear).subscribe(streetInfo => {
       this.selectedStreet = streetInfo;
       this.loading = false;
