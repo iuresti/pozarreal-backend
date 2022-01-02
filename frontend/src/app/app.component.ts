@@ -12,6 +12,7 @@ export class AppComponent implements OnInit {
   isAdmin: boolean;
   failedLogin = false;
   isCollapsed = true;
+  title: 'pozarreal';
 
   constructor(private sessionService: SessionService) {
   }

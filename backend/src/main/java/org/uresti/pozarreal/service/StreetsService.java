@@ -9,5 +9,5 @@ import org.uresti.pozarreal.model.Street;
 public interface StreetsService {
     List<Street> getStreets(LoggedUser user);
 
-    StreetInfo getStreetInfo(String streetId, LoggedUser userLogged);
+    StreetInfo getStreetInfo(String streetId, LoggedUser userLogged, Integer startYear);
 }

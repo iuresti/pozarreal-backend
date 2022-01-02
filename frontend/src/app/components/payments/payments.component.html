@@ -85,6 +85,10 @@
   <div class="modal-body">
     <app-payment-add (dataReady)="newPaymentReady = true"
                      (wrongData)="newPaymentReady = false"
+                     [maxDate]="maxDate"
+                     [minDate]="minDate"
+                     (date)="changeDate($event)"
+                     [paymentDateReadOnly]="false"
                      [paymentData]="newPayment">
     </app-payment-add>
   </div>

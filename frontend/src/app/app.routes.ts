@@ -5,7 +5,7 @@ import {PaymentsComponent} from './components/payments/payments.component';
 import {ChipsUpdaterComponent} from './components/chips-updater/chips-updater.component';
 import {CoursesComponent} from './components/courses/courses.component';
 import {UsersComponent} from './components/users/users.component';
-import {HouseInfoComponent} from "./components/house-info/house-info.component";
+import {HouseInfoComponent} from './components/house-info/house-info.component';
 
 export const ROUTES: Routes = [
   {path: 'account', component: UserAccountComponent},

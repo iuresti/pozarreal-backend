@@ -14,8 +14,8 @@ public interface PaymentRepository extends JpaRepository<Payment, String> {
 
     List<Payment> findAllByHouseIdAndPaymentConceptId(String houseId, String concept);
 
-    List<Payment> findAllByHouseIdAndPaymentSubConceptId(String houseId, String subConcept);
+    List<Payment> findAllByHouseIdAndPaymentSubConceptIdAndPaymentDateBetween(String houseId, String subConcept, LocalDate startDate, LocalDate endDate);
 
-    @Query("SELECT p FROM Payment p INNER JOIN House h ON p.houseId = h.id INNER JOIN Street s ON h.street = s.id WHERE s.id = :streetId AND p.paymentDate >= :startDate")
-    List<Payment> findAllByStreetAndPaymentDateIsGreaterThanEqual(String streetId, LocalDate startDate);
+    @Query("SELECT p FROM Payment p INNER JOIN House h ON p.houseId = h.id INNER JOIN Street s ON h.street = s.id WHERE s.id = :streetId AND p.paymentDate BETWEEN :startDate AND :endDate")
+    List<Payment> findAllByStreetAndPaymentDateBetween(String streetId, LocalDate startDate, LocalDate endDate);
 }
