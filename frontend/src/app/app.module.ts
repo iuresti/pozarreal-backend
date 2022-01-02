@@ -65,7 +65,7 @@ import {NotificationsComponent} from './components/notifications/notifications.c
     CommonDateFormatPipe,
     HouseInfoComponent,
     VerificationPipe,
-    NotificationsComponent
+    NotificationsComponent,
   ],
   imports: [
     NgbModule,

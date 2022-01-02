@@ -6,6 +6,7 @@ public class NotificationMapper {
 
     public static Notification entityToDto(org.uresti.pozarreal.model.Notification notification) {
         return Notification.builder()
+                .id(notification.getId())
                 .message(notification.getMessage())
                 .seen(notification.isSeen())
                 .timestamp(notification.getTimestamp())
@@ -14,6 +15,7 @@ public class NotificationMapper {
 
     public static org.uresti.pozarreal.model.Notification dtoToEntity(Notification notification) {
         return org.uresti.pozarreal.model.Notification.builder()
+                .id(notification.getId())
                 .message(notification.getMessage())
                 .seen(notification.isSeen())
                 .timestamp(notification.getTimestamp())

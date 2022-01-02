@@ -12,6 +12,7 @@ import java.sql.Timestamp;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Notification {
+    private String id;
     private Timestamp timestamp;
     private String message;
     private boolean seen;

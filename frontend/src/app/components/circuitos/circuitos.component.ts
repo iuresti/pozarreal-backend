@@ -14,6 +14,7 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {User} from '../../model/user';
 import {SessionService} from '../../services/session.service';
 import {UploadFileService} from '../../services/upload-file.service';
+import {NotificationService} from '../../services/notification.service';
 
 @Component({
   selector: 'app-circuitos',
@@ -44,6 +45,7 @@ export class CircuitosComponent implements OnInit {
               private sessionService: SessionService,
               private houseService: HouseService,
               private modalService: NgbModal,
+              private notificationService: NotificationService,
               private paymentService: PaymentService,
               private uploadFileService: UploadFileService,
               private router: Router,
@@ -51,6 +53,7 @@ export class CircuitosComponent implements OnInit {
   }
 
   public ngOnInit(): void {
+    this.sessionService.getUser().subscribe(user => this.user = user);
 
     const now = new Date();
 
@@ -131,11 +134,19 @@ export class CircuitosComponent implements OnInit {
     this.newPayment.paymentSubConceptId = 'MAINTENANCE_BIM_' + bim;
     this.newPayment.paymentDate = this.date;
     this.newPayment.amount = this.maintenanceFee - bimesterPayment.amount;
+
     this.modalService.open(content, {ariaLabelledBy: 'modal-basic-title'}).result.then(() => {
       console.log('Saving payment');
       console.log(this.newPayment);
       this.paymentService.save(this.newPayment).subscribe(payment => {
         console.log('Saving payment');
+
+        let message = 'Un usuario ha registrado un nuevo pago.';
+        if (!this.userHasRoles(['ROLE_ADMIN'])) {
+          message = 'Un pago necesita que sea validado.';
+        }
+        this.notificationService.saveNotification(message).subscribe();
+
         bimesterPayment.validated = payment.validated;
         bimesterPayment.amount += this.newPayment.amount;
         bimesterPayment.complete = this.maintenanceFee <= bimesterPayment.amount;
@@ -162,7 +173,8 @@ export class CircuitosComponent implements OnInit {
   }
 
   showHouse(id: string): void {
-    this.router.navigate(['house', id]).then(() => {});
+    this.router.navigate(['house', id]).then(() => {
+    });
   }
 
   getStyle(bimesterPayment: PaymentByConcept): any {
@@ -175,7 +187,6 @@ export class CircuitosComponent implements OnInit {
   }
 
   validatePayment(bimesterPayment: PaymentByConcept, house: House): void {
-    this.sessionService.getUser().subscribe(user => this.user = user);
     if (!bimesterPayment.validated && bimesterPayment.amount > 0 && this.userHasRoles(['ROLE_ADMIN'])) {
       Swal.fire({
         title: `¿Validar pago por $${bimesterPayment.amount} de la casa ${house.number}?`,
@@ -186,7 +197,9 @@ export class CircuitosComponent implements OnInit {
       }).then(result => {
         if (result.isConfirmed) {
           this.paymentService.validatePayment(bimesterPayment.id).subscribe(payment => {
-            Swal.fire('Validado!', '', 'success').then(console.log);
+            Swal.fire('Validado!', '', 'success').then(() => {
+              this.notificationService.saveNotification('Un usuario ha validado un pago.').subscribe();
+            });
             bimesterPayment.validated = payment.validated;
           });
         }
@@ -195,7 +208,6 @@ export class CircuitosComponent implements OnInit {
   }
 
   conflictPayment($event: MouseEvent, bimesterPayment: PaymentByConcept, house: House): void {
-    this.sessionService.getUser().subscribe(user => this.user = user);
     if (!bimesterPayment.conflict && this.userHasRoles(['ROLE_REPRESENTATIVE'])) {
       Swal.fire({
         title: `¿Hay conflicto en el pago por $${bimesterPayment.amount} de la casa ${house.number}?`,
@@ -206,7 +218,9 @@ export class CircuitosComponent implements OnInit {
       }).then(result => {
         if (result.isConfirmed) {
           this.paymentService.conflictPayment(bimesterPayment.id).subscribe(payment => {
-            Swal.fire('', '', 'success').then(console.log);
+            Swal.fire('', '', 'success').then(() => {
+              this.notificationService.saveNotification('Existe un conflicto en un pago.').subscribe();
+            });
             bimesterPayment.conflict = payment.conflict;
           });
         }
@@ -225,7 +239,7 @@ export class CircuitosComponent implements OnInit {
     return this.user.roles.some(r => roles.includes(r));
   }
 
-  saveDate(event: string): void{
+  saveDate(event: string): void {
     this.date = event;
   }
 }

@@ -7,6 +7,7 @@ import {Payment} from '../../model/payment';
 import Swal from 'sweetalert2';
 import {SessionService} from '../../services/session.service';
 import {UploadFileService} from '../../services/upload-file.service';
+import {NotificationService} from '../../services/notification.service';
 
 @Component({
   selector: 'app-payments',
@@ -29,6 +30,7 @@ export class PaymentsComponent implements OnInit {
 
   constructor(private paymentService: PaymentService,
               private modalService: NgbModal,
+              private notificationService: NotificationService,
               private uploadFileService: UploadFileService,
               private sessionService: SessionService,
               config: NgbModalConfig) {
@@ -96,8 +98,10 @@ export class PaymentsComponent implements OnInit {
     }).then((result) => {
       if (result.isConfirmed) {
         this.paymentService.delete(payment.id).subscribe(() => {
+          this.notificationService.saveNotification('Un usuario ha eliminado un pago.').subscribe();
           this.doSearch(this.lastFilter);
-          Swal.fire('Eliminado!', '', 'success').then(() => {});
+          Swal.fire('Eliminado!', '', 'success').then(() => {
+          });
         });
       }
     });
@@ -121,6 +125,8 @@ export class PaymentsComponent implements OnInit {
       console.log('Saving payment');
       console.log(this.newPayment);
       this.paymentService.save(this.newPayment).subscribe(() => {
+        this.notificationService.saveNotification('Un usuario ha editado un pago.').subscribe();
+
         const files = this.newPayment.files;
         if (files) {
           Array.from(files).forEach((file) => {
@@ -184,7 +190,9 @@ export class PaymentsComponent implements OnInit {
         if (result.isConfirmed) {
           this.paymentService.validatePayment(payment.id).subscribe(p => {
             payment.validated = p.validated;
-            Swal.fire('Validado!', '', 'success').then(console.log);
+            Swal.fire('Validado!', '', 'success').then(() => {
+              this.notificationService.saveNotification('Un usuario ha validado un pago.').subscribe();
+            });
           });
         } else {
           event.target.value = 'false';

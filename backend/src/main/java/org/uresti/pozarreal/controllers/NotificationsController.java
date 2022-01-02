@@ -1,9 +1,8 @@
 package org.uresti.pozarreal.controllers;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
 import org.uresti.pozarreal.dto.LoggedUser;
 import org.uresti.pozarreal.dto.Notification;
 import org.uresti.pozarreal.service.NotificationsService;
@@ -25,11 +24,27 @@ public class NotificationsController {
     }
 
     @GetMapping()
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_REPRESENTATIVE')")
     public List<Notification> getNotifications(Principal principal) {
         LoggedUser loggedUser = sessionHelper.getLoggedUser(principal);
-
-        log.info("Getting notifications by user: {} - {}", loggedUser.getName(), loggedUser.getUserId());
-
         return notificationsService.getNotifications(loggedUser.getUserId());
+    }
+
+    @PostMapping()
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_REPRESENTATIVE')")
+    public void saveNotification(@RequestBody String message) {
+        notificationsService.saveNotification(message);
+    }
+
+    @PatchMapping("/{notificationId}")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_REPRESENTATIVE')")
+    public void readNotification(@PathVariable String notificationId) {
+        notificationsService.readNotification(notificationId);
+    }
+
+    @DeleteMapping("/{notificationId}")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_REPRESENTATIVE')")
+    public void deleteNotification(@PathVariable String notificationId) {
+        notificationsService.removeNotification(notificationId);
     }
 }

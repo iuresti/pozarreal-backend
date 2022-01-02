@@ -2,9 +2,6 @@ package org.uresti.pozarreal.service.mappers;
 
 import org.uresti.pozarreal.dto.CoursePayment;
 
-import java.time.LocalDate;
-import java.time.Period;
-
 public class CourseAssistantPaymentMapper {
 
     public static CoursePayment entityToDto(org.uresti.pozarreal.model.CoursePayment coursePayment) {

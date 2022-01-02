@@ -15,4 +15,16 @@ export class NotificationService {
   getNotifications(): Observable<Notification[]> {
     return this.http.get<Notification[]>(`${environment.baseUrl}/notifications`);
   }
+
+  saveNotification(message: string): Observable<Notification> {
+    return this.http.post<Notification>(`${environment.baseUrl}/notifications`, message);
+  }
+
+  readNotification(notificationId: string): Observable<Notification> {
+    return this.http.patch<Notification>(`${environment.baseUrl}/notifications/${notificationId}`, {});
+  }
+
+  deleteNotification(notificationId: string): Observable<void> {
+    return this.http.delete<void>(`${environment.baseUrl}/notifications/${notificationId}`);
+  }
 }
