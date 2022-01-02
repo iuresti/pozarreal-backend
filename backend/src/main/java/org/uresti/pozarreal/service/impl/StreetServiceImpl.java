@@ -125,6 +125,7 @@ public class StreetServiceImpl implements StreetsService {
 
         paymentByConcept.setAmount(payments.stream().map(Payment::getAmount).reduce(0.0, Double::sum));
         paymentByConcept.setComplete(paymentByConcept.getAmount() >= feeConfig.getParkingPenFee());
+        paymentByConcept.setValidated(paymentByConcept.isValidated());
 
         house.setParkingPenPayment(paymentByConcept);
     }
@@ -161,8 +162,11 @@ public class StreetServiceImpl implements StreetsService {
             } else {
                 for (int i = 0; i < twoMonthsPaymentIds.length; i++) {
                     if (twoMonthsPaymentIds[i].equals(payment.getPaymentSubConceptId())) {
+                        paymentInfo.get(i).setId(payment.getId());
                         paymentInfo.get(i).setAmount(paymentInfo.get(i).getAmount() + payment.getAmount());
                         paymentInfo.get(i).setComplete(paymentInfo.get(i).getAmount()  >= feeConfig.getBiMonthlyMaintenanceFee());
+                        paymentInfo.get(i).setValidated(payment.isValidated());
+                        paymentInfo.get(i).setConflict(payment.isConflict());
                         break;
                     }
                 }

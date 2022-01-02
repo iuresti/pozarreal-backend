@@ -43,4 +43,7 @@ public class Payment {
 
     private String notes;
 
+    private boolean validated;
+
+    private boolean conflict;
 }

@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {HttpClient, HttpEvent, HttpRequest} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import {environment} from '../../environments/environment';
@@ -16,6 +16,19 @@ export class UploadFileService {
     formData.append('file', file);
 
     const req = new HttpRequest('POST', `${environment.baseUrl}/chips-database/upload`, formData, {
+      reportProgress: true,
+      responseType: 'json'
+    });
+
+    return this.http.request(req);
+  }
+
+  uploadFilesPayment(file: File, paymentId: string): Observable<HttpEvent<any>> {
+    const formData: FormData = new FormData();
+
+    formData.append('file', file);
+
+    const req = new HttpRequest('POST', `${environment.baseUrl}/chips-database/upload/${paymentId}`, formData, {
       reportProgress: true,
       responseType: 'json'
     });

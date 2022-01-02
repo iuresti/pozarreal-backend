@@ -15,6 +15,8 @@ public class PaymentMapper {
                 .paymentMode(paymentDto.getPaymentMode())
                 .registrationDate(paymentDto.getRegistrationDate())
                 .userId(paymentDto.getUserId())
+                .validated(paymentDto.isValidated())
+                .conflict(paymentDto.isConflict())
                 .build();
     }
 
@@ -30,6 +32,8 @@ public class PaymentMapper {
                 .paymentMode(paymentModel.getPaymentMode())
                 .registrationDate(paymentModel.getRegistrationDate())
                 .userId(paymentModel.getUserId())
+                .validated(paymentModel.isValidated())
+                .conflict(paymentModel.isConflict())
                 .build();
     }
 

@@ -9,10 +9,8 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class PaymentByConcept {
-    String id;
-    boolean isComplete;
-    double amount = 0;
-    boolean validated;
-    boolean conflict;
+public class PaymentEvidence {
+    private String id;
+    private String paymentId;
+    private String url;
 }

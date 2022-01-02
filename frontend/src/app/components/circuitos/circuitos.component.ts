@@ -10,7 +10,10 @@ import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {PaymentService} from '../../services/payment.service';
 import {PaymentByConcept} from '../../model/payment-by-concept';
 import {environment} from '../../../environments/environment';
-import {ActivatedRoute, Router} from "@angular/router";
+import {ActivatedRoute, Router} from '@angular/router';
+import {User} from '../../model/user';
+import {SessionService} from '../../services/session.service';
+import {UploadFileService} from '../../services/upload-file.service';
 
 @Component({
   selector: 'app-circuitos',
@@ -19,6 +22,7 @@ import {ActivatedRoute, Router} from "@angular/router";
 })
 export class CircuitosComponent implements OnInit {
 
+  user: User;
   house: House;
   title = 'pozarreal';
   selectedStreet: StreetInfo;
@@ -31,9 +35,11 @@ export class CircuitosComponent implements OnInit {
   mobile: boolean;
 
   constructor(private streetService: StreetService,
+              private sessionService: SessionService,
               private houseService: HouseService,
               private modalService: NgbModal,
               private paymentService: PaymentService,
+              private uploadFileService: UploadFileService,
               private router: Router,
               private activatedRoute: ActivatedRoute) {
   }
@@ -49,10 +55,10 @@ export class CircuitosComponent implements OnInit {
       if (streets.length === 1) {
         this.selectedStreetId = streets[0].id;
         this.selectStreet();
-      }else {
+      } else {
         this.activatedRoute.params.subscribe(params => {
-          if (params['streetId']) {
-            this.selectedStreetId = params['streetId'];
+          if (params.streetId) {
+            this.selectedStreetId = params.streetId;
             this.selectStreet();
           }
         });
@@ -88,7 +94,8 @@ export class CircuitosComponent implements OnInit {
     });
   }
 
-  addPayment(content, bim: number, bimesterPayment: PaymentByConcept, house: House): void {
+  addPayment(content, bim: number, bimesterPayment: PaymentByConcept, house: House, event: MouseEvent): void {
+    event.stopPropagation();
     this.newPayment = {} as Payment;
     this.newPayment.streetId = this.selectedStreet.id;
     this.newPayment.houseId = house.id;
@@ -97,28 +104,90 @@ export class CircuitosComponent implements OnInit {
     this.newPayment.paymentConceptId = 'MAINTENANCE';
     this.newPayment.paymentSubConceptId = 'MAINTENANCE_BIM_' + bim;
     this.newPayment.amount = this.maintenanceFee - bimesterPayment.amount;
-    this.modalService.open(content, {ariaLabelledBy: 'modal-basic-title'}).result.then((result) => {
+    this.modalService.open(content, {ariaLabelledBy: 'modal-basic-title'}).result.then((_) => {
       console.log('Saving payment');
       console.log(this.newPayment);
-      this.paymentService.save(this.newPayment).subscribe(() => {
+      this.paymentService.save(this.newPayment).subscribe(payment => {
         console.log('Saving payment');
+        bimesterPayment.validated = payment.validated;
         bimesterPayment.amount += this.newPayment.amount;
         bimesterPayment.complete = this.maintenanceFee <= bimesterPayment.amount;
+        bimesterPayment.conflict = payment.conflict;
+
+        const files = this.newPayment.files;
+        if (files) {
+          Array.from(files).forEach((file) => {
+            this.uploadFileService.uploadFilesPayment(file, payment.id).subscribe();
+          });
+        }
       });
-    }, (reason) => {
+    }, (_) => {
       console.log('Cancel saving payment');
     });
   }
 
-  onMouseOver(number) {
-    number.style.display = 'block';
+  onMouseOver({style}: HTMLDivElement): void {
+    style.display = 'block';
   }
 
-  onMouseLeave(number) {
-    number.style.display = 'none';
+  onMouseLeave({style}: HTMLDivElement): void {
+    style.display = 'none';
   }
 
-  showHouse(id: string) {
-    this.router.navigate(["house", id]);
+  showHouse(id: string): void {
+    this.router.navigate(['house', id]);
+  }
+
+  getStyle(bimesterPayment: PaymentByConcept): any {
+    if (bimesterPayment.validated && bimesterPayment.complete) {
+      return {backgroundColor: '#B6D7A8'};
+    }
+    if (!bimesterPayment.validated && bimesterPayment.amount > 0) {
+      return {backgroundColor: '#FADC00'};
+    }
+  }
+
+  validatePayment(bimesterPayment: PaymentByConcept, house: House): void {
+    this.sessionService.getUser().subscribe(user => this.user = user);
+    if (!bimesterPayment.validated && bimesterPayment.amount > 0 && this.userHasRoles(['ROLE_ADMIN'])) {
+      Swal.fire({
+        title: `¿Validar pago por $${bimesterPayment.amount} de la casa ${house.number}?`,
+        showDenyButton: true,
+        showCancelButton: false,
+        confirmButtonText: `Sí`,
+        denyButtonText: `No`,
+      }).then(result => {
+        if (result.isConfirmed) {
+          this.paymentService.validatePayment(bimesterPayment.id).subscribe(payment => {
+            Swal.fire('Validado!', '', 'success').then(console.log);
+            bimesterPayment.validated = payment.validated;
+          });
+        }
+      });
+    }
+  }
+
+  conflictPayment($event: MouseEvent, bimesterPayment: PaymentByConcept, house: House): void {
+    this.sessionService.getUser().subscribe(user => this.user = user);
+    if (!bimesterPayment.conflict && this.userHasRoles(['ROLE_REPRESENTATIVE'])) {
+      Swal.fire({
+        title: `¿Hay conflicto en el pago por $${bimesterPayment.amount} de la casa ${house.number}?`,
+        showDenyButton: true,
+        showCancelButton: false,
+        confirmButtonText: `Sí`,
+        denyButtonText: `No`,
+      }).then(result => {
+        if (result.isConfirmed) {
+          this.paymentService.conflictPayment(bimesterPayment.id).subscribe(payment => {
+            Swal.fire('', '', 'success').then(console.log);
+            bimesterPayment.conflict = payment.conflict;
+          });
+        }
+      });
+    }
+  }
+
+  userHasRoles(roles: string[]): boolean {
+    return this.user.roles.some(r => roles.includes(r));
   }
 }

@@ -7,3 +7,9 @@
 /dataSources/
 /dataSources.local.xml
 /libraries
+/inspectionProfiles
+/sonarlint
+aws.xml
+csv-plugin.xml
+dataSources.xml
+uiDesigner.xml

@@ -193,3 +193,17 @@
     </textarea>
   </div>
 </div>
+
+<div class="row mt-1">
+
+  <div class="col-4">
+    <label class="form-label" for="voucher">Comprobante:</label>
+  </div>
+
+  <div class="col-8">
+    <input type="file"
+           multiple
+           (change)="prepareFiles($event)"
+           class="form-control" id="voucher">
+  </div>
+</div>

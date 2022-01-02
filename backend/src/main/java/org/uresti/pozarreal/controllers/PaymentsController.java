@@ -34,13 +34,13 @@ public class PaymentsController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_REPRESENTATIVE')")
     public Payment save(@RequestBody Payment payment, Principal principal) {
         LoggedUser loggedUser = sessionHelper.getLoggedUser(principal);
 
         log.info("Saving payment (house: {}, amount: $ {}, concept: {}, user: {} - {})", payment.getHouseId(), payment.getAmount(), payment.getPaymentConceptId(), loggedUser.getName(), loggedUser.getUserId());
 
-        return paymentsService.save(payment, sessionHelper.getUserIdForLoggedUser(principal));
+        return paymentsService.save(payment, principal);
     }
 
     @GetMapping("/{paymentId}")
@@ -62,5 +62,25 @@ public class PaymentsController {
         log.info("Deleting payment (paymentId: {}, user: {} - {})", paymentId, loggedUser.getName(), loggedUser.getUserId());
 
         paymentsService.delete(paymentId);
+    }
+
+    @PatchMapping("/{paymentId}")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+    public Payment validatePayment(Principal principal, @PathVariable String paymentId) {
+        LoggedUser loggedUser = sessionHelper.getLoggedUser(principal);
+
+        log.info("Updating payment: {} by user: {} - {}", paymentId, loggedUser.getName(), loggedUser.getUserId());
+
+        return paymentsService.validatePayment(paymentId);
+    }
+
+    @PutMapping("/{paymentId}")
+    @PreAuthorize("hasAnyRole('ROLE_REPRESENTATIVE')")
+    public Payment conflictPayment(Principal principal, @PathVariable String paymentId) {
+        LoggedUser loggedUser = sessionHelper.getLoggedUser(principal);
+
+        log.info("Updating payment: {} by user: {} - {}", paymentId, loggedUser.getName(), loggedUser.getUserId());
+
+        return paymentsService.conflictPayment(paymentId);
     }
 }

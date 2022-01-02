@@ -9,7 +9,9 @@ import {Payment} from '../../model/payment';
 import {Street} from '../../model/street';
 import {PaymentSubConcept} from '../../model/payment-sub-concept';
 import {DateFormatterService} from '../../services/date-formatter.service';
-import {HouseNumber} from "../../model/house-number";
+import {HouseNumber} from '../../model/house-number';
+import {User} from '../../model/user';
+import {SessionService} from '../../services/session.service';
 
 @Component({
   selector: 'app-payment-add',
@@ -17,6 +19,8 @@ import {HouseNumber} from "../../model/house-number";
   styleUrls: ['./payment-add.component.css']
 })
 export class PaymentAddComponent implements OnInit {
+
+  user: User;
   streets: Street[];
   houses: HouseNumber[];
   modelPaymentDate: NgbDateStruct;
@@ -35,6 +39,7 @@ export class PaymentAddComponent implements OnInit {
   @Output() wrongData: EventEmitter<void> = new EventEmitter<void>();
 
   constructor(private streetService: StreetService,
+              private sessionService: SessionService,
               private houseService: HouseService,
               private paymentService: PaymentService) {
   }
@@ -42,6 +47,8 @@ export class PaymentAddComponent implements OnInit {
   ngOnInit(): void {
 
     const now = new Date();
+
+    this.sessionService.getUser().subscribe(user => this.user = user);
 
     this.maxDate = {
       year: now.getFullYear(),
@@ -67,7 +74,7 @@ export class PaymentAddComponent implements OnInit {
 
   }
 
-  private prepareStreetsAndHouses() {
+  private prepareStreetsAndHouses(): void {
     if (this.isNew) {
       this.streetService.getStreets().subscribe(streets => {
         this.streets = streets;
@@ -82,7 +89,7 @@ export class PaymentAddComponent implements OnInit {
     }
   }
 
-  private prepareConceptsAndSubconcepts() {
+  private prepareConceptsAndSubconcepts(): void {
     this.paymentService.getPaymentConcepts().subscribe(paymentConcepts => {
       this.paymentConcepts = paymentConcepts;
       if (this.paymentData.paymentConceptId) {
@@ -94,7 +101,8 @@ export class PaymentAddComponent implements OnInit {
       this.paymentService.getPaymentSubConcepts(this.paymentData.paymentConceptId).subscribe(paymentSubConcepts => {
         this.paymentSubConcepts = paymentSubConcepts;
         if (this.paymentData.paymentSubConceptId) {
-          this.labelSubConcept = this.paymentSubConcepts.find(paymentSybConcept => paymentSybConcept.id === this.paymentData.paymentSubConceptId)?.label;
+          this.labelSubConcept = this.paymentSubConcepts
+            .find(paymentSybConcept => paymentSybConcept.id === this.paymentData.paymentSubConceptId)?.label;
         }
       });
     }
@@ -137,7 +145,8 @@ export class PaymentAddComponent implements OnInit {
       this.isPaymentConceptValid() &&
       this.isPaymentAmountValid() &&
       this.isPaymentDateValid() &&
-      this.isPaymentSubConceptValid();
+      this.isPaymentSubConceptValid() &&
+      this.isPaymentFilesValid();
 
     if (validPayment) {
       this.dataReady.emit();
@@ -174,6 +183,10 @@ export class PaymentAddComponent implements OnInit {
     return this.paymentSubConcepts.length === 0 || !!this.paymentData.paymentSubConceptId;
   }
 
+  isPaymentFilesValid(): boolean {
+    return this.userHasRoles(['ROLE_ADMIN']) || this.paymentData.files != null;
+  }
+
   prepareStartDate(): void {
     const now = new Date();
     this.modelPaymentDate = {
@@ -191,5 +204,14 @@ export class PaymentAddComponent implements OnInit {
       day: parseInt(this.paymentData.paymentDate.substr(8, 2), 10),
     };
     this.updateDate();
+  }
+
+  prepareFiles(event): void {
+    this.paymentData.files = event.target.files;
+    this.formChanged();
+  }
+
+  userHasRoles(roles: string[]): boolean {
+    return this.user.roles.some(r => roles.includes(r));
   }
 }
