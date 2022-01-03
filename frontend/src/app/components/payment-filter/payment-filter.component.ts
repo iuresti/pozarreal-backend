@@ -20,7 +20,7 @@ export class PaymentFilterComponent implements OnInit {
 
   @Output() selectionDone: EventEmitter<PaymentFilter> = new EventEmitter<PaymentFilter>();
   @Output() addPaymentClicked: EventEmitter<void> = new EventEmitter<void>();
-  @Input() isAdmin: boolean;
+  @Input() havePermission: boolean;
   modelStartDate: NgbDateStruct;
   modelEndDate: NgbDateStruct;
   paymentConcepts: PaymentConcept[] = [];
