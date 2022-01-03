@@ -75,7 +75,6 @@ export class PaymentAddComponent implements OnInit {
         this.streets = streets;
       });
 
-
       if (this.paymentData.streetId) {
         this.houseService.getHouseNumbersByStreet(this.paymentData.streetId).subscribe(houses => {
           this.houses = houses;
@@ -186,9 +185,9 @@ export class PaymentAddComponent implements OnInit {
   prepareStartDate(): void {
     const now = new Date();
     this.modelPaymentDate = {
-      year: now.getFullYear(),
-      month: now.getMonth() + 1,
-      day: now.getDate()
+      year: (this.maxDate.year < now.getFullYear()) ? this.maxDate.year : now.getFullYear(),
+      month: (this.maxDate.year < now.getFullYear()) ? 12 : now.getMonth() + 1,
+      day: (this.maxDate.year < now.getFullYear()) ? 31 : now.getDate()
     };
     this.updateDate();
   }

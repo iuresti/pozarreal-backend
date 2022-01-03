@@ -54,19 +54,19 @@ export class CircuitosComponent implements OnInit {
 
     const now = new Date();
 
+    this.selectedYear = now.getFullYear();
+
     this.maxDate = {
       year: now.getFullYear(),
-      month: now.getMonth(),
+      month: now.getMonth() + 1,
       day: now.getDate()
     };
 
     this.minDate = {
       year: now.getFullYear(),
-      month: now.getMonth(),
+      month: now.getMonth() + 1,
       day: now.getDate()
     };
-
-    this.selectedYear = new Date().getFullYear();
 
     for (let i = this.selectedYear - 4; i <= this.selectedYear; i++) {
       this.years.push(i);
@@ -129,7 +129,6 @@ export class CircuitosComponent implements OnInit {
     this.house = house;
     this.newPayment.paymentConceptId = 'MAINTENANCE';
     this.newPayment.paymentSubConceptId = 'MAINTENANCE_BIM_' + bim;
-    this.newPayment.paymentDate = this.date;
     this.newPayment.amount = this.maintenanceFee - bimesterPayment.amount;
     this.modalService.open(content, {ariaLabelledBy: 'modal-basic-title'}).result.then(() => {
       console.log('Saving payment');
@@ -162,7 +161,8 @@ export class CircuitosComponent implements OnInit {
   }
 
   showHouse(id: string): void {
-    this.router.navigate(['house', id]).then(() => {});
+    this.router.navigate(['house', id]).then(() => {
+    });
   }
 
   getStyle(bimesterPayment: PaymentByConcept): any {
@@ -216,6 +216,34 @@ export class CircuitosComponent implements OnInit {
 
   changePaymentsOfYear(startOfYear: number): void {
     this.loading = true;
+    const now = new Date();
+
+    if (startOfYear < now.getFullYear()) {
+      this.maxDate = {
+        year: Number(startOfYear),
+        day: 31,
+        month: 12
+      };
+
+      this.minDate = {
+        year: Number(startOfYear),
+        day: 1,
+        month: 1
+      };
+    } else {
+      this.maxDate = {
+        year: now.getFullYear(),
+        month: now.getMonth() + 1,
+        day: now.getDate()
+      };
+
+      this.minDate = {
+        year: now.getFullYear(),
+        month: now.getMonth() + 1,
+        day: now.getDate()
+      };
+    }
+    
     this.streetService.getStreetInfo(this.selectedStreetId, startOfYear).subscribe(streetInfo => {
       this.selectedStreet = streetInfo;
       this.loading = false;
@@ -226,7 +254,7 @@ export class CircuitosComponent implements OnInit {
     return this.user.roles.some(r => roles.includes(r));
   }
 
-  saveDate(event: string): void{
+  saveDate(event: string): void {
     this.date = event;
   }
 }
