@@ -135,8 +135,8 @@ export class CircuitosComponent implements OnInit {
       console.log(this.newPayment);
       this.paymentService.save(this.newPayment).subscribe(payment => {
         console.log('Saving payment');
-        bimesterPayment.validated = payment.validated;
         bimesterPayment.amount += this.newPayment.amount;
+        bimesterPayment.validated = payment.validated;
         bimesterPayment.complete = this.maintenanceFee <= bimesterPayment.amount;
         bimesterPayment.conflict = payment.conflict;
 

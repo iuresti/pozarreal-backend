@@ -73,7 +73,6 @@ export class PaymentsComponent implements OnInit {
     this.newPayment.paymentDate = this.date;
     this.modalService.open(content, {ariaLabelledBy: 'modal-basic-title'}).result.then(() => {
       console.log('Saving payment');
-      console.log(this.newPayment);
       this.paymentService.save(this.newPayment).subscribe(() => {
         if (this.lastFilter) {
           this.doSearch(this.lastFilter);
@@ -97,7 +96,8 @@ export class PaymentsComponent implements OnInit {
       if (result.isConfirmed) {
         this.paymentService.delete(payment.id).subscribe(() => {
           this.doSearch(this.lastFilter);
-          Swal.fire('Eliminado!', '', 'success').then(() => {});
+          Swal.fire('Eliminado!', '', 'success').then(() => {
+          });
         });
       }
     });
