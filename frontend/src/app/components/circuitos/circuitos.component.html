@@ -22,9 +22,9 @@
     </div>
 
     <div>
-      <select class="custom-select" [(ngModel)]="selectedYear" (ngModelChange)="changePaymentsOfYear($event)">
+      <select (change)="changePaymentsOfYear(selectedYear)" [(ngModel)]="selectedYear" class="custom-select">
         <option *ngFor="let year of years; let i = index"
-                [selected]="year == selectedYear" [value]="year">
+                [selected]="selectedYear == year" [value]="year">
           {{year}}
         </option>
       </select>
@@ -64,8 +64,8 @@
     <div *ngFor="let house of selectedStreet.houses;let i = index" [ngClass]="{'bg-white': i % 2 == 1}"
          class="row pb-2 ">
 
-      <div class="btn btn-link col {{mobile ? 'col-3' : 'col-1'}} pt-2"
-           (click)="showHouse(house.id)">{{house.number}}</div>
+      <div (click)="showHouse(house.id)"
+           class="btn btn-link col {{mobile ? 'col-3' : 'col-1'}} pt-2">{{house.number}}</div>
 
       <div *ngIf="!mobile" class="col col-1 pt-2">
         <div class="custom-control custom-switch ">
@@ -93,13 +93,13 @@
       </div>
 
       <div
+        (click)="validatePayment(bimesterPayment, house)"
         *ngFor="let bimesterPayment of house.twoMonthsPayments;let bim = index"
         [ngStyle]="getStyle(bimesterPayment)"
-        (click)="validatePayment(bimesterPayment, house)"
         class="col col-1 border border-light rounded d-flex align-items-center justify-content-center numbers">
-        <div *ngIf="bimesterPayment.complete && !mobile"
-             (mouseleave)="onMouseLeave(number)"
-             (mouseover)="onMouseOver(number)">
+        <div (mouseleave)="onMouseLeave(number)"
+             (mouseover)="onMouseOver(number)"
+             *ngIf="bimesterPayment.complete && !mobile">
           PAGADO
         </div>
 
@@ -111,8 +111,8 @@
           {{(bimesterPayment.amount ? bimesterPayment.amount : '&nbsp;')}}
         </div>
 
-        <div #number class="number"
-             (click)="conflictPayment($event, bimesterPayment, house)">
+        <div #number (click)="conflictPayment($event, bimesterPayment, house)"
+             class="number">
           {{house.number}}-B{{bim + 1}}
         </div>
 
@@ -139,13 +139,13 @@
   </div>
   <div class="modal-body">
     <app-payment-add (dataReady)="newPaymentReady = true"
-                     (wrongData)="newPaymentReady = false"
                      (date)="saveDate($event)"
+                     (wrongData)="newPaymentReady = false"
                      [house]="house"
-                     [minDate]="minDate"
                      [maxDate]="maxDate"
+                     [minDate]="minDate"
                      [paymentData]="newPayment"
-                     [paymentDateReadOnly]="true"
+                     [paymentDateReadOnly]="false"
                      [street]="selectedStreet">
     </app-payment-add>
   </div>
