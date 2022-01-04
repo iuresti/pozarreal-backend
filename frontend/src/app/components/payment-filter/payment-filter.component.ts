@@ -29,6 +29,7 @@ export class PaymentFilterComponent implements OnInit {
   selectedStreet: string;
   selectedHouse: string;
   selectedPaymentMode: string;
+  selectedStatus: string;
   houses: HouseNumber[];
 
 
@@ -75,14 +76,14 @@ export class PaymentFilterComponent implements OnInit {
       paymentMode: this.selectedPaymentMode,
       concepts: this.selectedPaymentConcepts.map(paymentConcept => paymentConcept.id),
       startDate: `${this.pad(this.modelStartDate.year)}-${this.pad(this.modelStartDate.month)}-${this.pad(this.modelStartDate.day)}`,
-      endDate: `${this.pad(this.modelEndDate.year)}-${this.pad(this.modelEndDate.month)}-${this.pad(this.modelEndDate.day)}`
+      endDate: `${this.pad(this.modelEndDate.year)}-${this.pad(this.modelEndDate.month)}-${this.pad(this.modelEndDate.day)}`,
+      status: this.selectedStatus
     };
 
     this.selectionDone.emit(paymentFilter);
   }
 
   streetSelected(selectedSteet: string): void {
-    console.log(selectedSteet);
     this.selectedStreet = selectedSteet;
     if (this.selectedStreet) {
       this.houseService.getHouseNumbersByStreet(this.selectedStreet).subscribe(houses => {

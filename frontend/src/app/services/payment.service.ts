@@ -47,6 +47,10 @@ export class PaymentService {
       queryParams += `&concepts=${paymentFilter.concepts.join(',')}`;
     }
 
+    if (paymentFilter.status) {
+      queryParams += `&status=${paymentFilter.status}`;
+    }
+
     return this.http.get<PaymentView[]>(`${environment.baseUrl}/payments?${queryParams}`);
   }
 

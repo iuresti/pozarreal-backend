@@ -23,4 +23,5 @@ public class PaymentFilter {
     private LocalDate endDate;
     private List<String> concepts;
     private String paymentMode;
+    private String status;
 }
