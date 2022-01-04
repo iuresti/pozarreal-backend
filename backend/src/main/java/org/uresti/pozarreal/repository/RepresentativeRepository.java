@@ -10,4 +10,6 @@ import java.util.Optional;
 public interface RepresentativeRepository extends JpaRepository<Representative, String> {
 
     Optional<Representative> findByStreet(String street);
+
+    Representative findByUserId(String userId);
 }
