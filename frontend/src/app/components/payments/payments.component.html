@@ -1,6 +1,6 @@
 <app-payment-filter (selectionDone)="doSearch($event)"
                     (addPaymentClicked)="open(addPaymentDialog)"
-                    [havePermission]="havePermission">
+                    [havePermission]="isAdmin || isRepresentative">
 </app-payment-filter>
 
 <div class="d-flex justify-content-center" *ngIf="loading">
@@ -44,7 +44,7 @@
       <td>{{payment.paymentMode | paymentMode}}</td>
       <td>{{payment.notes}}</td>
       <td>
-        <select *ngIf="(havePermission && !payment.validated);else showResult"
+        <select *ngIf="(isAdmin && !payment.validated);else showResult"
                 class="form-control"
                 (click)="$event.stopPropagation()"
                 (change)="onChange(payment,$event)">
@@ -56,12 +56,12 @@
       <td>
         <i class="bi bi-trash btn btn-link"
            (click)="deletePayment(payment, $event)"
-           *ngIf="havePermission">
+           *ngIf="isAdmin">
         </i> &nbsp;
         <i class="bi bi-pencil btn btn-link"
            disabled="true"
            (click)="editPayment(addPaymentDialog, payment, $event)"
-           *ngIf="havePermission">
+           *ngIf="isAdmin">
         </i>
       </td>
     </tr>

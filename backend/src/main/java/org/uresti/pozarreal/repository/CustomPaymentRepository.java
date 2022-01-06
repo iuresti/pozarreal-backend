@@ -22,7 +22,8 @@ public class CustomPaymentRepository {
 
     public List<PaymentView> executeQuery(PaymentFilter paymentFilter) {
         String query = "SELECT p.id, s.id streetId, s.name streetName, h.id houseId, h.number houseNumber, p.payment_date, " +
-                " p.registration_date, u.name userName, p.amount, p.validated, pc.id paymentConceptId, pc.label paymentConcept, psc.id paymentSubConceptId, psc.label paymentSubConcept, p.payment_mode paymentMode, p.notes " +
+                " p.registration_date, u.name userName, p.amount, p.validated, pc.id paymentConceptId, pc.label paymentConcept, " +
+                "psc.id paymentSubConceptId, psc.label paymentSubConcept, p.payment_mode paymentMode, p.notes" +
                 " FROM payments p INNER JOIN houses h ON p.house_id = h.id " +
                 "  INNER JOIN streets s ON h.street = s.id " +
                 "  INNER JOIN payment_concepts pc ON p.payment_concept_id = pc.id" +
@@ -62,6 +63,11 @@ public class CustomPaymentRepository {
         if (StringUtils.hasLength(paymentFilter.getStreet())) {
             appendParam(whereCondition, " s.id = :streetId");
             mapSqlParameterSource.addValue("streetId", paymentFilter.getStreet());
+        }
+
+        if (StringUtils.hasLength(paymentFilter.getStatus())){
+            appendParam(whereCondition, " p.validated = :status");
+            mapSqlParameterSource.addValue("status", Boolean.parseBoolean(paymentFilter.getStatus()));
         }
 
         return namedParameterJdbcTemplate.query(query + whereCondition + " ORDER BY p.payment_date", mapSqlParameterSource, paymentViewMapper);
