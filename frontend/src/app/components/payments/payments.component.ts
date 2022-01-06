@@ -41,10 +41,11 @@ export class PaymentsComponent implements OnInit {
 
   ngOnInit(): void {
 
-    this.sessionService.getUser().subscribe(user => this.user = user);
-
-    this.isAdmin = this.userHasRoles(['ROLE_ADMIN']);
-    this.isRepresentative = this.userHasRoles(['ROLE_REPRESENTATIVE']);
+    this.sessionService.getUser().subscribe(user => {
+      this.user = user;
+      this.isAdmin = this.userHasRoles(['ROLE_ADMIN']);
+      this.isRepresentative = this.userHasRoles(['ROLE_REPRESENTATIVE']);
+    });
 
     const now = new Date();
 
