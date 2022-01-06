@@ -68,21 +68,29 @@ public class RepresentativesServiceImplTests {
     }
 
     @Test
-    public void givenAndUserId_whenDelete_thenRepresentativeIsDeleted() {
+    public void givenAnUserId_whenDelete_thenRepresentativeIsDeleted() {
         // Given:
         RepresentativeRepository representativeRepository = Mockito.mock(RepresentativeRepository.class);
 
         RepresentativesServiceImpl representativesService = new RepresentativesServiceImpl(representativeRepository);
 
+        Representative representative = Representative.builder()
+                .userId("userId")
+                .house("house")
+                .phone("123456")
+                .street("street")
+                .build();
+
+        Mockito.when(representativeRepository.findByUserId("userId")).thenReturn(representative);
         // When:
         representativesService.delete("userId");
 
         // Then:
-        Mockito.verify(representativeRepository).deleteById("userId");
+        Mockito.verify(representativeRepository).delete(representative);
     }
 
     @Test
-    public void givenAndUserIdAndStreetId_whenSaveStreet_thenStreetIsSaved() {
+    public void givenAnUserIdAndStreetId_whenSaveStreet_thenStreetIsSaved() {
         // Given:
         RepresentativeRepository representativeRepository = Mockito.mock(RepresentativeRepository.class);
 
