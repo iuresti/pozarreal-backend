@@ -12,7 +12,7 @@ public interface PaymentsService {
 
     Payment save(Payment payment, Principal principal);
 
-    void delete(String paymentId);
+    void delete(String paymentId, Principal principal);
 
     Payment getPayment(String paymentId, String userIdForLoggedUser);
 

@@ -9,6 +9,7 @@ import org.uresti.pozarreal.dto.Payment;
 import org.uresti.pozarreal.dto.PaymentFilter;
 import org.uresti.pozarreal.dto.PaymentView;
 import org.uresti.pozarreal.exception.MaintenanceFeeOverPassedException;
+import org.uresti.pozarreal.exception.PozarrealSystemException;
 import org.uresti.pozarreal.repository.CustomPaymentRepository;
 import org.uresti.pozarreal.repository.PaymentRepository;
 import org.uresti.pozarreal.service.PaymentsService;
@@ -49,6 +50,9 @@ public class PaymentsServiceImpl implements PaymentsService {
     @Override
     @Transactional
     public Payment save(Payment payment, Principal principal) {
+        if(payment.isValidated()) {
+            throw new PozarrealSystemException("Editing payment validated", "INVALID_UPDATE_PAYMENT");
+        }
 
         if (payment.getId() == null) {
             payment.setId(UUID.randomUUID().toString());
@@ -70,7 +74,18 @@ public class PaymentsServiceImpl implements PaymentsService {
 
     @Override
     @Transactional
-    public void delete(String paymentId) {
+    public void delete(String paymentId, Principal principal) {
+        if (sessionHelper.hasRole(sessionHelper.getLoggedUser(principal), Role.ROLE_ADMIN)) {
+            paymentRepository.deleteById(paymentId);
+            return;
+        }
+
+        org.uresti.pozarreal.model.Payment payment = paymentRepository.findById(paymentId).orElseThrow();
+
+        if(payment.isValidated()) {
+            throw new PozarrealSystemException("Deleting payment validated", "INVALID_DELETE_PAYMENT");
+        }
+
         paymentRepository.deleteById(paymentId);
     }
 

@@ -56,12 +56,12 @@
       <td>
         <i class="bi bi-trash btn btn-link"
            (click)="deletePayment(payment, $event)"
-           *ngIf="isAdmin">
+           *ngIf="isAdmin || (!payment.validated && !isAdmin && isRepresentative)">
         </i> &nbsp;
         <i class="bi bi-pencil btn btn-link"
            disabled="true"
            (click)="editPayment(addPaymentDialog, payment, $event)"
-           *ngIf="isAdmin">
+           *ngIf="(isAdmin || (!isAdmin && isRepresentative)) && !payment.validated">
         </i>
       </td>
     </tr>

@@ -13,6 +13,7 @@ import org.uresti.pozarreal.dto.Payment;
 import org.uresti.pozarreal.dto.PaymentFilter;
 import org.uresti.pozarreal.dto.PaymentView;
 import org.uresti.pozarreal.exception.MaintenanceFeeOverPassedException;
+import org.uresti.pozarreal.exception.PozarrealSystemException;
 import org.uresti.pozarreal.repository.CustomPaymentRepository;
 import org.uresti.pozarreal.repository.PaymentRepository;
 
@@ -136,7 +137,6 @@ public class PaymentsServiceImplTests {
                 .build();
 
         Payment paymentDto = Payment.builder()
-                .validated(true)
                 .amount(100.0)
                 .id("id2")
                 .houseId("house2")
@@ -178,6 +178,7 @@ public class PaymentsServiceImplTests {
         PozarrealConfig pozarrealConfig = Mockito.mock(PozarrealConfig.class);
         SessionHelper sessionHelper = Mockito.mock(SessionHelper.class);
         Principal principal = Mockito.mock(Principal.class);
+
         ArgumentCaptor<org.uresti.pozarreal.model.Payment> argumentCaptor =
                 ArgumentCaptor.forClass(org.uresti.pozarreal.model.Payment.class);
 
@@ -194,7 +195,7 @@ public class PaymentsServiceImplTests {
         LocalDate registrationDate = LocalDate.ofYearDay(2000, 10);
 
         org.uresti.pozarreal.model.Payment payment = org.uresti.pozarreal.model.Payment.builder()
-                .validated(true)
+                .validated(false)
                 .amount(100.0)
                 .id("id1")
                 .houseId("house1")
@@ -208,7 +209,7 @@ public class PaymentsServiceImplTests {
                 .build();
 
         Payment paymentDto = Payment.builder()
-                .validated(true)
+                .validated(false)
                 .amount(100.0)
                 .houseId("house2")
                 .notes("hello")
@@ -231,7 +232,7 @@ public class PaymentsServiceImplTests {
 
         Assertions.assertThat(paymentSaved.getId()).isNotNull();
         Assertions.assertThat(paymentSaved.getAmount()).isEqualTo(100);
-        Assertions.assertThat(paymentSaved.isValidated()).isTrue();
+        Assertions.assertThat(paymentSaved.isValidated()).isFalse();
         Assertions.assertThat(paymentSaved.getHouseId()).isEqualTo("house1");
         Assertions.assertThat(paymentSaved.getNotes()).isEqualTo("hello");
         Assertions.assertThat(paymentSaved.getPaymentConceptId()).isEqualTo("Concept");
@@ -241,6 +242,43 @@ public class PaymentsServiceImplTests {
 
         Assertions.assertThat(parameter.getRegistrationDate()).isNotEqualTo(registrationDate);
         Assertions.assertThat(parameter.getId()).isNotEqualTo(userId);
+    }
+
+    @Test
+    public void givenAValidatedPayment_whenSave_ThenThrowException() {
+        // Given:
+        CustomPaymentRepository customPaymentRepository = Mockito.mock(CustomPaymentRepository.class);
+        PaymentRepository paymentRepository = Mockito.mock(PaymentRepository.class);
+        PozarrealConfig pozarrealConfig = Mockito.mock(PozarrealConfig.class);
+        SessionHelper sessionHelper = Mockito.mock(SessionHelper.class);
+        Principal principal = Mockito.mock(Principal.class);
+
+        PaymentsServiceImpl paymentsService = new PaymentsServiceImpl(
+                customPaymentRepository,
+                paymentRepository,
+                sessionHelper,
+                pozarrealConfig);
+
+        LocalDate paymentDate = LocalDate.now();
+        LocalDate registrationDate = LocalDate.ofYearDay(2000, 10);
+
+        Payment paymentDto = Payment.builder()
+                .validated(true)
+                .amount(100.0)
+                .houseId("house2")
+                .notes("hello")
+                .paymentConceptId("Concept2")
+                .paymentDate(paymentDate)
+                .registrationDate(registrationDate)
+                .paymentMode("mode")
+                .paymentSubConceptId("SubConcept2")
+                .userId("user2")
+                .build();
+
+        // When:
+        // Then:
+        Assertions.assertThatThrownBy( () -> paymentsService.save(paymentDto, principal))
+                .isInstanceOf(PozarrealSystemException.class);
     }
 
     @Test
@@ -285,7 +323,6 @@ public class PaymentsServiceImplTests {
                 .build();
 
         Payment paymentDto = Payment.builder()
-                .validated(true)
                 .amount(100.0)
                 .id("id2")
                 .houseId("house2")
@@ -345,7 +382,6 @@ public class PaymentsServiceImplTests {
         LocalDate registrationDate = LocalDate.ofYearDay(2000, 10);
 
         Payment paymentDto = Payment.builder()
-                .validated(true)
                 .amount(200.0)
                 .id("id2")
                 .houseId("house2")
@@ -444,6 +480,7 @@ public class PaymentsServiceImplTests {
         PaymentRepository paymentRepository = Mockito.mock(PaymentRepository.class);
         SessionHelper sessionHelper = Mockito.mock(SessionHelper.class);
         PozarrealConfig pozarrealConfig = Mockito.mock(PozarrealConfig.class);
+        Principal principal = Mockito.mock(Principal.class);
 
         PaymentsServiceImpl paymentsService = new PaymentsServiceImpl(
                 customPaymentRepository,
@@ -451,8 +488,10 @@ public class PaymentsServiceImplTests {
                 sessionHelper,
                 pozarrealConfig);
 
+        Mockito.when(sessionHelper.hasRole(sessionHelper.getLoggedUser(principal), Role.ROLE_ADMIN)).thenReturn(true);
+
         // When:
-        paymentsService.delete("id");
+        paymentsService.delete("id", principal);
 
         // Then:
         Mockito.verify(paymentRepository).deleteById("id");
