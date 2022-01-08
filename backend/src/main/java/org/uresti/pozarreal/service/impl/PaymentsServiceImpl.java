@@ -51,7 +51,7 @@ public class PaymentsServiceImpl implements PaymentsService {
     @Transactional
     public Payment save(Payment payment, Principal principal) {
         if(payment.isValidated()) {
-            throw new PozarrealSystemException("Editing payment validated", "INVALID_UPDATE_PAYMENT");
+            throw new PozarrealSystemException("Editing validated payment", "INVALID_UPDATE_PAYMENT");
         }
 
         if (payment.getId() == null) {
