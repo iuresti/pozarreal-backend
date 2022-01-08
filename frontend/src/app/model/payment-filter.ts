@@ -5,4 +5,5 @@ export interface PaymentFilter {
   endDate: string;
   concepts: string[];
   paymentMode: string;
+  status: string;
 }

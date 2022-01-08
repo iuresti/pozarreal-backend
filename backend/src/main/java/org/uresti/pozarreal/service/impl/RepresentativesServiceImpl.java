@@ -28,7 +28,11 @@ public class RepresentativesServiceImpl implements RepresentativesService {
 
     @Override
     public void delete(String userId) {
-        representativeRepository.deleteById(userId);
+        Representative representative = representativeRepository.findByUserId(userId);
+
+        if (representative != null) {
+            representativeRepository.delete(representative);
+        }
     }
 
     @Override

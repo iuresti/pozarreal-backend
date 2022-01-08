@@ -1,25 +1,25 @@
-<app-payment-filter (selectionDone)="doSearch($event)"
-                    (addPaymentClicked)="open(addPaymentDialog)"
-                    [havePermission]="havePermission">
+<app-payment-filter (addPaymentClicked)="open(addPaymentDialog)"
+                    (selectionDone)="doSearch($event)"
+                    [havePermission]="isAdmin || isRepresentative">
 </app-payment-filter>
 
-<div class="d-flex justify-content-center" *ngIf="loading">
+<div *ngIf="loading" class="d-flex justify-content-center">
   <div class="spinner-border" role="status">
     <span class="sr-only">Loading...</span>
   </div>
 </div>
 
-<a *ngIf="payments"
-   (click)="exportToExcel()"
+<a (click)="exportToExcel()"
+   *ngIf="payments"
    class="export ml-3">
   Exportar a Excel
 </a>
 
 <div class="table-responsive">
-  <table class="table"
+  <table #tableElement
          *ngIf="!loading"
-         id="table"
-         #tableElement>
+         class="table"
+         id="table">
     <thead>
     <tr>
       <th>Circuito</th>
@@ -34,8 +34,8 @@
     </tr>
     </thead>
     <tbody>
-    <tr *ngFor="let payment of payments"
-        (click)="showVouchers()">
+    <tr (click)="showVouchers()"
+        *ngFor="let payment of payments">
       <td>{{payment.streetName}}</td>
       <td>{{payment.houseNumber}}</td>
       <td>{{payment.paymentDate | commonDateFormat}}</td>
@@ -44,24 +44,24 @@
       <td>{{payment.paymentMode | paymentMode}}</td>
       <td>{{payment.notes}}</td>
       <td>
-        <select *ngIf="(havePermission && !payment.validated);else showResult"
-                class="form-control"
+        <select (change)="onChange(payment,$event)"
                 (click)="$event.stopPropagation()"
-                (change)="onChange(payment,$event)">
+                *ngIf="(isAdmin && !payment.validated);else showResult"
+                class="form-control">
           <option [value]="false">{{payment.validated | verification}}</option>
           <option [value]="true">{{!payment.validated | verification}}</option>
         </select>
         <ng-template #showResult>{{payment.validated | verification}}</ng-template>
       </td>
       <td>
-        <i class="bi bi-trash btn btn-link"
-           (click)="deletePayment(payment, $event)"
-           *ngIf="havePermission">
+        <i (click)="deletePayment(payment, $event)"
+           *ngIf="isAdmin"
+           class="bi bi-trash btn btn-link">
         </i> &nbsp;
-        <i class="bi bi-pencil btn btn-link"
-           disabled="true"
-           (click)="editPayment(addPaymentDialog, payment, $event)"
-           *ngIf="havePermission">
+        <i (click)="editPayment(addPaymentDialog, payment, $event)"
+           *ngIf="isAdmin"
+           class="bi bi-pencil btn btn-link"
+           disabled="true">
         </i>
       </td>
     </tr>
@@ -74,31 +74,32 @@
 
   <div class="modal-header">
     <h4 class="modal-title" id="modal-basic-title">Registrar pago</h4>
-    <button type="button"
-            class="close"
+    <button (click)="d('Cross click')"
             aria-label="Close"
-            (click)="d('Cross click')">
+            class="close"
+            type="button">
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
 
   <div class="modal-body">
     <app-payment-add (dataReady)="newPaymentReady = true"
+                     (date)="changeDate($event)"
                      (wrongData)="newPaymentReady = false"
+                     [isEdit]="isEdit"
                      [maxDate]="maxDate"
                      [minDate]="minDate"
-                     (date)="changeDate($event)"
-                     [paymentDateReadOnly]="false"
-                     [paymentData]="newPayment">
+                     [paymentData]="newPayment"
+                     [paymentDateReadOnly]="false">
     </app-payment-add>
   </div>
 
   <div class="modal-footer">
     <label *ngIf="!newPaymentReady" class="alert-danger">Hay datos inválidos</label>
-    <button [disabled]="!newPaymentReady"
-            type="button"
+    <button (click)="c('saved')"
+            [disabled]="!newPaymentReady"
             class="btn btn-outline-dark"
-            (click)="c('saved')">
+            type="button">
       Guardar
     </button>
   </div>

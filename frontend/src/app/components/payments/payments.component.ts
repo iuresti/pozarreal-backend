@@ -7,6 +7,7 @@ import {Payment} from '../../model/payment';
 import Swal from 'sweetalert2';
 import {SessionService} from '../../services/session.service';
 import {UploadFileService} from '../../services/upload-file.service';
+import {User} from '../../model/user';
 
 @Component({
   selector: 'app-payments',
@@ -16,12 +17,15 @@ import {UploadFileService} from '../../services/upload-file.service';
 })
 export class PaymentsComponent implements OnInit {
   @ViewChild('tableElement') html: ElementRef;
+  user: User;
   payments: PaymentView[];
   newPayment: Payment;
   lastFilter: PaymentFilter;
   newPaymentReady: boolean;
   loading: boolean;
-  havePermission: boolean;
+  isEdit: boolean;
+  isAdmin: boolean;
+  isRepresentative: boolean;
 
   maxDate: NgbDateStruct;
   minDate: NgbDateStruct;
@@ -38,6 +42,12 @@ export class PaymentsComponent implements OnInit {
 
   ngOnInit(): void {
 
+    this.sessionService.getUser().subscribe(user => {
+      this.user = user;
+      this.isAdmin = this.userHasRoles(['ROLE_ADMIN']);
+      this.isRepresentative = this.userHasRoles(['ROLE_REPRESENTATIVE']);
+    });
+
     const now = new Date();
 
     this.maxDate = {
@@ -53,10 +63,6 @@ export class PaymentsComponent implements OnInit {
     };
 
     this.newPaymentReady = false;
-
-    this.sessionService.getUser().subscribe(user => {
-      this.havePermission = user.roles.filter(role => role === 'ROLE_ADMIN' || role === 'ROLE_REPRESENTATIVE').length > 0;
-    });
   }
 
   doSearch(paymentFilter: PaymentFilter): void {
@@ -69,6 +75,7 @@ export class PaymentsComponent implements OnInit {
   }
 
   open(content): void {
+    this.isEdit = false;
     this.newPayment = {} as Payment;
     this.newPayment.paymentDate = this.date;
     this.modalService.open(content, {ariaLabelledBy: 'modal-basic-title'}).result.then(() => {
@@ -105,6 +112,7 @@ export class PaymentsComponent implements OnInit {
 
   editPayment(content, payment: PaymentView, event): void {
     event.stopPropagation();
+    this.isEdit = true;
     this.newPayment = {} as Payment;
 
     this.newPayment.paymentConceptId = payment.paymentConceptId;
@@ -184,7 +192,8 @@ export class PaymentsComponent implements OnInit {
         if (result.isConfirmed) {
           this.paymentService.validatePayment(payment.id).subscribe(p => {
             payment.validated = p.validated;
-            Swal.fire('Validado!', '', 'success').then(console.log);
+            Swal.fire('Validado!', '', 'success').then(() => {
+            });
           });
         } else {
           event.target.value = 'false';
@@ -195,5 +204,9 @@ export class PaymentsComponent implements OnInit {
 
   changeDate(event: string): void {
     this.date = event;
+  }
+
+  userHasRoles(roles: string[]): boolean {
+    return this.user.roles.some(r => roles.includes(r));
   }
 }
