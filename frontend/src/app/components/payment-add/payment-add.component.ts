@@ -33,6 +33,7 @@ export class PaymentAddComponent implements OnInit {
   @Input() house: House;
   @Input() street: Street;
   @Input() paymentDateReadOnly: boolean;
+  @Input() isEdit: boolean;
   isNew: boolean;
   labelConcept: string;
   labelSubConcept: string;
@@ -179,7 +180,7 @@ export class PaymentAddComponent implements OnInit {
   }
 
   isPaymentFilesValid(): boolean {
-    return this.userHasRoles(['ROLE_ADMIN']) || this.paymentData.files != null;
+    return this.userHasRoles(['ROLE_ADMIN', 'ROLE_REPRESENTATIVE']) || this.paymentData.files != null;
   }
 
   prepareStartDate(): void {

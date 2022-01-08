@@ -23,6 +23,7 @@ export class PaymentsComponent implements OnInit {
   lastFilter: PaymentFilter;
   newPaymentReady: boolean;
   loading: boolean;
+  isEdit: boolean;
   isAdmin: boolean;
   isRepresentative: boolean;
 
@@ -74,6 +75,7 @@ export class PaymentsComponent implements OnInit {
   }
 
   open(content): void {
+    this.isEdit = false;
     this.newPayment = {} as Payment;
     this.newPayment.paymentDate = this.date;
     this.modalService.open(content, {ariaLabelledBy: 'modal-basic-title'}).result.then(() => {
@@ -110,6 +112,7 @@ export class PaymentsComponent implements OnInit {
 
   editPayment(content, payment: PaymentView, event): void {
     event.stopPropagation();
+    this.isEdit = true;
     this.newPayment = {} as Payment;
 
     this.newPayment.paymentConceptId = payment.paymentConceptId;
