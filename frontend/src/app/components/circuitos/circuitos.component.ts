@@ -186,8 +186,7 @@ export class CircuitosComponent implements OnInit {
       }).then(result => {
         if (result.isConfirmed) {
           this.paymentService.validatePayment(bimesterPayment.id).subscribe(payment => {
-            Swal.fire('Validado!', '', 'success').then(console.log);
-            bimesterPayment.validated = payment.validated;
+            Swal.fire('Validado!', '', 'success').then(() => bimesterPayment.validated = payment.validated);
           });
         }
       });
@@ -206,8 +205,7 @@ export class CircuitosComponent implements OnInit {
       }).then(result => {
         if (result.isConfirmed) {
           this.paymentService.conflictPayment(bimesterPayment.id).subscribe(payment => {
-            Swal.fire('', '', 'success').then(console.log);
-            bimesterPayment.conflict = payment.conflict;
+            Swal.fire('', '', 'success').then(() => bimesterPayment.conflict = payment.conflict);
           });
         }
       });
@@ -243,7 +241,7 @@ export class CircuitosComponent implements OnInit {
         day: now.getDate()
       };
     }
-    
+
     this.streetService.getStreetInfo(this.selectedStreetId, startOfYear).subscribe(streetInfo => {
       this.selectedStreet = streetInfo;
       this.loading = false;

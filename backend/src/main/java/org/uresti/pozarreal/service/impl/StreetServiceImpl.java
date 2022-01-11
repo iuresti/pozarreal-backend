@@ -164,6 +164,7 @@ public class StreetServiceImpl implements StreetsService {
         for (Payment payment : payments) {
             if (MAINTENANCE_ANNUITY.equals(payment.getPaymentSubConceptId())) {
                 for (PaymentByConcept paymentByConcept : paymentInfo) {
+                    paymentByConcept.setId(payment.getId());
                     paymentByConcept.setComplete(true);
                     paymentByConcept.setAmount(payment.getAmount());
                     paymentByConcept.setValidated(payment.isValidated());
