@@ -9,7 +9,7 @@
       <span class="navbar-toggler-icon"></span>
     </button>
 
-    <div class="collapse navbar-collapse" id="appNavigation" [ngbCollapse]="isCollapsed">
+    <div class="collapse navbar-collapse d-flex justify-content-between" id="appNavigation" [ngbCollapse]="isCollapsed">
       <div class="navbar-nav mr-auto">
         <a (click)="toggleMenu()" class="nav-item nav-link" routerLink="/account"
            routerLinkActive="active">Mi Cuenta</a>
@@ -26,16 +26,19 @@
            routerLinkActive="active" *ngIf="userHasRoles(['ROLE_USER_MANAGER'])">Usuarios</a>
         <a href="/logout" class="nav-item nav-link">Salir</a>
       </div>
+      hola
     </div>
 
+
   </nav>
+
 
   <router-outlet></router-outlet>
 
 </div>
 
 
-<div *ngIf="failedLogin" class="container">
+<form *ngIf="failedLogin" class="container">
   <div class="row mt-3">
     <div class="col col-3">Usuario:</div>
     <div class="col col-9"><input class="form-control" type="text" #userInput></div>
@@ -53,4 +56,4 @@
       </button>
     </div>
   </div>
-</div>
+</form>

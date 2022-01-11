@@ -54,6 +54,8 @@ export class CircuitosComponent implements OnInit {
 
     const now = new Date();
 
+    this.sessionService.getUser().subscribe(user => this.user = user);
+
     this.selectedYear = now.getFullYear();
 
     this.maxDate = {
@@ -131,10 +133,20 @@ export class CircuitosComponent implements OnInit {
     this.newPayment.paymentSubConceptId = 'MAINTENANCE_BIM_' + bim;
     this.newPayment.amount = this.maintenanceFee - bimesterPayment.amount;
     this.modalService.open(content, {ariaLabelledBy: 'modal-basic-title'}).result.then(() => {
-      console.log('Saving payment');
-      console.log(this.newPayment);
       this.paymentService.save(this.newPayment).subscribe(payment => {
         console.log('Saving payment');
+        console.log(this.newPayment);
+
+        if (payment.paymentSubConceptId === 'MAINTENANCE_ANNUITY') {
+          house.twoMonthsPayments.forEach(p => {
+            p.id = payment.id;
+            p.validated = payment.validated;
+            p.amount = payment.amount;
+            p.conflict = payment.conflict;
+            p.complete = true;
+          });
+        }
+
         bimesterPayment.amount += this.newPayment.amount;
         bimesterPayment.validated = payment.validated;
         bimesterPayment.complete = this.maintenanceFee <= bimesterPayment.amount;
@@ -175,7 +187,6 @@ export class CircuitosComponent implements OnInit {
   }
 
   validatePayment(bimesterPayment: PaymentByConcept, house: House): void {
-    this.sessionService.getUser().subscribe(user => this.user = user);
     if (!bimesterPayment.validated && bimesterPayment.amount > 0 && this.userHasRoles(['ROLE_ADMIN'])) {
       Swal.fire({
         title: `¿Validar pago por $${bimesterPayment.amount} de la casa ${house.number}?`,
@@ -186,15 +197,20 @@ export class CircuitosComponent implements OnInit {
       }).then(result => {
         if (result.isConfirmed) {
           this.paymentService.validatePayment(bimesterPayment.id).subscribe(payment => {
-            Swal.fire('Validado!', '', 'success').then(() => bimesterPayment.validated = payment.validated);
+
+            Swal.fire('Validado!', '', 'success').then(() => {
+              if (payment.paymentSubConceptId === 'MAINTENANCE_ANNUITY') {
+                house.twoMonthsPayments.forEach(p => p.validated = true);
+              }
+              bimesterPayment.validated = payment.validated;
+            });
           });
         }
-      });
+      })
     }
   }
 
   conflictPayment($event: MouseEvent, bimesterPayment: PaymentByConcept, house: House): void {
-    this.sessionService.getUser().subscribe(user => this.user = user);
     if (!bimesterPayment.conflict && this.userHasRoles(['ROLE_REPRESENTATIVE'])) {
       Swal.fire({
         title: `¿Hay conflicto en el pago por $${bimesterPayment.amount} de la casa ${house.number}?`,
