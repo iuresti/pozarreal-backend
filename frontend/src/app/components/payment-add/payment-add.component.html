@@ -156,6 +156,9 @@
         <option [value]="paymentData.paymentSubConceptId">
           {{labelSubConcept}}
         </option>
+        <option *ngIf="!unavailableAnnuity" value="MAINTENANCE_ANNUITY">
+          Anualidad
+        </option>
       </ng-template>
     </select>
   </div>
