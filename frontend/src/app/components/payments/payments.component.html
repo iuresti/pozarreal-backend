@@ -54,14 +54,14 @@
         <ng-template #showResult>{{payment.validated | verification}}</ng-template>
       </td>
       <td>
-        <i (click)="deletePayment(payment, $event)"
-           *ngIf="isAdmin"
-           class="bi bi-trash btn btn-link">
+        <i class="bi bi-trash btn btn-link"
+           (click)="deletePayment(payment, $event)"
+           *ngIf="isAdmin || (!payment.validated && isRepresentative)">
         </i> &nbsp;
-        <i (click)="editPayment(addPaymentDialog, payment, $event)"
-           *ngIf="isAdmin"
-           class="bi bi-pencil btn btn-link"
-           disabled="true">
+        <i class="bi bi-pencil btn btn-link"
+           disabled="true"
+           (click)="editPayment(addPaymentDialog, payment, $event)"
+           *ngIf="(isAdmin || isRepresentative) && !payment.validated">
         </i>
       </td>
     </tr>

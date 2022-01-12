@@ -124,6 +124,7 @@ export class PaymentsComponent implements OnInit {
     this.newPayment.amount = payment.amount;
     this.newPayment.houseId = payment.houseId;
     this.newPayment.streetId = payment.streetId;
+    this.newPayment.validated = payment.validated;
 
     this.modalService.open(content, {ariaLabelledBy: 'modal-basic-title'}).result.then(() => {
       console.log('Saving payment');
