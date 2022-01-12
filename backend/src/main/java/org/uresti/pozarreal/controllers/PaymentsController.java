@@ -55,13 +55,13 @@ public class PaymentsController {
     }
 
     @DeleteMapping("/{paymentId}")
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_REPRESENTATIVE')")
     public void deletePayment(@PathVariable String paymentId, Principal principal) {
         LoggedUser loggedUser = sessionHelper.getLoggedUser(principal);
 
         log.info("Deleting payment (paymentId: {}, user: {} - {})", paymentId, loggedUser.getName(), loggedUser.getUserId());
 
-        paymentsService.delete(paymentId);
+        paymentsService.delete(paymentId, principal);
     }
 
     @PatchMapping("/{paymentId}")
