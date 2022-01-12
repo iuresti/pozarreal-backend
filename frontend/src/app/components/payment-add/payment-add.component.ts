@@ -37,6 +37,7 @@ export class PaymentAddComponent implements OnInit {
   isNew: boolean;
   labelConcept: string;
   labelSubConcept: string;
+  unavailableAnnuity: boolean;
 
   @Output() date: EventEmitter<string> = new EventEmitter<string>();
   @Output() dataReady: EventEmitter<void> = new EventEmitter<void>();
@@ -81,6 +82,8 @@ export class PaymentAddComponent implements OnInit {
           this.houses = houses;
         });
       }
+    } else {
+      this.unavailableAnnuity = this.house.twoMonthsPayments.some(house => house.id != null);
     }
   }
 
@@ -88,7 +91,8 @@ export class PaymentAddComponent implements OnInit {
     this.paymentService.getPaymentConcepts().subscribe(paymentConcepts => {
       this.paymentConcepts = paymentConcepts;
       if (this.paymentData.paymentConceptId) {
-        this.labelConcept = this.paymentConcepts.find(paymentConcept => paymentConcept.id === this.paymentData.paymentConceptId)?.label;
+        this.labelConcept = this.paymentConcepts
+          .find(paymentConcept => paymentConcept.id === this.paymentData.paymentConceptId)?.label;
       }
     });
 
@@ -97,7 +101,7 @@ export class PaymentAddComponent implements OnInit {
         this.paymentSubConcepts = paymentSubConcepts;
         if (this.paymentData.paymentSubConceptId) {
           this.labelSubConcept = this.paymentSubConcepts
-            .find(paymentSybConcept => paymentSybConcept.id === this.paymentData.paymentSubConceptId)?.label;
+            .find(paymentSubConcept => paymentSubConcept.id === this.paymentData.paymentSubConceptId)?.label;
         }
       });
     }

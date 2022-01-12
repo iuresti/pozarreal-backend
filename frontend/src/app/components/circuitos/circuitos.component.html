@@ -64,8 +64,9 @@
     <div *ngFor="let house of selectedStreet.houses;let i = index" [ngClass]="{'bg-white': i % 2 == 1}"
          class="row pb-2 ">
 
-      <div (click)="showHouse(house.id)"
-           class="btn btn-link col {{mobile ? 'col-3' : 'col-1'}} pt-2">{{house.number}}</div>
+      <div (click)="showHouse(house.id)" class="btn btn-link col {{mobile ? 'col-3' : 'col-1'}} pt-2">
+        {{house.number}}
+      </div>
 
       <div *ngIf="!mobile" class="col col-1 pt-2">
         <div class="custom-control custom-switch ">
@@ -78,12 +79,10 @@
       </div>
 
       <div *ngIf="!mobile" class="col col-2">
-        <button (click)="house.toggleChips = true" *ngIf="!house.toggleChips"
-                class="btn btn-link">
+        <button (click)="house.toggleChips = true" *ngIf="!house.toggleChips" class="btn btn-link">
           <em class="bi bi-caret-down-fill"></em> Mostrar chips
         </button>
-        <button (click)="house.toggleChips = false" *ngIf="house.toggleChips"
-                class="btn btn-link">
+        <button (click)="house.toggleChips = false" *ngIf="house.toggleChips" class="btn btn-link">
           <em class="bi bi-caret-up-fill"></em> Ocultar chips
         </button>
         <app-chips-by-house *ngIf="house.toggleChips"
@@ -92,11 +91,10 @@
         </app-chips-by-house>
       </div>
 
-      <div
-        (click)="validatePayment(bimesterPayment, house)"
-        *ngFor="let bimesterPayment of house.twoMonthsPayments;let bim = index"
-        [ngStyle]="getStyle(bimesterPayment)"
-        class="col col-1 border border-light rounded d-flex align-items-center justify-content-center numbers">
+      <div (click)="validatePayment(bimesterPayment, house)"
+           *ngFor="let bimesterPayment of house.twoMonthsPayments;let bim = index"
+           [ngStyle]="getStyle(bimesterPayment)"
+           class="col col-1 border border-light rounded d-flex align-items-center justify-content-center numbers">
         <div (mouseleave)="onMouseLeave(number)"
              (mouseover)="onMouseOver(number)"
              *ngIf="bimesterPayment.complete && !mobile">
@@ -111,16 +109,13 @@
           {{(bimesterPayment.amount ? bimesterPayment.amount : '&nbsp;')}}
         </div>
 
-        <div #number (click)="conflictPayment($event, bimesterPayment, house)"
-             class="number">
+        <div #number (click)="conflictPayment($event, bimesterPayment, house)" class="number">
           {{house.number}}-B{{bim + 1}}
         </div>
-
       </div>
 
-      <div
-        [ngStyle]="{'background-color': house.parkingPenPayment.complete ? '#B6D7A8': 'transparent'}"
-        class="ml-1 col {{mobile ? 'col-2' : 'col-1'}} border border-light rounded d-flex align-items-center justify-content-center">
+      <div [ngStyle]="{'background-color': house.parkingPenPayment.complete ? '#B6D7A8': 'transparent'}"
+           class="ml-1 col {{mobile ? 'col-2' : 'col-1'}} border border-light rounded d-flex align-items-center justify-content-center">
         {{house.parkingPenPayment.complete ? (mobile ? '' : 'PAGADO') : (house.parkingPenPayment.amount ? house.parkingPenPayment.amount : '')}}
       </div>
 
