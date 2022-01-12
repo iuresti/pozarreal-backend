@@ -12,8 +12,8 @@
             class="form-control">
       <ng-container *ngIf="!street; else elseBlock">
         <option *ngFor="let street of streets"
-                id="street"
-                [value]="street.id">
+                [value]="street.id"
+                id="street">
           {{street.name}}
         </option>
       </ng-container>
@@ -82,12 +82,12 @@
       <div class="form-group">
         <div class="input-group pr-1">
           <input #paymentDate="ngbDatepicker"
-                 [(ngModel)]="modelPaymentDate"
                  (ngModelChange)="updateDate()"
+                 [(ngModel)]="modelPaymentDate"
                  [maxDate]="maxDate"
                  [minDate]="minDate"
-                 [readonly]="paymentDateReadOnly"
                  [ngClass]="{'border border-danger':!isPaymentDateValid() }"
+                 [readonly]="paymentDateReadOnly"
                  class="form-control"
                  id="paymentDate"
                  name="dp"
@@ -196,16 +196,16 @@
   </div>
 </div>
 
-<div class="row mt-1">
+<div *ngIf="isEdit" class="row mt-1">
 
   <div class="col-4">
     <label class="form-label" for="voucher">Comprobante:</label>
   </div>
 
   <div class="col-8">
-    <input type="file"
-           multiple
-           (change)="prepareFiles($event)"
-           class="form-control" id="voucher">
+    <input (change)="prepareFiles($event)"
+           class="form-control"
+           id="voucher"
+           multiple type="file">
   </div>
 </div>
