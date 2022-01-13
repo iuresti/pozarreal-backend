@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {UserService} from '../../services/user.service';
 import {User} from '../../model/user';
 import {RepresentativeService} from '../../services/representative.service';
+import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-users',
@@ -13,7 +14,8 @@ export class UsersComponent implements OnInit {
   users: User[];
 
   constructor(private userService: UserService,
-              private representativeService: RepresentativeService) {
+              private representativeService: RepresentativeService,
+              private modalService: NgbModal) {
   }
 
   ngOnInit(): void {
@@ -39,5 +41,9 @@ export class UsersComponent implements OnInit {
 
   hasRole(user: User, role: string): boolean {
     return user.roles.indexOf(role) >= 0;
+  }
+
+  showHouses(housesDialog): void {
+    this.modalService.open(housesDialog, {ariaLabelledBy: 'modal-basic-title'}).result.then(() => {});
   }
 }
