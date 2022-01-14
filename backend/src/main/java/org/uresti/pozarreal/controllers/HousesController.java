@@ -4,9 +4,12 @@ package org.uresti.pozarreal.controllers;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.uresti.pozarreal.dto.HousesByUser;
 import org.uresti.pozarreal.dto.ToggleChipStatusRequest;
 import org.uresti.pozarreal.dto.HouseInfo;
 import org.uresti.pozarreal.service.HousesService;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/house")
@@ -35,5 +38,20 @@ public class HousesController {
     @PreAuthorize("hasAnyRole('ROLE_REPRESENTATIVE', 'ROLE_ADMIN')")
     public void saveNotes(@PathVariable String houseId, @RequestBody String notes) {
         housesService.saveNotes(houseId, notes);
+    }
+
+    @GetMapping("{userId}")
+    public List<HousesByUser> getHousesByUser(@PathVariable String userId) {
+        return housesService.getHousesByUser(userId);
+    }
+
+    @DeleteMapping("{id}")
+    public void deleteHouseByUser(@PathVariable String id) {
+        housesService.deleteHouseByUser(id);
+    }
+
+    @PostMapping()
+    public HousesByUser saveHouseByUser(@RequestBody HousesByUser housesByUser) {
+        return housesService.saveHouseByUser(housesByUser);
     }
 }

@@ -14,7 +14,7 @@
       <img [src]="user.picture" style="width: 50px;" alt="">
     </td>
     <td>
-      <em class="bi bi-house-fill pointer" (click)="showHouses(housesDialog)"></em>
+      <em class="bi bi-house-fill pointer" (click)="getHousesByUser(housesDialog, user)"></em>
       {{ user.name }}
     </td>
     <td>{{ user.status }}</td>
@@ -48,16 +48,45 @@
       </tr>
       </thead>
       <tbody>
-      <tr>
-        <td></td>
-        <td>Pozarreal</td>
-        <td>100</td>
-        <td><em class="bi bi-patch-minus pointer"></em></td>
+      <tr *ngFor="let house of housesByUser">
+        <td>&nbsp;</td>
+        <td>{{house.streetName}}</td>
+        <td>{{house.number}}</td>
+        <td>
+          <em class="bi bi-patch-minus pointer" (click)="deleteHouse(house)"></em>
+        </td>
       </tr>
+
+      <tr class="d-none" #row>
+        <td>&nbsp;</td>
+        <td>
+          <select class="form-control" [(ngModel)]="selectedStreetId" (change)="getHouses()">
+            <option *ngFor="let street of streets" [value]="street.id">
+              {{street.name}}
+            </option>
+          </select>
+        </td>
+        <td>
+          <select class="form-control" *ngIf="selectedStreetId" [(ngModel)]="selectedHouseId">
+            <option *ngFor="let house of houses" [value]="house.id">
+              {{house.number}}
+            </option>
+          </select>
+        </td>
+        <td>
+          <button class="btn" (click)="saveHouseByUser()">
+            +
+          </button>
+          <button class="btn" (click)="removeRow(row)">
+            -
+          </button>
+        </td>
+      </tr>
+
       </tbody>
     </table>
   </div>
   <div class="modal-footer">
-    <em class="bi bi-plus-circle pointer"></em>
+    <em class="bi bi-plus-circle pointer" (click)="addRow(row)"></em>
   </div>
 </ng-template>
