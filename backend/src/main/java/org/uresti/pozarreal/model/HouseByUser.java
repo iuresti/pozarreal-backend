@@ -16,7 +16,7 @@ import javax.persistence.Table;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class HousesByUser {
+public class HouseByUser {
     @Id
     private String id;
 

@@ -1,4 +1,4 @@
-export interface HousesByUser {
+export interface HouseByUser {
   id: string;
   userId: string;
   houseId: string;

@@ -4,7 +4,7 @@ package org.uresti.pozarreal.controllers;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import org.uresti.pozarreal.dto.HousesByUser;
+import org.uresti.pozarreal.dto.HouseByUser;
 import org.uresti.pozarreal.dto.ToggleChipStatusRequest;
 import org.uresti.pozarreal.dto.HouseInfo;
 import org.uresti.pozarreal.service.HousesService;
@@ -41,7 +41,7 @@ public class HousesController {
     }
 
     @GetMapping("{userId}")
-    public List<HousesByUser> getHousesByUser(@PathVariable String userId) {
+    public List<HouseByUser> getHousesByUser(@PathVariable String userId) {
         return housesService.getHousesByUser(userId);
     }
 
@@ -51,7 +51,7 @@ public class HousesController {
     }
 
     @PostMapping()
-    public HousesByUser saveHouseByUser(@RequestBody HousesByUser housesByUser) {
-        return housesService.saveHouseByUser(housesByUser);
+    public HouseByUser saveHouseByUser(@RequestBody HouseByUser houseByUser) {
+        return housesService.saveHouseByUser(houseByUser);
     }
 }

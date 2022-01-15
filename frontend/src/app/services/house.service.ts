@@ -6,7 +6,7 @@ import {House} from '../model/house';
 import {HouseNumber} from '../model/house-number';
 import {map} from 'rxjs/operators';
 import {HouseInfo} from '../model/house-info';
-import {HousesByUser} from '../model/houses-by-user';
+import {HouseByUser} from '../model/house-by-user';
 
 @Injectable({
   providedIn: 'root'
@@ -55,16 +55,16 @@ export class HouseService {
     return this.http.patch<void>(`${environment.baseUrl}/house/${houseId}/notes`, notes);
   }
 
-  getHousesByUser(userId: string): Observable<HousesByUser[]> {
-    return this.http.get<HousesByUser[]>(`${environment.baseUrl}/house/${userId}`);
+  getHousesByUser(userId: string): Observable<HouseByUser[]> {
+    return this.http.get<HouseByUser[]>(`${environment.baseUrl}/house/${userId}`);
   }
 
   deleteHouseByUser(id: string): Observable<void> {
     return this.http.delete<void>(`${environment.baseUrl}/house/${id}`);
   }
 
-  saveHouseByUser(housesByUser: HousesByUser): Observable<HousesByUser> {
-    return this.http.post<HousesByUser>(`${environment.baseUrl}/house`, housesByUser);
+  saveHouseByUser(housesByUser: HouseByUser): Observable<HouseByUser> {
+    return this.http.post<HouseByUser>(`${environment.baseUrl}/house`, housesByUser);
   }
 
 }

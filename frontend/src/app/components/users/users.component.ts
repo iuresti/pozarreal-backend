@@ -6,7 +6,7 @@ import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {HouseService} from '../../services/house.service';
 import {StreetService} from '../../services/street.service';
 import {Street} from '../../model/street';
-import {HousesByUser} from '../../model/houses-by-user';
+import {HouseByUser} from '../../model/house-by-user';
 
 @Component({
   selector: 'app-users',
@@ -20,7 +20,7 @@ export class UsersComponent implements OnInit {
   selectedStreetId: string;
   streets: Street[];
   houses;
-  housesByUser: HousesByUser[];
+  housesByUser: HouseByUser[];
   selectedHouseId: string;
 
   constructor(private userService: UserService,
@@ -65,7 +65,7 @@ export class UsersComponent implements OnInit {
     });
   }
 
-  deleteHouse(house: HousesByUser): void {
+  deleteHouse(house: HouseByUser): void {
     this.houseService.deleteHouseByUser(house.id).subscribe(() => {
       this.houseService.getHousesByUser(this.userId).subscribe(housesByUser => this.housesByUser = housesByUser);
     });
@@ -87,7 +87,7 @@ export class UsersComponent implements OnInit {
   }
 
   saveHouseByUser(): void {
-    const houseByUser: HousesByUser = {} as HousesByUser;
+    const houseByUser: HouseByUser = {} as HouseByUser;
 
     houseByUser.houseId = this.selectedHouseId;
     houseByUser.userId = this.userId;

@@ -5,7 +5,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.uresti.pozarreal.config.Role;
 import org.uresti.pozarreal.controllers.SessionHelper;
 import org.uresti.pozarreal.dto.HouseInfo;
-import org.uresti.pozarreal.dto.HousesByUser;
+import org.uresti.pozarreal.dto.HouseByUser;
 import org.uresti.pozarreal.dto.LoggedUser;
 import org.uresti.pozarreal.exception.BadRequestDataException;
 import org.uresti.pozarreal.model.House;
@@ -75,17 +75,17 @@ public class HousesServiceImpl implements HousesService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<HousesByUser> getHousesByUser(String userId) {
+    public List<HouseByUser> getHousesByUser(String userId) {
         return housesByUserRepository.findAllByUserId(userId).stream()
                 .map(HousesByUserMapper::entityToDto)
-                .peek(housesByUser -> {
-                    House house = housesRepository.findById(housesByUser.getHouseId()).orElseThrow();
+                .peek(houseByUser -> {
+                    House house = housesRepository.findById(houseByUser.getHouseId()).orElseThrow();
 
                     Street street = streetRepository.findById(house.getStreet()).orElseThrow();
 
-                    housesByUser.setNumber(house.getNumber());
+                    houseByUser.setNumber(house.getNumber());
 
-                    housesByUser.setStreetName(street.getName());
+                    houseByUser.setStreetName(street.getName());
                 })
                 .collect(Collectors.toList());
     }
@@ -121,21 +121,21 @@ public class HousesServiceImpl implements HousesService {
     }
 
     @Override
-    public HousesByUser saveHouseByUser(HousesByUser housesByUser) {
+    public HouseByUser saveHouseByUser(HouseByUser houseByUser) {
 
-        Optional<org.uresti.pozarreal.model.HousesByUser> house = housesByUserRepository.findByHouseId(housesByUser.getHouseId());
+        Optional<org.uresti.pozarreal.model.HouseByUser> house = housesByUserRepository.findByHouseId(houseByUser.getHouseId());
 
         if (house.isPresent()) {
             throw new BadRequestDataException("Already exist another user with this house", "INVALID_SAVE_HOUSE");
         }
 
-        if (housesByUser.getId() == null) {
-            housesByUser.setId(UUID.randomUUID().toString());
+        if (houseByUser.getId() == null) {
+            houseByUser.setId(UUID.randomUUID().toString());
         }
 
-        housesByUser.setMainHouse(false);
-        housesByUser.setValidated(false);
+        houseByUser.setMainHouse(false);
+        houseByUser.setValidated(false);
 
-        return HousesByUserMapper.entityToDto(housesByUserRepository.save(HousesByUserMapper.dtoToEntity(housesByUser)));
+        return HousesByUserMapper.entityToDto(housesByUserRepository.save(HousesByUserMapper.dtoToEntity(houseByUser)));
     }
 }

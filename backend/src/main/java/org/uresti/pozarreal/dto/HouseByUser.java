@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class HousesByUser {
+public class HouseByUser {
     private String id;
     private String userId;
     private String houseId;

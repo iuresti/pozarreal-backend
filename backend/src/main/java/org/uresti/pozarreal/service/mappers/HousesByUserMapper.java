@@ -1,26 +1,26 @@
 package org.uresti.pozarreal.service.mappers;
 
-import org.uresti.pozarreal.dto.HousesByUser;
+import org.uresti.pozarreal.dto.HouseByUser;
 
 public class HousesByUserMapper {
 
-    public static HousesByUser entityToDto(org.uresti.pozarreal.model.HousesByUser housesByUser) {
-        return HousesByUser.builder()
-                .id(housesByUser.getId())
-                .userId(housesByUser.getUserId())
-                .houseId(housesByUser.getHouseId())
-                .mainHouse(housesByUser.getMainHouse())
-                .validated(housesByUser.getValidated())
+    public static HouseByUser entityToDto(org.uresti.pozarreal.model.HouseByUser houseByUser) {
+        return HouseByUser.builder()
+                .id(houseByUser.getId())
+                .userId(houseByUser.getUserId())
+                .houseId(houseByUser.getHouseId())
+                .mainHouse(houseByUser.getMainHouse())
+                .validated(houseByUser.getValidated())
                 .build();
     }
 
-    public static org.uresti.pozarreal.model.HousesByUser dtoToEntity(HousesByUser housesByUser) {
-        return org.uresti.pozarreal.model.HousesByUser.builder()
-                .id(housesByUser.getId())
-                .userId(housesByUser.getUserId())
-                .houseId(housesByUser.getHouseId())
-                .mainHouse(housesByUser.getMainHouse())
-                .validated(housesByUser.getValidated())
+    public static org.uresti.pozarreal.model.HouseByUser dtoToEntity(HouseByUser houseByUser) {
+        return org.uresti.pozarreal.model.HouseByUser.builder()
+                .id(houseByUser.getId())
+                .userId(houseByUser.getUserId())
+                .houseId(houseByUser.getHouseId())
+                .mainHouse(houseByUser.getMainHouse())
+                .validated(houseByUser.getValidated())
                 .build();
     }
 }
