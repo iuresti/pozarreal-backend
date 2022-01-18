@@ -123,11 +123,12 @@ public class HousesServiceImpl implements HousesService {
     @Override
     public HouseByUser saveHouseByUser(HouseByUser houseByUser) {
 
-        Optional<org.uresti.pozarreal.model.HouseByUser> house = housesByUserRepository.findByHouseId(houseByUser.getHouseId());
-
-        if (house.isPresent()) {
-            throw new BadRequestDataException("Already exist another user with this house", "INVALID_SAVE_HOUSE");
-        }
+        housesByUserRepository.findAllByUserId(houseByUser.getUserId())
+                .forEach(house -> {
+                    if (house.getHouseId().equals(houseByUser.getHouseId())) {
+                        throw new BadRequestDataException("already you are owner of this house", "INVALID_SAVE_HOUSE");
+                    }
+                });
 
         if (houseByUser.getId() == null) {
             houseByUser.setId(UUID.randomUUID().toString());

@@ -7,6 +7,7 @@ import {HouseService} from '../../services/house.service';
 import {StreetService} from '../../services/street.service';
 import {Street} from '../../model/street';
 import {HouseByUser} from '../../model/house-by-user';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-users',
@@ -35,9 +36,6 @@ export class UsersComponent implements OnInit {
       console.log(users);
       this.users = users;
     });
-
-
-    this.streetService.getStreets().subscribe(streets => this.streets = streets);
   }
 
   saveStreetForRepresentative(user: User, streetId: string): void {
@@ -66,13 +64,28 @@ export class UsersComponent implements OnInit {
   }
 
   deleteHouse(house: HouseByUser): void {
-    this.houseService.deleteHouseByUser(house.id).subscribe(() => {
-      this.houseService.getHousesByUser(this.userId).subscribe(housesByUser => this.housesByUser = housesByUser);
+    Swal.fire({
+      title: `¿Confirmas la eliminación de la casa ${house.streetName} ${house.number} de este usuario?`,
+      showDenyButton: true,
+      showCancelButton: false,
+      confirmButtonText: `Sí`,
+      denyButtonText: `No`,
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.houseService.deleteHouseByUser(house.id).subscribe(() => {
+          this.houseService.getHousesByUser(this.userId).subscribe(housesByUser => {
+            this.housesByUser = housesByUser;
+            Swal.fire('Eliminado!', '', 'success').then(() => {
+            });
+          });
+        });
+      }
     });
   }
 
   addRow(row): void {
     row.classList.remove('d-none');
+    this.streetService.getStreets().subscribe(streets => this.streets = streets);
   }
 
   removeRow(row): void {
@@ -80,7 +93,6 @@ export class UsersComponent implements OnInit {
   }
 
   getHouses(): void {
-    console.log(this.selectedStreetId);
     this.houseService.getHouseNumbersByStreet(this.selectedStreetId).subscribe(houses => {
       this.houses = houses;
     });

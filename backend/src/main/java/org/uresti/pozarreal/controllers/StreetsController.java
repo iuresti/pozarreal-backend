@@ -44,7 +44,7 @@ public class StreetsController {
     }
 
     @GetMapping("{streetId}/houses")
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_REPRESENTATIVE')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_REPRESENTATIVE', 'ROLE_USER_MANAGER')")
     public ResponseEntity<List<House>> getHousesByStreet(@PathVariable String streetId, Principal principal) {
         LoggedUser user = sessionHelper.getLoggedUser(principal);
 

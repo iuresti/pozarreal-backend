@@ -41,16 +41,19 @@ public class HousesController {
     }
 
     @GetMapping("{userId}")
+    @PreAuthorize("hasAnyRole('ROLE_USER_MANAGER')")
     public List<HouseByUser> getHousesByUser(@PathVariable String userId) {
         return housesService.getHousesByUser(userId);
     }
 
-    @DeleteMapping("{id}")
-    public void deleteHouseByUser(@PathVariable String id) {
-        housesService.deleteHouseByUser(id);
+    @DeleteMapping("{houseId}")
+    @PreAuthorize("hasAnyRole('ROLE_USER_MANAGER')")
+    public void deleteHouseByUser(@PathVariable String houseId) {
+        housesService.deleteHouseByUser(houseId);
     }
 
     @PostMapping()
+    @PreAuthorize("hasAnyRole('ROLE_USER_MANAGER')")
     public HouseByUser saveHouseByUser(@RequestBody HouseByUser houseByUser) {
         return housesService.saveHouseByUser(houseByUser);
     }
