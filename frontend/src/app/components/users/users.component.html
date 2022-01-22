@@ -45,6 +45,7 @@
         <th scope="col">&nbsp;</th>
         <th scope="col">Circuito</th>
         <th scope="col">Número de casa</th>
+        <th scope="col">&nbsp;</th>
       </tr>
       </thead>
       <tbody>
@@ -53,7 +54,7 @@
         <td>{{house.streetName}}</td>
         <td>{{house.number}}</td>
         <td>
-          <em class="bi bi-patch-minus pointer" (click)="deleteHouse(house)"></em>
+          <i class="bi bi-dash-circle pointer" (click)="deleteHouse(house)"></i>
         </td>
       </tr>
 
@@ -74,15 +75,10 @@
           </select>
         </td>
         <td>
-          <button class="btn" (click)="saveHouseByUser()">
-            +
-          </button>
-          <button class="btn" (click)="removeRow(row)">
-            -
-          </button>
+          <i class="bi bi-check-circle pointer mr-2" (click)="saveHouseByUser()"></i>
+          <i class="bi bi-dash-circle pointer ml-2" (click)="removeRow(row)"></i>
         </td>
       </tr>
-
       </tbody>
     </table>
   </div>

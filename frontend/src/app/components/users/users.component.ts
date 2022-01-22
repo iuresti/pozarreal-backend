@@ -60,9 +60,13 @@ export class UsersComponent implements OnInit {
     this.userId = user.id;
     this.selectedHouseId = null;
     this.selectedStreetId = null;
-    this.houseService.getHousesByUser(user.id).subscribe(housesByUser => this.housesByUser = housesByUser);
+    this.houseService.getHousesByUser(user.id).subscribe(housesByUser => {
+      this.housesByUser = housesByUser;
+      this.getHouseInfo();
+    });
     this.modalService.open(housesDialog, {ariaLabelledBy: 'modal-basic-title'}).result.then();
   }
+
 
   deleteHouse(house: HouseByUser): void {
     Swal.fire({
@@ -95,14 +99,8 @@ export class UsersComponent implements OnInit {
   getHouses(): void {
     this.houseService.getHousesByStreet(this.selectedStreetId).subscribe(houses => {
       this.houseService.getHousesByUser(this.userId).subscribe(housesByUser => {
-        this.houses = houses;
-        for (const houseByUser of housesByUser) {
-          for (const [i, house] of this.houses.entries()) {
-            if (house.id === houseByUser.houseId) {
-              this.houses.splice(i, 1);
-            }
-          }
-        }
+        this.houses = houses.filter(house => !housesByUser.find(houseByUser => houseByUser.houseId === house.id));
+        this.getHouseInfo();
       });
     });
   }
@@ -115,8 +113,18 @@ export class UsersComponent implements OnInit {
 
     this.houseService.saveHouseByUser(houseByUser).subscribe(() => {
       this.houseService.getHousesByUser(this.userId).subscribe(housesByUser => {
+        this.selectedHouseId = null;
         this.housesByUser = housesByUser;
         this.getHouses();
+      });
+    });
+  }
+
+  getHouseInfo(): void {
+    this.housesByUser.map(houseByUser => {
+      this.houseService.getHouseInfo(houseByUser.houseId).subscribe(houseInfo => {
+        houseByUser.number = houseInfo.number;
+        houseByUser.streetName = houseInfo.streetName;
       });
     });
   }

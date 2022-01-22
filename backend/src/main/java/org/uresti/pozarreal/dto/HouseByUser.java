@@ -14,8 +14,6 @@ public class HouseByUser {
     private String id;
     private String userId;
     private String houseId;
-    private String streetName;
-    private String number;
     private Boolean mainHouse;
     private Boolean validated;
 }

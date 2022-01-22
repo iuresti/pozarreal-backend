@@ -46,10 +46,10 @@ public class HousesController {
         return housesService.getHousesByUser(userId);
     }
 
-    @DeleteMapping("{houseId}")
+    @DeleteMapping("{id}")
     @PreAuthorize("hasAnyRole('ROLE_USER_MANAGER')")
-    public void deleteHouseByUser(@PathVariable String houseId) {
-        housesService.deleteHouseByUser(houseId);
+    public void deleteHouseByUser(@PathVariable String id) {
+        housesService.deleteHouseByUser(id);
     }
 
     @PostMapping()

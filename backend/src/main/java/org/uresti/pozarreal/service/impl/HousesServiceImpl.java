@@ -78,15 +78,6 @@ public class HousesServiceImpl implements HousesService {
     public List<HouseByUser> getHousesByUser(String userId) {
         return housesByUserRepository.findAllByUserId(userId).stream()
                 .map(HousesByUserMapper::entityToDto)
-                .peek(houseByUser -> {
-                    House house = housesRepository.findById(houseByUser.getHouseId()).orElseThrow();
-
-                    Street street = streetRepository.findById(house.getStreet()).orElseThrow();
-
-                    houseByUser.setNumber(house.getNumber());
-
-                    houseByUser.setStreetName(street.getName());
-                })
                 .collect(Collectors.toList());
     }
 
@@ -122,6 +113,10 @@ public class HousesServiceImpl implements HousesService {
 
     @Override
     public HouseByUser saveHouseByUser(HouseByUser houseByUser) {
+
+        if (houseByUser.getHouseId() == null) {
+            throw new BadRequestDataException("it's no possible save null house", "WRONG_HOUSE_ID");
+        }
 
         housesByUserRepository.findAllByUserId(houseByUser.getUserId())
                 .forEach(house -> {
