@@ -7,6 +7,7 @@ import {HouseService} from '../../services/house.service';
 import {StreetService} from '../../services/street.service';
 import {Street} from '../../model/street';
 import {HouseByUser} from '../../model/house-by-user';
+import {House} from '../../model/house';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -20,7 +21,7 @@ export class UsersComponent implements OnInit {
   userId: string;
   selectedStreetId: string;
   streets: Street[];
-  houses;
+  houses: House[];
   housesByUser: HouseByUser[];
   selectedHouseId: string;
 
@@ -33,7 +34,6 @@ export class UsersComponent implements OnInit {
 
   ngOnInit(): void {
     this.userService.getAllUsers().subscribe(users => {
-      console.log(users);
       this.users = users;
     });
   }
@@ -58,9 +58,10 @@ export class UsersComponent implements OnInit {
 
   getHousesByUser(housesDialog, user: User): void {
     this.userId = user.id;
+    this.selectedHouseId = null;
+    this.selectedStreetId = null;
     this.houseService.getHousesByUser(user.id).subscribe(housesByUser => this.housesByUser = housesByUser);
-    this.modalService.open(housesDialog, {ariaLabelledBy: 'modal-basic-title'}).result.then(() => {
-    });
+    this.modalService.open(housesDialog, {ariaLabelledBy: 'modal-basic-title'}).result.then();
   }
 
   deleteHouse(house: HouseByUser): void {
@@ -75,26 +76,34 @@ export class UsersComponent implements OnInit {
         this.houseService.deleteHouseByUser(house.id).subscribe(() => {
           this.houseService.getHousesByUser(this.userId).subscribe(housesByUser => {
             this.housesByUser = housesByUser;
-            Swal.fire('Eliminado!', '', 'success').then(() => {
-            });
+            Swal.fire('Eliminado!', '', 'success').then(() => this.getHouses());
           });
         });
       }
     });
   }
 
-  addRow(row): void {
+  addRow(row: HTMLDivElement): void {
     row.classList.remove('d-none');
     this.streetService.getStreets().subscribe(streets => this.streets = streets);
   }
 
-  removeRow(row): void {
+  removeRow(row: HTMLDivElement): void {
     row.classList.add('d-none');
   }
 
   getHouses(): void {
-    this.houseService.getHouseNumbersByStreet(this.selectedStreetId).subscribe(houses => {
-      this.houses = houses;
+    this.houseService.getHousesByStreet(this.selectedStreetId).subscribe(houses => {
+      this.houseService.getHousesByUser(this.userId).subscribe(housesByUser => {
+        this.houses = houses;
+        for (const houseByUser of housesByUser) {
+          for (const [i, house] of this.houses.entries()) {
+            if (house.id === houseByUser.houseId) {
+              this.houses.splice(i, 1);
+            }
+          }
+        }
+      });
     });
   }
 
@@ -105,7 +114,10 @@ export class UsersComponent implements OnInit {
     houseByUser.userId = this.userId;
 
     this.houseService.saveHouseByUser(houseByUser).subscribe(() => {
-      this.houseService.getHousesByUser(this.userId).subscribe(housesByUser => this.housesByUser = housesByUser);
+      this.houseService.getHousesByUser(this.userId).subscribe(housesByUser => {
+        this.housesByUser = housesByUser;
+        this.getHouses();
+      });
     });
   }
 }
