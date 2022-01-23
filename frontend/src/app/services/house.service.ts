@@ -56,7 +56,15 @@ export class HouseService {
   }
 
   getHousesByUser(userId: string): Observable<HouseByUser[]> {
-    return this.http.get<HouseByUser[]>(`${environment.baseUrl}/house/${userId}`);
+    return this.http.get<HouseByUser[]>(`${environment.baseUrl}/house/${userId}`).pipe(map(housesByUser => {
+      housesByUser.map(houseByUser => {
+        this.getHouseInfo(houseByUser.houseId).subscribe(houseInfo => {
+          houseByUser.number = houseInfo.number;
+          houseByUser.streetName = houseInfo.streetName;
+        });
+      });
+      return housesByUser;
+    }));
   }
 
   deleteHouseByUser(id: string): Observable<void> {

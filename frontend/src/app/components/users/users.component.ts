@@ -62,7 +62,6 @@ export class UsersComponent implements OnInit {
     this.selectedStreetId = null;
     this.houseService.getHousesByUser(user.id).subscribe(housesByUser => {
       this.housesByUser = housesByUser;
-      this.getHouseInfo();
     });
     this.modalService.open(housesDialog, {ariaLabelledBy: 'modal-basic-title'}).result.then();
   }
@@ -100,7 +99,6 @@ export class UsersComponent implements OnInit {
     this.houseService.getHousesByStreet(this.selectedStreetId).subscribe(houses => {
       this.houseService.getHousesByUser(this.userId).subscribe(housesByUser => {
         this.houses = houses.filter(house => !housesByUser.find(houseByUser => houseByUser.houseId === house.id));
-        this.getHouseInfo();
       });
     });
   }
@@ -120,12 +118,4 @@ export class UsersComponent implements OnInit {
     });
   }
 
-  getHouseInfo(): void {
-    this.housesByUser.map(houseByUser => {
-      this.houseService.getHouseInfo(houseByUser.houseId).subscribe(houseInfo => {
-        houseByUser.number = houseInfo.number;
-        houseByUser.streetName = houseInfo.streetName;
-      });
-    });
-  }
 }
