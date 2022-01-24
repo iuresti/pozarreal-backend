@@ -10,6 +10,7 @@ import org.uresti.pozarreal.dto.HouseInfo;
 import org.uresti.pozarreal.dto.LoggedUser;
 import org.uresti.pozarreal.exception.BadRequestDataException;
 import org.uresti.pozarreal.model.Street;
+import org.uresti.pozarreal.repository.HousesByUserRepository;
 import org.uresti.pozarreal.repository.HousesRepository;
 import org.uresti.pozarreal.repository.RepresentativeRepository;
 import org.uresti.pozarreal.repository.StreetRepository;
@@ -27,13 +28,15 @@ public class HousesServiceImplTests {
         HousesRepository housesRepository = Mockito.mock(HousesRepository.class);
         StreetRepository streetRepository = Mockito.mock(StreetRepository.class);
         RepresentativeRepository representativeRepository = Mockito.mock(RepresentativeRepository.class);
+        HousesByUserRepository housesByUserRepository = Mockito.mock(HousesByUserRepository.class);
         SessionHelper sessionHelper = Mockito.mock(SessionHelper.class);
 
         HousesServiceImpl housesService = new HousesServiceImpl(
                 housesRepository,
                 streetRepository,
                 representativeRepository,
-                sessionHelper);
+                sessionHelper,
+                housesByUserRepository);
 
         LoggedUser loggedUser = LoggedUser.builder().build();
 
@@ -54,12 +57,14 @@ public class HousesServiceImplTests {
         StreetRepository streetRepository = Mockito.mock(StreetRepository.class);
         RepresentativeRepository representativeRepository = Mockito.mock(RepresentativeRepository.class);
         SessionHelper sessionHelper = Mockito.mock(SessionHelper.class);
+        HousesByUserRepository housesByUserRepository = Mockito.mock(HousesByUserRepository.class);
 
         HousesServiceImpl housesService = new HousesServiceImpl(
                 housesRepository,
                 streetRepository,
                 representativeRepository,
-                sessionHelper);
+                sessionHelper,
+                housesByUserRepository);
 
         LoggedUser loggedUser = LoggedUser.builder().build();
 
@@ -94,12 +99,14 @@ public class HousesServiceImplTests {
         StreetRepository streetRepository = Mockito.mock(StreetRepository.class);
         RepresentativeRepository representativeRepository = Mockito.mock(RepresentativeRepository.class);
         SessionHelper sessionHelper = Mockito.mock(SessionHelper.class);
+        HousesByUserRepository housesByUserRepository = Mockito.mock(HousesByUserRepository.class);
 
         HousesServiceImpl housesService = new HousesServiceImpl(
                 housesRepository,
                 streetRepository,
                 representativeRepository,
-                sessionHelper);
+                sessionHelper,
+                housesByUserRepository);
 
         String userId = UUID.randomUUID().toString();
         LoggedUser user = LoggedUser.builder().claims(Collections.singletonMap("userId", userId)).build();
@@ -129,12 +136,14 @@ public class HousesServiceImplTests {
         StreetRepository streetRepository = Mockito.mock(StreetRepository.class);
         RepresentativeRepository representativeRepository = Mockito.mock(RepresentativeRepository.class);
         SessionHelper sessionHelper = Mockito.mock(SessionHelper.class);
+        HousesByUserRepository housesByUserRepository = Mockito.mock(HousesByUserRepository.class);
 
         HousesServiceImpl housesService = new HousesServiceImpl(
                 housesRepository,
                 streetRepository,
                 representativeRepository,
-                sessionHelper);
+                sessionHelper,
+                housesByUserRepository);
 
         org.uresti.pozarreal.model.House house = org.uresti.pozarreal.model.House.builder()
                 .id("1")
@@ -162,12 +171,14 @@ public class HousesServiceImplTests {
         StreetRepository streetRepository = Mockito.mock(StreetRepository.class);
         RepresentativeRepository representativeRepository = Mockito.mock(RepresentativeRepository.class);
         SessionHelper sessionHelper = Mockito.mock(SessionHelper.class);
+        HousesByUserRepository housesByUserRepository = Mockito.mock(HousesByUserRepository.class);
 
         HousesServiceImpl housesService = new HousesServiceImpl(
                 housesRepository,
                 streetRepository,
                 representativeRepository,
-                sessionHelper);
+                sessionHelper,
+                housesByUserRepository);
 
         org.uresti.pozarreal.model.House house = org.uresti.pozarreal.model.House.builder()
                 .id("1")
@@ -205,12 +216,14 @@ public class HousesServiceImplTests {
         StreetRepository streetRepository = Mockito.mock(StreetRepository.class);
         RepresentativeRepository representativeRepository = Mockito.mock(RepresentativeRepository.class);
         SessionHelper sessionHelper = Mockito.mock(SessionHelper.class);
+        HousesByUserRepository housesByUserRepository = Mockito.mock(HousesByUserRepository.class);
 
         HousesServiceImpl housesService = new HousesServiceImpl(
                 housesRepository,
                 streetRepository,
                 representativeRepository,
-                sessionHelper);
+                sessionHelper,
+                housesByUserRepository);
 
         org.uresti.pozarreal.model.House house = org.uresti.pozarreal.model.House.builder()
                 .id("1")

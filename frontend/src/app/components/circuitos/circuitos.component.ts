@@ -206,7 +206,7 @@ export class CircuitosComponent implements OnInit {
             });
           });
         }
-      })
+      });
     }
   }
 

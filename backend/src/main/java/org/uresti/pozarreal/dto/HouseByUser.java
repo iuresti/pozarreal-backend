@@ -1,31 +1,19 @@
-package org.uresti.pozarreal.model;
+package org.uresti.pozarreal.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
 
-@Entity
-@Table(name = "houses_by_user")
 @Builder
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class HousesByUser {
-    @Id
+public class HouseByUser {
     private String id;
-
     private String userId;
-
     private String houseId;
-
-    @Column(name = "main_house")
     private Boolean mainHouse;
-
     private Boolean validated;
 }

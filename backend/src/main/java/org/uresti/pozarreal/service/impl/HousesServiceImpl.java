@@ -5,18 +5,23 @@ import org.springframework.transaction.annotation.Transactional;
 import org.uresti.pozarreal.config.Role;
 import org.uresti.pozarreal.controllers.SessionHelper;
 import org.uresti.pozarreal.dto.HouseInfo;
+import org.uresti.pozarreal.dto.HouseByUser;
 import org.uresti.pozarreal.dto.LoggedUser;
 import org.uresti.pozarreal.exception.BadRequestDataException;
 import org.uresti.pozarreal.model.House;
 import org.uresti.pozarreal.model.Representative;
 import org.uresti.pozarreal.model.Street;
+import org.uresti.pozarreal.repository.HousesByUserRepository;
 import org.uresti.pozarreal.repository.HousesRepository;
 import org.uresti.pozarreal.repository.RepresentativeRepository;
 import org.uresti.pozarreal.repository.StreetRepository;
 import org.uresti.pozarreal.service.HousesService;
+import org.uresti.pozarreal.service.mappers.HousesByUserMapper;
 import org.uresti.pozarreal.service.mappers.HousesMapper;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -26,16 +31,19 @@ public class HousesServiceImpl implements HousesService {
     private final StreetRepository streetRepository;
     private final RepresentativeRepository representativeRepository;
     private final SessionHelper sessionHelper;
+    private final HousesByUserRepository housesByUserRepository;
 
 
     public HousesServiceImpl(HousesRepository housesRepository,
                              StreetRepository streetRepository,
                              RepresentativeRepository representativeRepository,
-                             SessionHelper sessionHelper) {
+                             SessionHelper sessionHelper,
+                             HousesByUserRepository housesByUserRepository) {
         this.housesRepository = housesRepository;
         this.streetRepository = streetRepository;
         this.representativeRepository = representativeRepository;
         this.sessionHelper = sessionHelper;
+        this.housesByUserRepository = housesByUserRepository;
     }
 
     @Override
@@ -66,6 +74,14 @@ public class HousesServiceImpl implements HousesService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public List<HouseByUser> getHousesByUser(String userId) {
+        return housesByUserRepository.findAllByUserId(userId).stream()
+                .map(HousesByUserMapper::entityToDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public HouseInfo getHouseInfo(String houseId) {
 
         House house = housesRepository.findById(houseId).orElseThrow();
@@ -88,5 +104,34 @@ public class HousesServiceImpl implements HousesService {
         house.setNotes(notes);
 
         housesRepository.save(house);
+    }
+
+    @Override
+    public void deleteHouseByUser(String id) {
+        housesByUserRepository.deleteById(id);
+    }
+
+    @Override
+    public HouseByUser saveHouseByUser(HouseByUser houseByUser) {
+
+        if (houseByUser.getHouseId() == null) {
+            throw new BadRequestDataException("it's no possible save null house", "WRONG_HOUSE_ID");
+        }
+
+        housesByUserRepository.findAllByUserId(houseByUser.getUserId())
+                .forEach(house -> {
+                    if (house.getHouseId().equals(houseByUser.getHouseId())) {
+                        throw new BadRequestDataException("already you are owner of this house", "INVALID_SAVE_HOUSE");
+                    }
+                });
+
+        if (houseByUser.getId() == null) {
+            houseByUser.setId(UUID.randomUUID().toString());
+        }
+
+        houseByUser.setMainHouse(false);
+        houseByUser.setValidated(false);
+
+        return HousesByUserMapper.entityToDto(housesByUserRepository.save(HousesByUserMapper.dtoToEntity(houseByUser)));
     }
 }
