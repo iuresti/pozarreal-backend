@@ -29,7 +29,7 @@ public class HousesController {
     }
 
     @GetMapping("/info/{houseId}")
-    @PreAuthorize("hasAnyRole('ROLE_REPRESENTATIVE', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_REPRESENTATIVE', 'ROLE_ADMIN','ROLE_USER_MANAGER')")
     public HouseInfo getHouseInfo(@PathVariable String houseId) {
         return housesService.getHouseInfo(houseId);
     }
