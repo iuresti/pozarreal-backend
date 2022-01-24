@@ -17,7 +17,17 @@
       <em class="bi bi-house-fill pointer" (click)="getHousesByUser(housesDialog, user)"></em>
       {{ user.name }}
     </td>
-    <td>{{ user.status }}</td>
+    <td>
+      <div class="custom-control custom-switch">
+        <input
+          class="custom-control-input"
+          (change)="updateStatus(user)"
+          [(ngModel)]="user.status"
+          id="{{user.id}}"
+          type="checkbox">
+        <label class="custom-control-label" for="{{user.id}}"></label>
+      </div>
+    </td>
     <td>
       <app-roles-by-user [user]="user" (roleRemoved)="roleRemoved(user, $event)"></app-roles-by-user>
     </td>

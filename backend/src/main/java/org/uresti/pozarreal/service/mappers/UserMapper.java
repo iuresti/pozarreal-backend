@@ -8,6 +8,7 @@ public class UserMapper {
                 .id(userEntity.getId())
                 .name(userEntity.getName())
                 .picture(userEntity.getPicture())
+                .status(userEntity.getStatus())
                 .build();
     }
 }

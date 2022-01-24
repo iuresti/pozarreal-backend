@@ -16,6 +16,6 @@ public class User {
     private String name;
     private String picture;
     private List<String> roles;
-    private String status;
+    private Boolean status;
     private String street;
 }

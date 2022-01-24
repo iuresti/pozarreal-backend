@@ -3,6 +3,6 @@ export interface User {
   name: string;
   picture: string;
   roles: string[];
-  status?: string;
+  status: boolean;
   street?: string;
 }
