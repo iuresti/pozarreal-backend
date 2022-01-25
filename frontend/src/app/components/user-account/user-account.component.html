@@ -4,7 +4,7 @@
     <input type="text"
            class="form-control"
            id="name"
-           [(ngModel)]="user.name"
+           [(ngModel)]="userName"
            aria-describedby="nameHelp">
     <div id="nameHelp" class="form-text"></div>
   </div>
@@ -13,16 +13,32 @@
     <table class="table table-responsive">
       <thead>
       <tr>
-        <th>Circuito</th>
-        <th>Número</th>
+        <th>Calle</th>
+        <th>Número de casa</th>
         <th>Chips</th>
-        <th>Teléfonos en caseta</th>
         <th>Al corriente en mantenimiento</th>
+        <th>Teléfonos en caseta</th>
       </tr>
       </thead>
+      <tbody>
+      <tr *ngFor="let house of housesByUser">
+        <td>{{house.streetName}}</td>
+        <td>{{house.number}}</td>
+        <td>
+          <div *ngFor="let chip of house.chips">
+            {{chip.code}}
+          </div>
+        </td>
+        <td>
+          <span *ngFor="let payment of house.twoMonthsPayments">
+            {{payment.amount}}
+          </span>
+        </td>
+        <td></td>
+      </tr>
+      </tbody>
     </table>
   </div>
 
-
-  <button class="btn btn-primary" (click)="saveUserInfo()">Guardar</button>
+  <button class="btn btn-primary" (click)="saveName()">Guardar</button>
 </div>

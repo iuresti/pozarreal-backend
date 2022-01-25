@@ -111,6 +111,15 @@ public class UserServiceImpl implements UserService {
         return userRepository.findByEmail(email).or(() -> registerUser(email, picture, name)).orElseThrow();
     }
 
+    @Override
+    public User updateName(String name, String email) {
+        org.uresti.pozarreal.model.User user = userRepository.findByEmail(email).orElseThrow();
+
+        user.setName(name);
+
+        return UserMapper.entityToDto(userRepository.save(user));
+    }
+
     private Optional<org.uresti.pozarreal.model.User> registerUser(String email, String picture, String name) {
         org.uresti.pozarreal.model.User user = new org.uresti.pozarreal.model.User();
 

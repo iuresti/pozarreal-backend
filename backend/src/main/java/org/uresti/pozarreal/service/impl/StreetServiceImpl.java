@@ -19,12 +19,12 @@ import org.uresti.pozarreal.repository.*;
 import org.uresti.pozarreal.service.StreetsService;
 import org.uresti.pozarreal.service.mappers.HousesMapper;
 import org.uresti.pozarreal.service.mappers.RepresentativeMapper;
+import org.uresti.pozarreal.tools.PaymentTools;
 
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static org.uresti.pozarreal.model.PaymentSubConcept.*;
 
 @Service
 public class StreetServiceImpl implements StreetsService {
@@ -86,7 +86,7 @@ public class StreetServiceImpl implements StreetsService {
 
         LocalDate endOfYear = LocalDate.now().withDayOfYear(1);
 
-        if(startYear != null) {
+        if (startYear != null) {
             startOfYear = startOfYear.withYear(startYear);
             endOfYear = endOfYear.withYear(startYear + 1);
         }
@@ -99,7 +99,7 @@ public class StreetServiceImpl implements StreetsService {
         streetInfo.setName(street.getName());
         streetInfo.setRepresentative(getRepresentative(street));
         streetInfo.setHouses(housesRepository.findAllByStreetOrderByNumber(streetId).stream().map(HousesMapper::entityToDto)
-                .peek(house -> setYearPayments(house, streetPaymentsByHouse.getOrDefault(house.getId(), Collections.emptyList())))
+                .peek(house -> PaymentTools.setYearPayments(house, streetPaymentsByHouse.getOrDefault(house.getId(), Collections.emptyList())))
                 .peek(this::setParkingPenPayment)
                 .collect(Collectors.toList()));
 
@@ -136,53 +136,5 @@ public class StreetServiceImpl implements StreetsService {
         paymentByConcept.setValidated(paymentByConcept.isValidated());
 
         house.setParkingPenPayment(paymentByConcept);
-    }
-
-    private void setYearPayments(org.uresti.pozarreal.dto.House house, List<Payment> payments) {
-        String[] twoMonthsPaymentIds = {
-                MAINTENANCE_BIM_1,
-                MAINTENANCE_BIM_2,
-                MAINTENANCE_BIM_3,
-                MAINTENANCE_BIM_4,
-                MAINTENANCE_BIM_5,
-                MAINTENANCE_BIM_6
-        };
-
-        ArrayList<PaymentByConcept> paymentInfo = new ArrayList<>();
-
-        paymentInfo.add(new PaymentByConcept());
-        paymentInfo.add(new PaymentByConcept());
-        paymentInfo.add(new PaymentByConcept());
-        paymentInfo.add(new PaymentByConcept());
-        paymentInfo.add(new PaymentByConcept());
-        paymentInfo.add(new PaymentByConcept());
-
-        house.setTwoMonthsPayments(paymentInfo);
-
-        FeeConfig feeConfig = pozarrealConfig.getFees();
-
-        for (Payment payment : payments) {
-            if (MAINTENANCE_ANNUITY.equals(payment.getPaymentSubConceptId())) {
-                for (PaymentByConcept paymentByConcept : paymentInfo) {
-                    paymentByConcept.setId(payment.getId());
-                    paymentByConcept.setComplete(true);
-                    paymentByConcept.setAmount(payment.getAmount());
-                    paymentByConcept.setValidated(payment.isValidated());
-                    paymentByConcept.setConflict(payment.isConflict());
-                }
-                break;
-            } else {
-                for (int i = 0; i < twoMonthsPaymentIds.length; i++) {
-                    if (twoMonthsPaymentIds[i].equals(payment.getPaymentSubConceptId())) {
-                        paymentInfo.get(i).setId(payment.getId());
-                        paymentInfo.get(i).setAmount(paymentInfo.get(i).getAmount() + payment.getAmount());
-                        paymentInfo.get(i).setComplete(paymentInfo.get(i).getAmount() >= feeConfig.getBiMonthlyMaintenanceFee());
-                        paymentInfo.get(i).setValidated(payment.isValidated());
-                        paymentInfo.get(i).setConflict(payment.isConflict());
-                        break;
-                    }
-                }
-            }
-        }
     }
 }

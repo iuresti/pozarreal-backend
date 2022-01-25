@@ -18,4 +18,6 @@ public interface PaymentRepository extends JpaRepository<Payment, String> {
 
     @Query("SELECT p FROM Payment p INNER JOIN House h ON p.houseId = h.id INNER JOIN Street s ON h.street = s.id WHERE s.id = :streetId AND p.paymentDate BETWEEN :startDate AND :endDate")
     List<Payment> findAllByStreetAndPaymentDateBetween(String streetId, LocalDate startDate, LocalDate endDate);
+
+    List<Payment> findAllByHouseIdAndPaymentDateBetween(String houseId, LocalDate startDate, LocalDate endDate);
 }

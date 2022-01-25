@@ -31,4 +31,8 @@ export class UserService {
   saveUser(user: User): Observable<User> {
     return this.http.put<User>(`${environment.baseUrl}/users/${user.id}`, user);
   }
+
+  updateName(name: string): Observable<User> {
+    return this.http.patch<User>(`${environment.baseUrl}/users`, name);
+  }
 }

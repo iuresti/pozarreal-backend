@@ -1,10 +1,9 @@
 package org.uresti.pozarreal.service;
 
-import org.uresti.pozarreal.dto.House;
-import org.uresti.pozarreal.dto.HouseInfo;
-import org.uresti.pozarreal.dto.LoggedUser;
-import org.uresti.pozarreal.dto.HouseByUser;
+import org.uresti.pozarreal.dto.*;
 
+import java.security.Principal;
+import java.util.ArrayList;
 import java.util.List;
 
 public interface HousesService {
@@ -14,6 +13,8 @@ public interface HousesService {
 
     List<HouseByUser> getHousesByUser(String userId);
 
+    List<HouseByUser> getHousesByUser(Principal principal);
+
     HouseInfo getHouseInfo(String houseId);
 
     void saveNotes(String houseId, String notes);
@@ -21,4 +22,6 @@ public interface HousesService {
     void deleteHouseByUser(String id);
 
     HouseByUser saveHouseByUser(HouseByUser houseByUser);
+
+    ArrayList<PaymentByConcept> getPaymentsHouse(String houseId);
 }

@@ -4,24 +4,20 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.uresti.pozarreal.config.Role;
 import org.uresti.pozarreal.controllers.SessionHelper;
-import org.uresti.pozarreal.dto.HouseInfo;
-import org.uresti.pozarreal.dto.HouseByUser;
-import org.uresti.pozarreal.dto.LoggedUser;
+import org.uresti.pozarreal.dto.*;
 import org.uresti.pozarreal.exception.BadRequestDataException;
 import org.uresti.pozarreal.model.House;
 import org.uresti.pozarreal.model.Representative;
 import org.uresti.pozarreal.model.Street;
-import org.uresti.pozarreal.repository.HousesByUserRepository;
-import org.uresti.pozarreal.repository.HousesRepository;
-import org.uresti.pozarreal.repository.RepresentativeRepository;
-import org.uresti.pozarreal.repository.StreetRepository;
+import org.uresti.pozarreal.repository.*;
 import org.uresti.pozarreal.service.HousesService;
 import org.uresti.pozarreal.service.mappers.HousesByUserMapper;
 import org.uresti.pozarreal.service.mappers.HousesMapper;
+import org.uresti.pozarreal.tools.PaymentTools;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.security.Principal;
+import java.time.LocalDate;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -32,18 +28,20 @@ public class HousesServiceImpl implements HousesService {
     private final RepresentativeRepository representativeRepository;
     private final SessionHelper sessionHelper;
     private final HousesByUserRepository housesByUserRepository;
-
+    private final PaymentRepository paymentRepository;
 
     public HousesServiceImpl(HousesRepository housesRepository,
                              StreetRepository streetRepository,
                              RepresentativeRepository representativeRepository,
                              SessionHelper sessionHelper,
-                             HousesByUserRepository housesByUserRepository) {
+                             HousesByUserRepository housesByUserRepository,
+                             PaymentRepository paymentRepository) {
         this.housesRepository = housesRepository;
         this.streetRepository = streetRepository;
         this.representativeRepository = representativeRepository;
         this.sessionHelper = sessionHelper;
         this.housesByUserRepository = housesByUserRepository;
+        this.paymentRepository = paymentRepository;
     }
 
     @Override
@@ -133,5 +131,30 @@ public class HousesServiceImpl implements HousesService {
         houseByUser.setValidated(false);
 
         return HousesByUserMapper.entityToDto(housesByUserRepository.save(HousesByUserMapper.dtoToEntity(houseByUser)));
+    }
+
+    @Override
+    public ArrayList<PaymentByConcept> getPaymentsHouse(String houseId) {
+        LocalDate startOfYear = LocalDate.now().withYear(LocalDate.now().getYear()).withDayOfYear(1);
+
+        LocalDate endOfYear = LocalDate.now().withYear(LocalDate.now().getYear() + 1).withDayOfYear(1);
+
+        List<org.uresti.pozarreal.model.Payment> paymentsByHouse = paymentRepository
+                .findAllByHouseIdAndPaymentDateBetween(houseId, startOfYear, endOfYear);
+
+
+        org.uresti.pozarreal.dto.House house = org.uresti.pozarreal.dto.House.builder().build();
+
+        PaymentTools.setYearPayments(house, paymentsByHouse);
+
+        return house.getTwoMonthsPayments();
+    }
+
+    @Override
+    public List<HouseByUser> getHousesByUser(Principal principal) {
+        String userId = sessionHelper.getLoggedUser(principal).getUserId();
+        return housesByUserRepository.findAllByUserId(userId).stream()
+                .map(HousesByUserMapper::entityToDto)
+                .collect(Collectors.toList());
     }
 }
