@@ -231,6 +231,7 @@ public class UserServiceImplTests {
                 .id("userId")
                 .name("name")
                 .picture("picture")
+                .status(true)
                 .build();
 
         Mockito.when(userRepository.findByEmail("email@email.com")).thenReturn(java.util.Optional.ofNullable(user));

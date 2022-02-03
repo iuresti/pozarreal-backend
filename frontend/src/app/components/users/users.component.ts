@@ -118,4 +118,22 @@ export class UsersComponent implements OnInit {
     });
   }
 
+  updateStatus(user: User): void {
+    Swal.fire({
+      title: `¿Deseas ${user.status ? 'habilitar' : 'deshabilitar'} usuario ${user.name}?`,
+      showDenyButton: true,
+      showCancelButton: false,
+      confirmButtonText: `Sí`,
+      denyButtonText: `No`,
+    }).then((result) => {
+        if (result.isConfirmed) {
+          this.userService.updateStatus(user).subscribe(() => {
+            Swal.fire('Guardado!', '', 'success').then();
+          });
+        } else {
+          user.status = !user.status;
+        }
+      }
+    );
+  }
 }
