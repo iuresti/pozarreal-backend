@@ -12,7 +12,6 @@ import java.util.List;
 import static org.uresti.pozarreal.model.PaymentSubConcept.*;
 
 public class PaymentTools {
-
     public static void setYearPayments(House house, List<Payment> payments) {
         String[] twoMonthsPaymentIds = {
                 MAINTENANCE_BIM_1,

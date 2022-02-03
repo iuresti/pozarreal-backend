@@ -142,7 +142,6 @@ public class HousesServiceImpl implements HousesService {
         List<org.uresti.pozarreal.model.Payment> paymentsByHouse = paymentRepository
                 .findAllByHouseIdAndPaymentDateBetween(houseId, startOfYear, endOfYear);
 
-
         org.uresti.pozarreal.dto.House house = org.uresti.pozarreal.dto.House.builder().build();
 
         PaymentTools.setYearPayments(house, paymentsByHouse);
@@ -152,9 +151,6 @@ public class HousesServiceImpl implements HousesService {
 
     @Override
     public List<HouseByUser> getHousesByUser(Principal principal) {
-        String userId = sessionHelper.getLoggedUser(principal).getUserId();
-        return housesByUserRepository.findAllByUserId(userId).stream()
-                .map(HousesByUserMapper::entityToDto)
-                .collect(Collectors.toList());
+        return getHousesByUser(sessionHelper.getLoggedUser(principal).getUserId());
     }
 }
