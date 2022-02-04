@@ -36,7 +36,6 @@ public class UserController {
         String email = sessionHelper.getEmailForLoggedUser(principal);
 
         return userService.buildUserForEmail(email);
-
     }
 
     @GetMapping("/api/users")
@@ -84,6 +83,12 @@ public class UserController {
         String email = sessionHelper.getEmailForLoggedUser(principal);
 
         return userService.updateName(name, email);
+    }
+  
+    @PatchMapping("api/users/status/{userId}")
+    @PreAuthorize("hasAnyRole('ROLE_USER_MANAGER')")
+    public User updateStatus(@PathVariable String userId, @RequestBody Boolean status) {
+        return userService.updateStatus(userId, status);
     }
 
     @GetMapping("logout")

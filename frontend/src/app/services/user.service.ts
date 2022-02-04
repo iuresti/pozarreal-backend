@@ -35,4 +35,8 @@ export class UserService {
   updateName(name: string): Observable<User> {
     return this.http.patch<User>(`${environment.baseUrl}/users`, name);
   }
+  
+  updateStatus(user: User): Observable<User> {
+    return this.http.patch<User>(`${environment.baseUrl}/users/status/${user.id}`, user.status)
+  }
 }

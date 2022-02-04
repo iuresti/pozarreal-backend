@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.uresti.pozarreal.config.Role;
 import org.uresti.pozarreal.dto.User;
+import org.uresti.pozarreal.exception.BadRequestDataException;
 import org.uresti.pozarreal.model.Login;
 import org.uresti.pozarreal.model.RoleByUser;
 import org.uresti.pozarreal.repository.LoginRepository;
@@ -79,6 +80,10 @@ public class UserServiceImpl implements UserService {
     public User buildUserForEmail(String email) {
         org.uresti.pozarreal.model.User user = userRepository.findByEmail(email).orElseThrow();
 
+        if (!user.getStatus()) {
+            throw new BadRequestDataException("user is disabled","ERROR_USER_DISABLED");
+        }
+
         return User.builder()
                 .id(user.getId())
                 .picture(user.getPicture())
@@ -116,6 +121,13 @@ public class UserServiceImpl implements UserService {
         org.uresti.pozarreal.model.User user = userRepository.findByEmail(email).orElseThrow();
 
         user.setName(name);
+    }
+  
+    @Override
+    public User updateStatus(String userId, Boolean status) {
+        org.uresti.pozarreal.model.User user = userRepository.findById(userId).orElseThrow();
+
+        user.setStatus(status);
 
         return UserMapper.entityToDto(userRepository.save(user));
     }

@@ -18,4 +18,6 @@ public interface UserService {
     org.uresti.pozarreal.model.User findOrRegister(String email, String picture, String credential);
 
     User updateName(String name, String email);
+
+    User updateStatus(String userId, Boolean status);
 }
