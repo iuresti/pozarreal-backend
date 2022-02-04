@@ -121,6 +121,8 @@ public class UserServiceImpl implements UserService {
         org.uresti.pozarreal.model.User user = userRepository.findByEmail(email).orElseThrow();
 
         user.setName(name);
+        
+        return user;
     }
   
     @Override
