@@ -122,7 +122,7 @@ public class UserServiceImpl implements UserService {
 
         user.setName(name);
         
-        return user;
+        return UserMapper.entityToDto(user);
     }
   
     @Override
