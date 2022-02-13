@@ -1,3 +1,6 @@
+import {PaymentByConcept} from './payment-by-concept';
+import {Chip} from './chip';
+
 export interface HouseByUser {
   id: string;
   userId: string;
@@ -6,4 +9,6 @@ export interface HouseByUser {
   number: string;
   mainHouse: boolean;
   validated: boolean;
+  twoMonthsPayments: PaymentByConcept[];
+  chips: Chip[];
 }

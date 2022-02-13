@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.uresti.pozarreal.dto.House;
 import org.uresti.pozarreal.dto.LoggedUser;
+import org.uresti.pozarreal.dto.Payment;
 import org.uresti.pozarreal.model.Street;
 import org.uresti.pozarreal.service.HousesService;
 import org.uresti.pozarreal.service.StreetsService;

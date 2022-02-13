@@ -117,6 +117,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public User updateName(String name, String email) {
+        org.uresti.pozarreal.model.User user = userRepository.findByEmail(email).orElseThrow();
+
+        user.setName(name);
+        
+        return UserMapper.entityToDto(user);
+    }
+  
+    @Override
     public User updateStatus(String userId, Boolean status) {
         org.uresti.pozarreal.model.User user = userRepository.findById(userId).orElseThrow();
 

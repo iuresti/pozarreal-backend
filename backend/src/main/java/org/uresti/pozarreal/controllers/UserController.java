@@ -77,6 +77,14 @@ public class UserController {
         return null;
     }
 
+    @PatchMapping("/api/users")
+    @PreAuthorize("hasAnyRole('ROLE_RESIDENT')")
+    public User updateUserName(@RequestBody String name, Principal principal) {
+        String email = sessionHelper.getEmailForLoggedUser(principal);
+
+        return userService.updateName(name, email);
+    }
+  
     @PatchMapping("api/users/status/{userId}")
     @PreAuthorize("hasAnyRole('ROLE_USER_MANAGER')")
     public User updateStatus(@PathVariable String userId, @RequestBody Boolean status) {
@@ -85,7 +93,6 @@ public class UserController {
 
     @GetMapping("logout")
     public void logout(Principal principal) {
-
         LoggedUser user = sessionHelper.getLoggedUser(principal);
 
         log.info("Logging out user: {}", user.getName());

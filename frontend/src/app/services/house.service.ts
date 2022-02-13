@@ -7,6 +7,7 @@ import {HouseNumber} from '../model/house-number';
 import {map} from 'rxjs/operators';
 import {HouseInfo} from '../model/house-info';
 import {HouseByUser} from '../model/house-by-user';
+import {PaymentByConcept} from "../model/payment-by-concept";
 
 @Injectable({
   providedIn: 'root'
@@ -55,8 +56,8 @@ export class HouseService {
     return this.http.patch<void>(`${environment.baseUrl}/house/${houseId}/notes`, notes);
   }
 
-  getHousesByUser(userId: string): Observable<HouseByUser[]> {
-    return this.http.get<HouseByUser[]>(`${environment.baseUrl}/house/${userId}`).pipe(map(housesByUser => {
+  getHousesByUser(userId?: string): Observable<HouseByUser[]> {
+    return this.http.get<HouseByUser[]>(`${environment.baseUrl}/house/${userId ? userId : ''}`).pipe(map(housesByUser => {
       housesByUser.map(houseByUser => {
         this.getHouseInfo(houseByUser.houseId).subscribe(houseInfo => {
           houseByUser.number = houseInfo.number;
@@ -73,6 +74,10 @@ export class HouseService {
 
   saveHouseByUser(housesByUser: HouseByUser): Observable<HouseByUser> {
     return this.http.post<HouseByUser>(`${environment.baseUrl}/house`, housesByUser);
+  }
+
+  getHousePayments(houseId: string): Observable<PaymentByConcept[]> {
+    return this.http.get<PaymentByConcept[]>(`${environment.baseUrl}/house/payments/${houseId}`);
   }
 
 }
