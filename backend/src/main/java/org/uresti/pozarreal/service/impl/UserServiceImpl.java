@@ -135,11 +135,12 @@ public class UserServiceImpl implements UserService {
     }
 
     private Optional<org.uresti.pozarreal.model.User> registerUser(String email, String picture, String name) {
-        org.uresti.pozarreal.model.User user = new org.uresti.pozarreal.model.User();
-
-        user.setId(UUID.randomUUID().toString());
-        user.setName(name);
-        user.setPicture(picture);
+        org.uresti.pozarreal.model.User user = org.uresti.pozarreal.model.User.builder()
+                .id(UUID.randomUUID().toString())
+                .name(name)
+                .picture(picture)
+                .status(false)
+                .build();
 
         userRepository.save(user);
 
