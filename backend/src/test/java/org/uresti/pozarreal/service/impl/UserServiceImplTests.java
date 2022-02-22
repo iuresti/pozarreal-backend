@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.uresti.pozarreal.dto.User;
+import org.uresti.pozarreal.exception.BadRequestDataException;
 import org.uresti.pozarreal.model.Login;
 import org.uresti.pozarreal.model.Representative;
 import org.uresti.pozarreal.model.RoleByUser;
@@ -292,7 +293,7 @@ public class UserServiceImplTests {
         List<String> roles = new LinkedList<>(List.of(
                 "ROLE_REPRESENTATIVE",
                 "ROLE_RESIDENT"
-                ));
+        ));
 
         org.uresti.pozarreal.model.User user = org.uresti.pozarreal.model.User.builder()
                 .id("userId")
@@ -410,5 +411,84 @@ public class UserServiceImplTests {
         Assertions.assertThat(userServiceOrRegister.getPicture()).isEqualTo("picture");
         Assertions.assertThat(userServiceOrRegister.getName()).isEqualTo("name");
         Assertions.assertThat(userServiceOrRegister.getId()).isNotNull();
+    }
+
+    @Test
+    public void givenAnEmailAndNewName_whenUpdateName_thenNameIsChanged() {
+        // Given:
+        UserRepository userRepository = Mockito.mock(UserRepository.class);
+
+        UserServiceImpl userService = new UserServiceImpl(null, userRepository, null, null);
+
+        org.uresti.pozarreal.model.User user = org.uresti.pozarreal.model.User.builder()
+                .id("id")
+                .name("new name")
+                .status(true)
+                .build();
+
+        String email = "example@example.com";
+
+        Mockito.when(userRepository.findByEmail(email)).thenReturn(Optional.of(user));
+
+        // When:
+        User userReturned = userService.updateName("new name", email);
+
+        // Then:
+        Assertions.assertThat(userReturned).isNotNull();
+        Assertions.assertThat(userReturned.getName()).isEqualTo("new name");
+        Assertions.assertThat(userReturned.getId()).isEqualTo("id");
+        Assertions.assertThat(userReturned.getStatus()).isTrue();
+    }
+
+    @Test
+    public void givenAnUserIdAndNewStatus_whenUpdateStatus_thenStatusIsUpdated() {
+        // Given:
+        UserRepository userRepository = Mockito.mock(UserRepository.class);
+
+        UserServiceImpl userService = new UserServiceImpl(null, userRepository, null, null);
+
+        String id = UUID.randomUUID().toString();
+
+        org.uresti.pozarreal.model.User user = org.uresti.pozarreal.model.User.builder()
+                .id(id)
+                .name("name")
+                .status(true)
+                .build();
+
+        Mockito.when(userRepository.findById(id)).thenReturn(Optional.of(user));
+        Mockito.when(userRepository.save(user)).thenReturn(user);
+
+        // When:
+        User userReturned = userService.updateStatus(id, true);
+
+        // Then:
+        Assertions.assertThat(userReturned).isNotNull();
+        Assertions.assertThat(userReturned.getName()).isEqualTo("name");
+        Assertions.assertThat(userReturned.getId()).isEqualTo(id);
+        Assertions.assertThat(userReturned.getStatus()).isTrue();
+    }
+
+    @Test
+    public void givenAnUserWithStatusFalse_whenBuildUserForEmail_thenBadRequestDataExceptionIsThrown() {
+        // Given:
+        UserRepository userRepository = Mockito.mock(UserRepository.class);
+
+        UserServiceImpl userService = new UserServiceImpl(null, userRepository, null, null);
+
+        org.uresti.pozarreal.model.User user = org.uresti.pozarreal.model.User.builder()
+                .id("id")
+                .name("name")
+                .status(false)
+                .build();
+
+        String email = "example@example.com";
+
+        Mockito.when(userRepository.findByEmail(email)).thenReturn(Optional.of(user));
+
+        // When:
+        // Then:
+        Assertions.assertThatThrownBy(() -> userService.buildUserForEmail(email))
+                .isInstanceOf(BadRequestDataException.class)
+                .hasMessage("user is disabled");
     }
 }
