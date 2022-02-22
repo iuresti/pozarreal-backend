@@ -488,13 +488,76 @@ public class PaymentsServiceImplTests {
                 sessionHelper,
                 pozarrealConfig);
 
+        LocalDate paymentDate = LocalDate.now();
+        LocalDate registrationDate = LocalDate.ofYearDay(2000, 10);
+
+        String id = UUID.randomUUID().toString();
+
+        org.uresti.pozarreal.model.Payment payment = org.uresti.pozarreal.model.Payment.builder()
+                .validated(false)
+                .amount(200.0)
+                .id(id)
+                .houseId("house1")
+                .notes("hello")
+                .paymentConceptId("Concept")
+                .paymentDate(paymentDate)
+                .registrationDate(registrationDate)
+                .paymentMode("mode")
+                .paymentSubConceptId("SubConcept")
+                .userId("user1")
+                .build();
+
         Mockito.when(sessionHelper.hasRole(sessionHelper.getLoggedUser(principal), Role.ROLE_ADMIN)).thenReturn(true);
+        Mockito.when(paymentRepository.findById(id)).thenReturn(Optional.ofNullable(payment));
 
         // When:
-        paymentsService.delete("id", principal);
+        paymentsService.delete(id, principal);
 
         // Then:
-        Mockito.verify(paymentRepository).deleteById("id");
+        Mockito.verify(paymentRepository).deleteById(id);
+    }
+
+    @Test
+    public void givenAPaymentValidated_whenDelete_thenPozarrealSystemExceptionIsThrown() {
+        // Given:
+        CustomPaymentRepository customPaymentRepository = Mockito.mock(CustomPaymentRepository.class);
+        PaymentRepository paymentRepository = Mockito.mock(PaymentRepository.class);
+        SessionHelper sessionHelper = Mockito.mock(SessionHelper.class);
+        PozarrealConfig pozarrealConfig = Mockito.mock(PozarrealConfig.class);
+        Principal principal = Mockito.mock(Principal.class);
+
+        PaymentsServiceImpl paymentsService = new PaymentsServiceImpl(
+                customPaymentRepository,
+                paymentRepository,
+                sessionHelper,
+                pozarrealConfig);
+
+        LocalDate paymentDate = LocalDate.now();
+        LocalDate registrationDate = LocalDate.ofYearDay(2000, 10);
+
+        String id = UUID.randomUUID().toString();
+
+        org.uresti.pozarreal.model.Payment payment = org.uresti.pozarreal.model.Payment.builder()
+                .validated(true)
+                .amount(200.0)
+                .id(id)
+                .houseId("house1")
+                .notes("hello")
+                .paymentConceptId("Concept")
+                .paymentDate(paymentDate)
+                .registrationDate(registrationDate)
+                .paymentMode("mode")
+                .paymentSubConceptId("SubConcept")
+                .userId("user1")
+                .build();
+
+        Mockito.when(paymentRepository.findById(id)).thenReturn(Optional.ofNullable(payment));
+
+        // When:
+        // Then:
+        Assertions.assertThatThrownBy(() -> paymentsService.delete(id, principal))
+                .isInstanceOf(PozarrealSystemException.class)
+                .hasMessage("Deleting payment validated");
     }
 
     @Test

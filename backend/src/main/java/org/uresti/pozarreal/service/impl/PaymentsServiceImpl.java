@@ -75,18 +75,15 @@ public class PaymentsServiceImpl implements PaymentsService {
     @Override
     @Transactional
     public void delete(String paymentId, Principal principal) {
-        if (sessionHelper.hasRole(sessionHelper.getLoggedUser(principal), Role.ROLE_ADMIN)) {
-            paymentRepository.deleteById(paymentId);
-            return;
-        }
-
         org.uresti.pozarreal.model.Payment payment = paymentRepository.findById(paymentId).orElseThrow();
 
         if(payment.isValidated()) {
             throw new PozarrealSystemException("Deleting payment validated", "INVALID_DELETE_PAYMENT");
         }
 
-        paymentRepository.deleteById(paymentId);
+        if (sessionHelper.hasRole(sessionHelper.getLoggedUser(principal), Role.ROLE_ADMIN)) {
+            paymentRepository.deleteById(paymentId);
+        }
     }
 
     @Override
