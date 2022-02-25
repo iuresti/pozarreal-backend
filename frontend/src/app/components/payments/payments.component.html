@@ -69,6 +69,25 @@
   </table>
 </div>
 
+<nav aria-label="Page navigation example" *ngIf="payments">
+  <ul class="pagination">
+    <li class="page-item">
+      <a class="page-link pointer" aria-label="Previous" (click)="previousPage()">
+        <span aria-hidden="true">&laquo;</span>
+        <span class="sr-only">Previous</span>
+      </a>
+    </li>
+    <li *ngFor="let page of pagesToView" class="page-item pointer" (click)="changePage(page - 1)">
+      <a class="page-link">{{page}}</a>
+    </li>
+    <li class="page-item">
+      <a class="page-link pointer" aria-label="Next" (click)="nextPage()">
+        <span aria-hidden="true">&raquo;</span>
+        <span class="sr-only">Next</span>
+      </a>
+    </li>
+  </ul>
+</nav>
 
 <ng-template #addPaymentDialog let-c="close" let-d="dismiss">
 

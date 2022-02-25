@@ -1,11 +1,17 @@
 package org.uresti.pozarreal.repository;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
+import org.uresti.pozarreal.config.Pagination;
 import org.uresti.pozarreal.dto.PaymentFilter;
 import org.uresti.pozarreal.dto.PaymentView;
 
@@ -16,11 +22,14 @@ public class CustomPaymentRepository {
 
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
+    @Autowired
+    private Pagination pagination;
+
     public CustomPaymentRepository(NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
         this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
     }
 
-    public List<PaymentView> executeQuery(PaymentFilter paymentFilter) {
+    public Page<PaymentView> executeQuery(PaymentFilter paymentFilter, int page) {
         String query = "SELECT p.id, s.id streetId, s.name streetName, h.id houseId, h.number houseNumber, p.payment_date, " +
                 " p.registration_date, u.name userName, p.amount, p.validated, pc.id paymentConceptId, pc.label paymentConcept, " +
                 "psc.id paymentSubConceptId, psc.label paymentSubConcept, p.payment_mode paymentMode, p.notes" +
@@ -65,12 +74,18 @@ public class CustomPaymentRepository {
             mapSqlParameterSource.addValue("streetId", paymentFilter.getStreet());
         }
 
-        if (StringUtils.hasLength(paymentFilter.getStatus())){
+        if (StringUtils.hasLength(paymentFilter.getStatus())) {
             appendParam(whereCondition, " p.validated = :status");
             mapSqlParameterSource.addValue("status", Boolean.parseBoolean(paymentFilter.getStatus()));
         }
 
-        return namedParameterJdbcTemplate.query(query + whereCondition + " ORDER BY p.payment_date", mapSqlParameterSource, paymentViewMapper);
+        Pageable pageable = PageRequest.of(page, pagination.getSize());
+
+        mapSqlParameterSource.addValue("status", Boolean.parseBoolean(paymentFilter.getStatus()));
+
+        List<PaymentView> paymentViews = namedParameterJdbcTemplate.query(query + whereCondition + " ORDER BY p.payment_date" + " limit " + pageable.getPageSize() + " offset " + pageable.getOffset(), mapSqlParameterSource, paymentViewMapper);
+
+        return new PageImpl<>(paymentViews, pageable, pagination.getSize());
     }
 
     private void appendParam(StringBuilder query, String paramString) {

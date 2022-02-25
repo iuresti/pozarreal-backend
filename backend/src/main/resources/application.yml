@@ -23,3 +23,6 @@ pozarreal:
 dropbox:
   accessToken: ${DROPBOX_ACCESS_TOKEN}
   clientIdentifier: ${DROPBOX_CLIENT_IDENTIFIER:'pozarreal'}
+
+pagination:
+  size: 20

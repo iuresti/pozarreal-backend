@@ -17,6 +17,7 @@ import {User} from '../../model/user';
 })
 export class PaymentsComponent implements OnInit {
   @ViewChild('tableElement') html: ElementRef;
+  currentPage: number;
   user: User;
   payments: PaymentView[];
   newPayment: Payment;
@@ -30,6 +31,8 @@ export class PaymentsComponent implements OnInit {
   maxDate: NgbDateStruct;
   minDate: NgbDateStruct;
   date: string;
+  totalPages: number;
+  pagesToView: number[];
 
   constructor(private paymentService: PaymentService,
               private modalService: NgbModal,
@@ -41,7 +44,7 @@ export class PaymentsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-
+    this.currentPage = 0;
     this.sessionService.getUser().subscribe(user => {
       this.user = user;
       this.isAdmin = this.userHasRoles(['ROLE_ADMIN']);
@@ -68,8 +71,18 @@ export class PaymentsComponent implements OnInit {
   doSearch(paymentFilter: PaymentFilter): void {
     this.lastFilter = paymentFilter;
     this.loading = true;
-    this.paymentService.getPayments(paymentFilter).subscribe(payments => {
-      this.payments = payments;
+    this.paymentService.getPayments(paymentFilter, this.currentPage).subscribe(payments => {
+      this.payments = payments.content;
+
+      this.totalPages = Math.trunc(payments.totalElements / payments.size);
+
+      this.pagesToView = [];
+      for (let i = 0; i < 5; i++) {
+        if (i <= this.totalPages) {
+          this.pagesToView.push(i + 1);
+        }
+      }
+
       this.loading = false;
     });
   }
@@ -209,5 +222,26 @@ export class PaymentsComponent implements OnInit {
 
   userHasRoles(roles: string[]): boolean {
     return this.user.roles.some(r => roles.includes(r));
+  }
+
+  changePage(page: number): void {
+    if (this.currentPage !== page) {
+      this.currentPage = page;
+      this.doSearch(this.lastFilter);
+    }
+  }
+
+  nextPage(): void {
+    if (this.currentPage < this.totalPages) {
+      this.currentPage++;
+      this.doSearch(this.lastFilter);
+    }
+  }
+
+  previousPage(): void {
+    if (this.currentPage > 0) {
+      this.currentPage--;
+      this.doSearch(this.lastFilter);
+    }
   }
 }
