@@ -4,6 +4,10 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.uresti.pozarreal.config.FeeConfig;
 import org.uresti.pozarreal.config.PozarrealConfig;
 import org.uresti.pozarreal.config.Role;
@@ -20,6 +24,7 @@ import org.uresti.pozarreal.repository.PaymentRepository;
 import java.security.Principal;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class PaymentsServiceImplTests {
 
@@ -39,12 +44,16 @@ public class PaymentsServiceImplTests {
 
         List<PaymentView> paymentViews = new LinkedList<>();
 
+        Pageable pageable = PageRequest.of(0, 2);
+
+        PageImpl<PaymentView> paymentViewPage = new PageImpl<>(paymentViews, pageable, 0);
+
         PaymentFilter paymentFilter = PaymentFilter.builder().build();
 
-        Mockito.when(customPaymentRepository.executeQuery(paymentFilter)).thenReturn(paymentViews);
+        Mockito.when(customPaymentRepository.executeQuery(paymentFilter, 0)).thenReturn(paymentViewPage);
 
         // When:
-        List<PaymentView> paymentViewList = paymentsService.getPayments(paymentFilter);
+        Page<PaymentView> paymentViewList = paymentsService.getPayments(paymentFilter, 0);
 
         // Then:
         Assertions.assertThat(paymentViewList.isEmpty()).isTrue();
@@ -83,23 +92,27 @@ public class PaymentsServiceImplTests {
         paymentViews.add(paymentView1);
         paymentViews.add(paymentView2);
 
+        Pageable pageable = PageRequest.of(0, 2);
+
+        Page<PaymentView> paymentViewPage = new PageImpl<>(paymentViews, pageable, 20);
+
         PaymentFilter paymentFilter = PaymentFilter.builder().build();
 
-        Mockito.when(customPaymentRepository.executeQuery(paymentFilter)).thenReturn(paymentViews);
+        Mockito.when(customPaymentRepository.executeQuery(paymentFilter, 0)).thenReturn(paymentViewPage);
 
         // When:
-        List<PaymentView> paymentViewList = paymentsService.getPayments(paymentFilter);
+        Page<PaymentView> paymentViewList = paymentsService.getPayments(paymentFilter, 0);
 
         // Then:
-        Assertions.assertThat(paymentViewList.size()).isEqualTo(2);
-        Assertions.assertThat(paymentViewList.get(0).getId()).isEqualTo("id1");
-        Assertions.assertThat(paymentViewList.get(0).getHouseId()).isEqualTo("house1");
-        Assertions.assertThat(paymentViewList.get(0).getAmount()).isEqualTo(100.0);
-        Assertions.assertThat(paymentViewList.get(0).getNotes()).isEqualTo("hello");
-        Assertions.assertThat(paymentViewList.get(1).getId()).isEqualTo("id2");
-        Assertions.assertThat(paymentViewList.get(1).getHouseId()).isEqualTo("house2");
-        Assertions.assertThat(paymentViewList.get(1).getAmount()).isEqualTo(100.0);
-        Assertions.assertThat(paymentViewList.get(1).getNotes()).isEqualTo("hello");
+        Assertions.assertThat((int) paymentViewList.get().count()).isEqualTo(2);
+        Assertions.assertThat(paymentViewList.get().collect(Collectors.toList()).get(0).getId()).isEqualTo("id1");
+        Assertions.assertThat(paymentViewList.get().collect(Collectors.toList()).get(0).getHouseId()).isEqualTo("house1");
+        Assertions.assertThat(paymentViewList.get().collect(Collectors.toList()).get(0).getAmount()).isEqualTo(100.0);
+        Assertions.assertThat(paymentViewList.get().collect(Collectors.toList()).get(0).getNotes()).isEqualTo("hello");
+        Assertions.assertThat(paymentViewList.get().collect(Collectors.toList()).get(1).getId()).isEqualTo("id2");
+        Assertions.assertThat(paymentViewList.get().collect(Collectors.toList()).get(1).getHouseId()).isEqualTo("house2");
+        Assertions.assertThat(paymentViewList.get().collect(Collectors.toList()).get(1).getAmount()).isEqualTo(100.0);
+        Assertions.assertThat(paymentViewList.get().collect(Collectors.toList()).get(1).getNotes()).isEqualTo("hello");
     }
 
     @Test
@@ -277,7 +290,7 @@ public class PaymentsServiceImplTests {
 
         // When:
         // Then:
-        Assertions.assertThatThrownBy( () -> paymentsService.save(paymentDto, principal))
+        Assertions.assertThatThrownBy(() -> paymentsService.save(paymentDto, principal))
                 .isInstanceOf(PozarrealSystemException.class);
     }
 
