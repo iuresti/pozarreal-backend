@@ -77,8 +77,8 @@ export class PaymentsComponent implements OnInit {
       this.totalPages = Math.trunc(payments.totalElements / payments.size);
 
       this.pagesToView = [];
-      for (let i = 0; i < 5; i++) {
-        if (i <= this.totalPages) {
+      for (let i = this.currentPage, j = 0; i <= this.totalPages; i++, j++) {
+        if (j <= 5) {
           this.pagesToView.push(i + 1);
         }
       }
