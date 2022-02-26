@@ -8,7 +8,7 @@ import org.uresti.pozarreal.dto.PaymentView;
 import java.security.Principal;
 
 public interface PaymentsService {
-    Page<PaymentView> getPayments(PaymentFilter paymentFilter, int page);
+    Page<PaymentView> getPayments(PaymentFilter paymentFilter, Integer page);
 
     Payment save(Payment payment, Principal principal);
 

@@ -44,14 +44,14 @@ public class PaymentsServiceImpl implements PaymentsService {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<PaymentView> getPayments(PaymentFilter paymentFilter, int page) {
+    public Page<PaymentView> getPayments(PaymentFilter paymentFilter, Integer page) {
         return customPaymentRepository.executeQuery(paymentFilter, page);
     }
 
     @Override
     @Transactional
     public Payment save(Payment payment, Principal principal) {
-        if(payment.isValidated()) {
+        if (payment.isValidated()) {
             throw new PozarrealSystemException("Editing validated payment", "INVALID_UPDATE_PAYMENT");
         }
 
@@ -83,7 +83,7 @@ public class PaymentsServiceImpl implements PaymentsService {
 
         org.uresti.pozarreal.model.Payment payment = paymentRepository.findById(paymentId).orElseThrow();
 
-        if(payment.isValidated()) {
+        if (payment.isValidated()) {
             throw new PozarrealSystemException("Deleting payment validated", "INVALID_DELETE_PAYMENT");
         }
 
