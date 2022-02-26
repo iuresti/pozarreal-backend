@@ -8,6 +8,7 @@ import Swal from 'sweetalert2';
 import {SessionService} from '../../services/session.service';
 import {UploadFileService} from '../../services/upload-file.service';
 import {User} from '../../model/user';
+import {Sort} from '@angular/material/sort';
 
 @Component({
   selector: 'app-payments',
@@ -20,6 +21,7 @@ export class PaymentsComponent implements OnInit {
   currentPage: number;
   user: User;
   payments: PaymentView[];
+  sortedData: PaymentView[];
   newPayment: Payment;
   lastFilter: PaymentFilter;
   newPaymentReady: boolean;
@@ -244,4 +246,39 @@ export class PaymentsComponent implements OnInit {
       this.doSearch(this.lastFilter);
     }
   }
+
+  sortData(sort: Sort): void {
+    const data = this.payments;
+    if (!sort.active || sort.direction === '') {
+      this.sortedData = data;
+      return;
+    }
+
+    this.sortedData = data.sort((a, b) => {
+      const isAsc = sort.direction === 'asc';
+      switch (sort.active) {
+        case 'street':
+          return this.compare(a.streetName, b.streetName, isAsc);
+        case 'house':
+          return this.compare(a.houseNumber, b.houseNumber, isAsc);
+        case 'date':
+          return this.compare(a.paymentDate, b.paymentDate, isAsc);
+        case 'amount':
+          return this.compare(a.amount, b.amount, isAsc);
+        case 'concept':
+          return this.compare(a.paymentConcept, b.paymentConcept, isAsc);
+        case 'mode':
+          return this.compare(a.paymentMode, b.paymentMode, isAsc);
+        case 'verification':
+          return this.compare(a.validated.toString(), b.validated.toString(), isAsc);
+        default:
+          return 0;
+      }
+    });
+  }
+
+  compare(a: number | string, b: number | string, isAsc: boolean): number {
+    return (a < b ? -1 : 1) * (isAsc ? 1 : -1);
+  }
+
 }

@@ -29,7 +29,7 @@ public class CustomPaymentRepository {
         this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
     }
 
-    public Page<PaymentView> executeQuery(PaymentFilter paymentFilter, int page) {
+    public Page<PaymentView> executeQuery(PaymentFilter paymentFilter, Integer page) {
         String query = "SELECT p.id, s.id streetId, s.name streetName, h.id houseId, h.number houseNumber, p.payment_date, " +
                 " p.registration_date, u.name userName, p.amount, p.validated, pc.id paymentConceptId, pc.label paymentConcept, " +
                 "psc.id paymentSubConceptId, psc.label paymentSubConcept, p.payment_mode paymentMode, p.notes" +
@@ -79,13 +79,16 @@ public class CustomPaymentRepository {
             mapSqlParameterSource.addValue("status", Boolean.parseBoolean(paymentFilter.getStatus()));
         }
 
-        Pageable pageable = PageRequest.of(page, pagination.getSize());
-
         mapSqlParameterSource.addValue("status", Boolean.parseBoolean(paymentFilter.getStatus()));
 
-        List<PaymentView> paymentViews = namedParameterJdbcTemplate.query(query + whereCondition + " ORDER BY p.payment_date" + " limit " + pageable.getPageSize() + " offset " + pageable.getOffset(), mapSqlParameterSource, paymentViewMapper);
+        Pageable pageable = PageRequest.of(page, pagination.getSize());
 
-        return new PageImpl<>(paymentViews, pageable, pagination.getSize());
+        List<PaymentView> paymentViews = namedParameterJdbcTemplate.query(query + whereCondition +
+                " ORDER BY p.payment_date" +
+                " LIMIT " + pageable.getPageSize() +
+                " OFFSET " + pageable.getOffset(), mapSqlParameterSource, paymentViewMapper);
+
+        return new PageImpl<>(paymentViews, pageable, pageable.getPageSize());
     }
 
     private void appendParam(StringBuilder query, String paramString) {
