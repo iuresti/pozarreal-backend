@@ -36,7 +36,7 @@ public class HousesController {
 
     @PatchMapping("/{houseId}/notes")
     @PreAuthorize("hasAnyRole('ROLE_REPRESENTATIVE', 'ROLE_ADMIN')")
-        public void saveNotes(@PathVariable String houseId, @RequestBody String notes) {
+    public void saveNotes(@PathVariable String houseId, @RequestBody String notes) {
         housesService.saveNotes(houseId, notes);
     }
 
