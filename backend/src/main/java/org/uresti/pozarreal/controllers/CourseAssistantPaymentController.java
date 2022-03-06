@@ -18,7 +18,6 @@ public class CourseAssistantPaymentController {
     private final CourseAssistantPaymentService courseAssistantPaymentService;
     private final SessionHelper sessionHelper;
 
-
     public CourseAssistantPaymentController(CourseAssistantPaymentService courseAssistantPaymentService,
                                             SessionHelper sessionHelper) {
         this.courseAssistantPaymentService = courseAssistantPaymentService;
