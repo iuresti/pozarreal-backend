@@ -30,7 +30,6 @@ public class ChipsController {
         return chipsService.getChipsByHouse(houseId);
     }
 
-
     @PatchMapping("activate/{chipId}")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     public Chip activateChip(@PathVariable String chipId, Principal principal) {
@@ -70,6 +69,4 @@ public class ChipsController {
 
         return chipsService.deleteChip(chipId);
     }
-
-
 }
