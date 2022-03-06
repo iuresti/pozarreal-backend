@@ -28,14 +28,14 @@ public class PaymentSubConceptsController {
     @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public PaymentSubConcept addPaymentSubConcept(PaymentSubConcept paymentSubConcept) {
+    public PaymentSubConcept addPaymentSubConcept(@RequestBody PaymentSubConcept paymentSubConcept) {
 
         return paymentSubConceptsService.save(paymentSubConcept);
     }
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     @PutMapping
-    public PaymentSubConcept updatePaymentSubConcept(PaymentSubConcept paymentSubConcept) {
+    public PaymentSubConcept updatePaymentSubConcept(@RequestBody PaymentSubConcept paymentSubConcept) {
 
         return paymentSubConceptsService.update(paymentSubConcept);
     }
