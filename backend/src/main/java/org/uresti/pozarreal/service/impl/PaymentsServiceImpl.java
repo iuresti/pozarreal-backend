@@ -1,5 +1,6 @@
 package org.uresti.pozarreal.service.impl;
 
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.uresti.pozarreal.config.PozarrealConfig;
@@ -43,8 +44,8 @@ public class PaymentsServiceImpl implements PaymentsService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<PaymentView> getPayments(PaymentFilter paymentFilter) {
-        return customPaymentRepository.executeQuery(paymentFilter);
+    public Page<PaymentView> getPayments(PaymentFilter paymentFilter, int page) {
+        return customPaymentRepository.executeQuery(paymentFilter, page);
     }
 
     @Override

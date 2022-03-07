@@ -1,14 +1,14 @@
 package org.uresti.pozarreal.service;
 
+import org.springframework.data.domain.Page;
 import org.uresti.pozarreal.dto.Payment;
 import org.uresti.pozarreal.dto.PaymentFilter;
 import org.uresti.pozarreal.dto.PaymentView;
 
 import java.security.Principal;
-import java.util.List;
 
 public interface PaymentsService {
-    List<PaymentView> getPayments(PaymentFilter paymentFilter);
+    Page<PaymentView> getPayments(PaymentFilter paymentFilter, int page);
 
     Payment save(Payment payment, Principal principal);
 

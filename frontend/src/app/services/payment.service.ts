@@ -2,12 +2,12 @@ import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {PaymentFilter} from '../model/payment-filter';
 import {Observable, of} from 'rxjs';
-import {PaymentView} from '../model/payment-view';
 import {environment} from '../../environments/environment';
 import {PaymentConcept} from '../model/payment-concept';
 import {Payment} from '../model/payment';
 import {PaymentSubConcept} from '../model/payment-sub-concept';
 import {tap} from 'rxjs/operators';
+import {PaymentViewPagination} from '../model/payment-view-pagination';
 
 @Injectable({
   providedIn: 'root'
@@ -20,7 +20,7 @@ export class PaymentService {
   constructor(private http: HttpClient) {
   }
 
-  public getPayments(paymentFilter: PaymentFilter): Observable<PaymentView[]> {
+  public getPayments(paymentFilter: PaymentFilter, page: number): Observable<PaymentViewPagination> {
     let queryParams = `rand=${Math.random()}`;
 
     if (paymentFilter.street) {
@@ -51,7 +51,7 @@ export class PaymentService {
       queryParams += `&status=${paymentFilter.status}`;
     }
 
-    return this.http.get<PaymentView[]>(`${environment.baseUrl}/payments?${queryParams}`);
+    return this.http.get<PaymentViewPagination>(`${environment.baseUrl}/payments?${queryParams}&page=${page}`);
   }
 
   getPaymentConcepts(): Observable<PaymentConcept[]> {
