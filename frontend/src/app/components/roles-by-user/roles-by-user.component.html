@@ -6,7 +6,7 @@
 </div>
 
 <a *ngFor="let role of user.roles"
-   class="badge mr-1 badge-info">{{role | role}}
+   class="badge mr-1 rounded-pill bg-info">{{role | role}}
   <a (click)="removeRole(user, role)" class="trash">
     <em style="color: red" class="bi bi-trash-fill"></em>
   </a>
