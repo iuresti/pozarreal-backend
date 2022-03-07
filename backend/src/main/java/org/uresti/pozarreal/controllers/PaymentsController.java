@@ -28,7 +28,7 @@ public class PaymentsController {
 
     @GetMapping
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_REPRESENTATIVE')")
-    public Page<PaymentView> search(PaymentFilter paymentFilter,@RequestParam("page") int page) {
+    public Page<PaymentView> search(PaymentFilter paymentFilter, @RequestParam("page") Integer page) {
         return paymentsService.getPayments(paymentFilter, page);
     }
 

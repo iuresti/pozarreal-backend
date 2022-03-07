@@ -15,21 +15,22 @@
   Exportar a Excel
 </a>
 
-<div class="table-responsive">
+<div>
   <table #tableElement
+         matSort (matSortChange)="sortData($event)"
          *ngIf="!loading"
-         class="table"
+         class="table table-responsive"
          id="table">
     <thead>
     <tr>
-      <th>Circuito</th>
-      <th>Casa</th>
-      <th>Fecha de pago</th>
-      <th>Monto</th>
-      <th>Concepto</th>
-      <th>Modo de pago</th>
+      <th mat-sort-header="street">Circuito</th>
+      <th mat-sort-header="house">Casa</th>
+      <th mat-sort-header="date">Fecha de pago</th>
+      <th mat-sort-header="amount">Monto</th>
+      <th mat-sort-header="concept">Concepto</th>
+      <th mat-sort-header="mode">Modo de pago</th>
       <th>Notas</th>
-      <th>Verificación</th>
+      <th mat-sort-header="verification">Verificación</th>
       <th>&nbsp;</th>
     </tr>
     </thead>
