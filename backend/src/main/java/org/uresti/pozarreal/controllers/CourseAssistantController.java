@@ -15,7 +15,6 @@ public class CourseAssistantController {
 
     private final CourseAssistantService courseAssistantService;
 
-
     public CourseAssistantController(CourseAssistantService courseAssistantService) {
         this.courseAssistantService = courseAssistantService;
     }
