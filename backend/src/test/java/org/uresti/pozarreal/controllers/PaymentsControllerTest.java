@@ -9,6 +9,9 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -60,22 +63,29 @@ public class PaymentsControllerTest {
     @WithMockUser(username = "test", password = "test", roles = "ADMIN")
     public void givenAPaymentFilter_whenGetPayments_thenIsReturnedAListOfPaymentView() throws Exception {
         // Given:
+        Integer page = 0;
+
         PaymentFilter paymentFilter = PaymentFilter.builder().build();
 
-        List<PaymentView> payments = new LinkedList<>();
+        List<PaymentView> paymentViews = new LinkedList<>();
 
-        Mockito.when(paymentsService.getPayments(paymentFilter)).thenReturn(payments);
+        Pageable pageable = PageRequest.of(0, 2);
+
+        PageImpl<PaymentView> paymentViewPage = new PageImpl<>(paymentViews, pageable, page);
+
+        Mockito.when(paymentsService.getPayments(paymentFilter, 0)).thenReturn(paymentViewPage);
 
         // When:
         MockHttpServletResponse response = mockMvc.perform(
                         MockMvcRequestBuilders.get(BASE_URL)
-                                .contentType(MediaType.APPLICATION_JSON))
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .param("page", String.valueOf(page)))
                 .andReturn().getResponse();
 
         // Then:
         Assertions.assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
 
-        Mockito.verify(paymentsService).getPayments(paymentFilter);
+        Mockito.verify(paymentsService).getPayments(paymentFilter, page);
         Mockito.verifyNoMoreInteractions(paymentsService);
     }
 

@@ -13,8 +13,8 @@
        (onDrop)="activateChip($event)">
     <a *ngFor="let chip of activeChips" draggable [dragData]="chip"
        [dragScope]="'inactivate'"
-       class="badge mr-1"
-       [ngClass]="{'badge-success': house.chipsEnabled,'badge-secondary': !house.chipsEnabled}">{{chip.code}}
+       class="badge mr-1 rounded-pill"
+       [ngClass]="{'bg-success': house.chipsEnabled,'bg-secondary': !house.chipsEnabled}">{{chip.code}}
     </a>
   </div>
 
@@ -26,8 +26,8 @@
        (mouseover)="removeIconVisible = true"
        (mouseleave)="removeIconVisible = false"
        [dragScope]="'activate'"
-       class="badge mr-1 "
-       [ngClass]="{'badge-danger': house.chipsEnabled,'badge-secondary': !house.chipsEnabled}">{{chip.code}}
+       class="badge mr-1 rounded-pill"
+       [ngClass]="{'bg-danger': house.chipsEnabled,'bg-secondary': !house.chipsEnabled}">{{chip.code}}
       <a (click)="removeChip(chip)" class="remove-chip">
         <em class="bi bi-trash-fill"></em>
       </a>
