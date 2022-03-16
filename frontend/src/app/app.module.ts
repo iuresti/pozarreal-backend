@@ -28,7 +28,9 @@ import {CoursesComponent} from './components/courses/courses.component';
 import {CourseInfoComponent} from './components/course-info/course-info.component';
 import {WeekdayLabelPipe} from './pipes/weekday-label.pipe';
 import {StudentAddComponent} from './components/student-add/student-add.component';
-import {CourseAssistantPaymentsComponent} from './components/course-assistant-payments/course-assistant-payments.component';
+import {
+  CourseAssistantPaymentsComponent
+} from './components/course-assistant-payments/course-assistant-payments.component';
 import {CourseAddPaymentComponent} from './components/course-add-payment/course-add-payment.component';
 import {SmallDateFormatPipe} from './pipes/small-date-format.pipe';
 import {CommonDateFormatPipe} from './pipes/common-date-format.pipe';
